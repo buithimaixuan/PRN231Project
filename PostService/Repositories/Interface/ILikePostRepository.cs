@@ -1,11 +1,11 @@
-﻿using PRN221_Models.Models;
+﻿using PostService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN221_Repository.LikePostRepo
+namespace PostService.Repositories.Interface
 {
     public interface ILikePostRepository
     {
