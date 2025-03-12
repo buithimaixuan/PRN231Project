@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PRN221_Models.Models;
+using PostService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN221_DataAccess.DAOs
+namespace PostService.DAOs
 {
-    public class CategoryNewsDAO : SingletonBase<CategoryNewsDAO>
+    public class CategoryNewsDAO : SingletonBaseDAO<CategoryNewsDAO>
     {
         public async Task<CategoryNews> GetCategoryNewsById(int id)
         {

@@ -1,12 +1,13 @@
-﻿using PostService.Models;
-using PRN221_DataAccess.DAOs;
+﻿using PostService.DAOs;
+using PostService.Models;
+using PostService.Repositories.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN221_Repository.CommentRepo
+namespace PostService.Repositories.Implement
 {
     public class CommentRepository : ICommentRepository
     {

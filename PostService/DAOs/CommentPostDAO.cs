@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN221_DataAccess.DAOs
+namespace PostService.DAOs
 {
     public class CommentPostDAO : SingletonBaseDAO<CommentPostDAO>
     {
