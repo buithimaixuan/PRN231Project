@@ -1,11 +1,6 @@
-﻿using PRN221_Models.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PostService.Models;
 
-namespace PRN221_BusinessLogic.Interface
+namespace PostService.Services.Interface
 {
     public interface INewsService
     {

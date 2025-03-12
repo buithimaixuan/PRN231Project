@@ -1,13 +1,8 @@
-﻿using PRN221_BusinessLogic.Interface;
-using PRN221_Models.Models;
-using PRN221_Repository.NewsRepo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PostService.Models;
+using PostService.Repositories.Interface;
+using PostService.Services.Interface;
 
-namespace PRN221_BusinessLogic.Service
+namespace PostService.Services.Implement
 {
     public class NewsService : INewsService
     {
