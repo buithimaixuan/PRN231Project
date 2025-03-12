@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using PostService.Models;
 
-namespace PostService.Models;
+namespace PostService.DAOs;
 
-public partial class MicroservicePostDbContext : DbContext
+public partial class PostDbContext : DbContext
 {
-    public MicroservicePostDbContext()
+    public PostDbContext()
     {
     }
 
-    public MicroservicePostDbContext(DbContextOptions<MicroservicePostDbContext> options)
+    public PostDbContext(DbContextOptions<PostDbContext> options)
         : base(options)
     {
     }
