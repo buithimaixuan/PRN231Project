@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PRN221_Models.Models;
+using PostService.DAOs;
+using PostService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PRN221_DataAccess.DAOs
 {
-    public class CommentPostDAO : SingletonBase<CommentPostDAO>
+    public class CommentPostDAO : SingletonBaseDAO<CommentPostDAO>
     {
         public async Task<IEnumerable<Comment>> GetAllCommentPostByPostId(int id)
         {
@@ -32,7 +33,6 @@ namespace PRN221_DataAccess.DAOs
         {
             var existingItem = await FindById(item.CommentId);
             if (existingItem == null) return;
-            item.UpdatedAt = DateTime.Now;
             _context.Entry(existingItem).CurrentValues.SetValues(item);
             await _context.SaveChangesAsync();
         }
