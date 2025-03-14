@@ -173,6 +173,7 @@ public partial class PostDbContext : DbContext
                 .HasColumnName("image_url");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.PostId).HasColumnName("post_id");
+            entity.Property(e => e.PublicId).HasColumnName("PublicId");
 
             entity.HasOne(d => d.Post).WithMany(p => p.PostImages)
                 .HasForeignKey(d => d.PostId)
