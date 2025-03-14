@@ -1,5 +1,5 @@
 ﻿using UserService.Models;
-using UserService.Repositories.RoleRepo;
+using UserService.Repositories;
 using UserService.Services.Interface;
 
 namespace UserService.Services.Implement
@@ -15,7 +15,7 @@ namespace UserService.Services.Implement
         {
             return await _roleRepo.GetListAll();
         }
-        public async Task<Role> GetByIdRole(int id)
+        public async Task<Role?> GetByIdRole(int id)
         {
             return await _roleRepo.getById(id);
         }
