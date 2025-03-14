@@ -11,11 +11,11 @@ public partial class Service
 
     public int CategoryServiceId { get; set; }
 
-    public DateOnly CreateAt { get; set; }
+    public DateTime CreateAt { get; set; }
 
-    public DateOnly? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
-    public DateOnly? DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     public string Title { get; set; } = null!;
 

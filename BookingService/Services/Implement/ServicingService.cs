@@ -71,6 +71,18 @@ namespace BookingService.Services.Implement
         {
             return await _ratingServicingService.AddRating(item);
         }
+        public async Task<IEnumerable<ServiceRating>> GetAllRating()
+        {
+            return await _ratingServicingService.GetAllRating();
+        }
+        public async Task<ServiceRating> GetRatingById(int id)
+        {
+            return await _ratingServicingService.GetRatingById(id);
+        }
+        public async Task<ServiceRating> UpdateRating(ServiceRating item)
+        {
+            return await _ratingServicingService.UpdateRating(item);
+        }
         // CategoryService
         public async Task<IEnumerable<CategoryService>> GetAllCategoryService() => await _categoryServicingService.GetAllCategoryService();
 
@@ -88,6 +100,10 @@ namespace BookingService.Services.Implement
             await _categoryServicingService.DeleteCategoryService(id);
         }
         // Booking
+        public async Task<IEnumerable<BookingService.Models.BookingService>> GetAllBooking()
+        {
+            return await _bookingServicingService.GetAllBooking();
+        }
         public async Task<BookingService.Models.BookingService> GetBookingById(int id)
         {
             return await _bookingServicingService.GetBookingById(id);
@@ -95,6 +111,10 @@ namespace BookingService.Services.Implement
         public async Task<BookingService.Models.BookingService> AddBooking(BookingService.Models.BookingService item)
         {
             return await _bookingServicingService.AddBooking(item);
+        }
+        public async Task UpdateStatusBooking(BookingService.Models.BookingService item)
+        {
+            await _bookingServicingService.UpdateStatusBooking(item);
         }
     }
 }

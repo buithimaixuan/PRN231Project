@@ -11,7 +11,7 @@ public partial class BookingService
 
     public int BookingBy { get; set; }
 
-    public DateOnly BookingAt { get; set; }
+    public DateTime BookingAt { get; set; }
 
     public string BookingStatus { get; set; } = null!;
 

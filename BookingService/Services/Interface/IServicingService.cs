@@ -18,6 +18,9 @@ namespace BookingService.Services.Interface
         Task DeleteService(int id);
         // Rating
         Task<ServiceRating> AddRating(ServiceRating item);
+        Task<IEnumerable<ServiceRating>> GetAllRating();
+        Task<ServiceRating> GetRatingById(int id);
+        Task<ServiceRating> UpdateRating(ServiceRating item);
         // CategoryService
         Task<CategoryService> GetCategoryServiceById(int id);
         Task<IEnumerable<CategoryService>> GetAllCategoryService();
@@ -25,7 +28,9 @@ namespace BookingService.Services.Interface
         Task UpdateCategoryService(CategoryService item);
         Task DeleteCategoryService(int id);
         // Booking
+        Task<IEnumerable<BookingService.Models.BookingService>> GetAllBooking();
         Task<BookingService.Models.BookingService> GetBookingById(int id);
         Task<BookingService.Models.BookingService> AddBooking(BookingService.Models.BookingService item);
+        Task UpdateStatusBooking(BookingService.Models.BookingService item);
     }
 }
