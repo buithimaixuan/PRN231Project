@@ -1,4 +1,6 @@
-﻿using RequestService.DAOs;
+﻿using BookingService.DAOs;
+using BookingService.Models;
+using RequestService.DAOs;
 
 namespace BookingService.Repositories.BookingServiceRepo
 {
@@ -9,6 +11,10 @@ namespace BookingService.Repositories.BookingServiceRepo
         {
             _bookingDAO = bookingDAO;
         }
+        public async Task<IEnumerable<BookingService.Models.BookingService>> GetAllBooking()
+        {
+            return await _bookingDAO.GetAllBooking();
+        }
         public async Task<BookingService.Models.BookingService> GetBookingById(int id)
         {
             return await _bookingDAO.GetBookingById(id);
@@ -16,6 +22,10 @@ namespace BookingService.Repositories.BookingServiceRepo
         public async Task<BookingService.Models.BookingService> AddBooking(BookingService.Models.BookingService item)
         {
             return await _bookingDAO.AddBooking(item);
+        }
+        public async Task UpdateStatusBooking(BookingService.Models.BookingService item)
+        {
+            await _bookingDAO.UpdateStatusBooking(item);
         }
     }
 }
