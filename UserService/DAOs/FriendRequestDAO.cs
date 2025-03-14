@@ -1,6 +1,7 @@
 ﻿namespace UserService.DAOs
 {
-    public class FriendRequestDAO
+    public class FriendRequestDAO : SingletonBase<FriendRequestDAO>
     {
+
     }
 }
