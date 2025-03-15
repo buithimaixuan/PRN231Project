@@ -17,16 +17,32 @@ namespace BookingService.Controllers
             _servicingService = servicingService;
         }
 
-        // Lấy dánh sách tất cả service
-        [HttpGet]
+        // Lấy dánh sách tất cả booking
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<BookingService.Models.BookingService>>> GetBookingServices()
         {
             var bookingServices = await _servicingService.GetAllBooking();
             return Ok(bookingServices);
         }
 
-        // 🔹 Lấy service theo ID
-        [HttpGet("{id}")]
+        // Lấy dánh sách tất cả booking theo accId
+        [HttpGet("all-by-accId/{id}")]
+        public async Task<ActionResult<IEnumerable<BookingService.Models.BookingService>>> GetBookingServicesByAccId(int id)
+        {
+            var bookingServices = await _servicingService.GetAllBookingByAccId(id);
+            return Ok(bookingServices);
+        }
+
+        // Lấy dánh sách tất cả booking theo serId
+        [HttpGet("all-by-serId/{id}")]
+        public async Task<ActionResult<IEnumerable<BookingService.Models.BookingService>>> GetBookingServicesBySerId(int id)
+        {
+            var bookingServices = await _servicingService.GetAllBookingBySerId(id);
+            return Ok(bookingServices);
+        }
+
+        // 🔹 Lấy booking theo ID
+        [HttpGet("get-by-id/{id}")]
 
         public async Task<ActionResult<BookingService.Models.BookingService>> GetBookingById(int id)
         {
@@ -38,7 +54,7 @@ namespace BookingService.Controllers
             return Ok(booking);
         }
 
-        // 🔹 Thêm service mới
+        // 🔹 Thêm booking mới
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingRequest request)
         {
@@ -63,8 +79,8 @@ namespace BookingService.Controllers
             return CreatedAtAction(nameof(GetBookingById), new { id = newBooking.BookingId }, newBooking);
         }
 
-        // 🔹 Cập nhật voucher
-        [HttpPut("{id}")]
+        // 🔹 Cập nhật booking
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateBooking(int id, [FromBody] BookingRequest request)
         {
             var checkBooking = await _servicingService.GetBookingById(id);
@@ -86,6 +102,38 @@ namespace BookingService.Controllers
             };
 
             await _servicingService.UpdateStatusBooking(updateBooking);
+            return NoContent();
+        }
+
+        // Xóa mềm booking phía farmer
+        [HttpPut("soft-delete-farmer/{id}")]
+        public async Task<IActionResult> SoftDeleteBookingByFarmer(int id)
+        {
+            var checkBooking = await _servicingService.GetBookingById(id);
+            if (checkBooking == null)
+            {
+                return BadRequest();
+            }
+
+            checkBooking.IsDeletedFarmer = true;
+
+            await _servicingService.UpdateStatusBooking(checkBooking);
+            return NoContent();
+        }
+
+        // Xóa mềm booking phía expert
+        [HttpPut("soft-delete-expert/{id}")]
+        public async Task<IActionResult> SoftDeleteBookingByExpert(int id)
+        {
+            var checkBooking = await _servicingService.GetBookingById(id);
+            if (checkBooking == null)
+            {
+                return BadRequest();
+            }
+
+            checkBooking.IsDeletedExpert = true;
+
+            await _servicingService.UpdateStatusBooking(checkBooking);
             return NoContent();
         }
 

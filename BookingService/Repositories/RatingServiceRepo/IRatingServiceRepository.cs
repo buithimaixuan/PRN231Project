@@ -8,5 +8,6 @@ namespace BookingService.Repositories.RatingServiceRepo
         Task<IEnumerable<ServiceRating>> GetAllRating();
         Task<ServiceRating> GetRatingById(int id);
         Task<ServiceRating> UpdateRating(ServiceRating item);
+        Task<IEnumerable<ServiceRating>> GetAllRatingByServiceId(int id);
     }
 }

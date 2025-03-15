@@ -30,14 +30,6 @@ namespace BookingService.Repositories.ServiceRepo
         {
             return await serviceDAO.GetTotalServicesCount();
         }
-        public async Task<int> CountServicecConfirm(int id)
-        {
-            return await serviceDAO.CountServicecConfirm(id);
-        }
-        public async Task<IEnumerable<ServiceRating>> GetAllRatingByServiceId(int id)
-        {
-            return await serviceDAO.GetAllRatingByServiceId(id);
-        }
         public async Task<IEnumerable<Service>> GetAllServiceByAccId(int id)
         {
             return await serviceDAO.GetAllServiceByAccId(id);

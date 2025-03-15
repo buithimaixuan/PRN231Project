@@ -20,15 +20,39 @@ namespace BookingService.Controllers
         }
 
         // Lấy dánh sách tất cả service
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Service>>> GetServices()
         {
             var services = await _servicingService.GetAllService();
             return Ok(services);
         }
 
+        // Lấy dánh sách dịch vụ khả dụng
+        [HttpGet("available")] // api/Services/available
+        public async Task<ActionResult<IEnumerable<Service>>> GetServicesAvailable()
+        {
+            var services = await _servicingService.GetAllServiceAvailable();
+            return Ok(services);
+        }
+
+        // Đếm tống số dịch vụ
+        [HttpGet("count-all")] // api/Services/countAll
+        public async Task<ActionResult<int>> GetTotalServicesCount()
+        {
+            int countAllServices = await _servicingService.GetTotalServicesCount();
+            return Ok(countAllServices);
+        }
+
+        // Lấy dánh sách dịch vụ theo accountId
+        [HttpGet("all-by-accId/{id}")]
+        public async Task<ActionResult<int>> GetAllServiceByAccId(int id)
+        {
+            var servicesByAccId = await _servicingService.GetAllServiceByAccId(id);
+            return Ok(servicesByAccId);
+        }
+
         // 🔹 Lấy service theo ID
-        [HttpGet("{id}")]
+        [HttpGet("get-by-id/{id}")]
 
         public async Task<ActionResult<Service>> GetServiceById(int id)
         {
@@ -70,8 +94,8 @@ namespace BookingService.Controllers
             return CreatedAtAction(nameof(GetServiceById), new { id = newService.ServiceId }, newService);
         }
 
-        // 🔹 Cập nhật voucher
-        [HttpPut("{id}")]
+        // 🔹 Cập nhật service
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateService(int id,[FromBody] ServiceRequest request)
         {
             var checkService = await _servicingService.GetServiceById(id);
@@ -101,7 +125,24 @@ namespace BookingService.Controllers
             return NoContent();
         }
 
-        // 🔹 Xóa voucher
+        // 🔹 Xóa mềm service
+        [HttpPut("soft-delete/{id}")]
+        public async Task<IActionResult> SoftDeleteService(int id)
+        {
+            var checkService = await _servicingService.GetServiceById(id);
+            if (checkService == null)
+            {
+                return BadRequest();
+            }
+
+            checkService.IsDeleted = true;
+            checkService.DeletedAt = DateTime.Now;
+
+            await _servicingService.UpdateService(checkService);
+            return NoContent();
+        }
+
+        // 🔹 Xóa cứng service
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteService(int id)
         {
