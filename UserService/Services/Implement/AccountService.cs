@@ -1,12 +1,12 @@
 ﻿using UserService.Models;
-using UserService.Repositories.AccountRepo;
+using UserService.Repositories;
 using UserService.Services.Interface;
 
 namespace UserService.Services.Implement
 {
     public class AccountService : IAccountService
     {
-     private readonly IAccountRepository _accountRepo;
+        private readonly IAccountRepository _accountRepo;
         public AccountService(IAccountRepository accountRepo)
         {
             _accountRepo = accountRepo;

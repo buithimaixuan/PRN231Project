@@ -14,10 +14,8 @@ namespace PostService.Services.Interface
         Task<IEnumerable<News>> GetAllNewsByCategoryId(int categoryId);
         Task<IEnumerable<CategoryNews>> GetCategoriesHaveNews();
         Task<int> GetTotalNewsService();
-        Task<IEnumerable<News>> SearchNews(int category, string searchString);
-        Task<IEnumerable<News>> GetNewsPaged(int pageNumber, int pageSize);
         Task<int> GetTotalNewsCount();
-
-       Task<IEnumerable<(string Month, int Count)>> GetNewsCountByMonth();
+        Task<IEnumerable<(string Month, int Count)>> GetNewsCountByMonth();
+        Task<(IEnumerable<News> News, int TotalCount)> FilterAndPaginateNews(int? categoryId, string searchString, int pageNumber, int pageSize);
     }
 }

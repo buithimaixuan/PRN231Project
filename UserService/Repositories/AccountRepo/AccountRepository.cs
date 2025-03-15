@@ -22,8 +22,6 @@ namespace UserService.Repositories.AccountRepo
             return await _accountDAO.getByUsername(username);
         }
 
-
-
         public async Task<IEnumerable<Account>> GetListAccByRoleId(int role_id) => await _accountDAO.GetListAccountByRoleId(role_id);
         public async Task<Account> GetById(int? id) => await _accountDAO.GetById(id);
         public async Task<Account?> GetAccountById(int? accountId) => await _accountDAO.GetAccountById(accountId);
