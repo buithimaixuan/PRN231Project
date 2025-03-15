@@ -16,6 +16,11 @@ namespace UserService.Services.Implement
             return await _accountRepo.GetAll();
         }
 
+        public async Task<IEnumerable<Account>> GetAllAccountAvailable()
+        {
+            return await _accountRepo.GetAllAccountAvailable();
+        }
+
         public async Task<IEnumerable<Account>> GetListAccountByRoleId(int id)
         {
             return await _accountRepo.GetListAccByRoleId(id);

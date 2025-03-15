@@ -1,6 +1,20 @@
+using UserService.DAOs;
+using UserService.PasswordHashing;
+using UserService.Repositories;
+using UserService.Repositories.AccountRepo;
+using UserService.Services.Implement;
+using UserService.Services.Interface;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Account DI
+builder.Services.AddScoped<AccountDAO>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<PasswordHasher>(); 
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

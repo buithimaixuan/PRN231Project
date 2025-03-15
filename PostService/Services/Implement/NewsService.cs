@@ -15,6 +15,7 @@ namespace PostService.Services.Implement
             _newsRepo = newsRepo;
             _categoryNewsRepository = categoryNewsRepository;
         }
+        public async Task<IEnumerable<News>> GetAllNewsAvailable() => await _newsRepo.GetAllNewsAvailable();
 
         public async Task<IEnumerable<News>> GetAllNews() => await _newsRepo.GetAllNews();
         

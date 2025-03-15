@@ -17,6 +17,11 @@ namespace UserService.Repositories.AccountRepo
             return await _accountDAO.getAll();
         }
 
+        public async Task<IEnumerable<Account>> GetAllAccountAvailable()
+        {
+            return await _accountDAO.getAllAccountAvailable();
+        }
+
         public async Task<Account?> GetByUsername(string username)
         {
             return await _accountDAO.getByUsername(username);

@@ -5,23 +5,14 @@ namespace UserService.DAOs
 {
     public class AccountDAO : SingletonBase<AccountDAO>
     {
-        private readonly MicroserviceUserDbContext _context;
-
-        public AccountDAO(MicroserviceUserDbContext context)
-        {
-            _context = context;
-        }
-
-
-        public AccountDAO()
-        {
-            _context = new MicroserviceUserDbContext();
-        }
-
-
         public async Task<IEnumerable<Account>> getAll()
         {
             return await _context.Accounts.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Account>> getAllAccountAvailable()
+        {
+            return await _context.Accounts.Where(a => a.IsDeleted == false).ToListAsync();
         }
 
         public async Task<Account?> getByUsername(string username)
@@ -45,7 +36,7 @@ namespace UserService.DAOs
 
         public async Task<Account> GetById(int? id)
         {
-            var item = await _context.Accounts.FirstOrDefaultAsync(c => c.AccountId == id);
+            var item = await _context.Accounts.FirstOrDefaultAsync(c => c.AccountId == id && c.IsDeleted == false);
             if (item == null) return null;
             return item;
         }

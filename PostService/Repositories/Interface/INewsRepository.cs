@@ -9,6 +9,7 @@ namespace PostService.Repositories.Interface
 {
     public interface INewsRepository
     {
+        Task<IEnumerable<News>> GetAllNewsAvailable();
         Task<IEnumerable<News>> GetAllNews();
         Task<News> GetById(int id);
         Task Add(News item);
