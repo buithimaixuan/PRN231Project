@@ -5,7 +5,7 @@ using PostService.Services.Interface;
 
 namespace PostService.Services.Implement
 {
-    public class PostService : IPostService
+    public class PostsService : IPostService
     {
         private readonly IPostRepository _postRepository;
         private readonly IPostImageRepository _postImageRepository;
@@ -13,7 +13,7 @@ namespace PostService.Services.Implement
         private readonly ICommentRepository _commentRepository;
         private readonly ISharePostRepository _sharePostRepository;
 
-        public PostService(IPostRepository postRepository, IPostImageRepository postImageRepository, ILikePostRepository likePostRepository, ICommentRepository commentRepository, ISharePostRepository sharePostRepository)
+        public PostsService(IPostRepository postRepository, IPostImageRepository postImageRepository, ILikePostRepository likePostRepository, ICommentRepository commentRepository, ISharePostRepository sharePostRepository)
         {
             _postRepository = postRepository;
             _postImageRepository = postImageRepository;
@@ -128,7 +128,6 @@ namespace PostService.Services.Implement
             };
 
             return await _postRepository.AddPost(post);
-
         }
 
         //Lấy list post không bị xóa
