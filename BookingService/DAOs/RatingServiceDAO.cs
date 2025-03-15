@@ -39,5 +39,11 @@ namespace BookingService.DAOs
             return item;
 
         }
+
+        // Lấy danh sách đánh giá của 1 dịch vụ
+        public async Task<IEnumerable<ServiceRating>> GetAllRatingByServiceId(int id)
+        {
+            return await _context.ServiceRatings.Where(sr => sr.ServiceId == id).ToListAsync();
+        }
     }
 }

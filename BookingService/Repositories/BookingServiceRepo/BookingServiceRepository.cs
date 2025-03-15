@@ -27,5 +27,17 @@ namespace BookingService.Repositories.BookingServiceRepo
         {
             await _bookingDAO.UpdateStatusBooking(item);
         }
+        public async Task<int> CountBookingConfirmBySerId(int id)
+        {
+            return await _bookingDAO.CountBookingConfirmBySerId(id);
+        }
+        public async Task<IEnumerable<BookingService.Models.BookingService>> GetAllBookingByAccId(int id)
+        {
+            return await _bookingDAO.GetAllBookingByAccId(id);
+        }
+        public async Task<IEnumerable<BookingService.Models.BookingService>> GetAllBookingBySerId(int id)
+        {
+            return await _bookingDAO.GetAllBookingBySerId(id);
+        }
     }
 }
