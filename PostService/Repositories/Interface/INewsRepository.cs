@@ -9,7 +9,6 @@ namespace PostService.Repositories.Interface
 {
     public interface INewsRepository
     {
-   
         Task<IEnumerable<News>> GetAllNews();
         Task<News> GetById(int id);
         Task Add(News item);
@@ -17,10 +16,8 @@ namespace PostService.Repositories.Interface
         Task Delete(int id);
         Task<IEnumerable<News>> GetAllNewsByCategoryId(int categoryId);
         Task<int> GetTotalNewsRepo();
-        Task<IEnumerable<News>> SearchNews(int category, string searchString);
-        Task<IEnumerable<News>> GetNewsPaged(int pageNumber, int pageSize);
         Task<int> GetTotalNewsCount();
-
         Task<IEnumerable<(string Month, int Count)>> GetNewsCountByMonth();
+        Task<(IEnumerable<News> News, int TotalCount)> FilterAndPaginateNews(int? categoryId, string searchString, int pageNumber, int pageSize);
     }
 }

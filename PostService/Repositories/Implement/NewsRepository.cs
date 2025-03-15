@@ -26,7 +26,9 @@ namespace PostService.Repositories.Implement
         }
 
         public async Task<News> GetById(int id) => await _newsDAO.FindById(id);
+        
         public async Task Add(News news) => await _newsDAO.Add(news);
+        
         public async Task Update(News news) => await _newsDAO.Update(news);
 
         public async Task Delete(int id) => await _newsDAO.Delete(id);
@@ -38,14 +40,11 @@ namespace PostService.Repositories.Implement
         public async Task<int> GetTotalNewsRepo() => await _newsDAO.GetTotalNewsCountAsync();
         public async Task<IEnumerable<CategoryNews>> GetAllCategoryNews() => await _categoryNewsDAO.GetAllCategoryNews();
 
-        public async Task<IEnumerable<News>> SearchNews(int category, string searchString) => await _newsDAO.SearchNews(category, searchString);
-
-        public Task<IEnumerable<News>> GetNewsPaged(int pageNumber, int pageSize) => _newsDAO.GetNewsPaged(pageNumber, pageSize);   
-
         public Task<int> GetTotalNewsCount() => _newsDAO.GetTotalNewsCount();
 
         public async Task<IEnumerable<(string Month, int Count)>> GetNewsCountByMonth() => await _newsDAO.GetNewsCountByMonth();
 
-
+        public async Task<(IEnumerable<News> News, int TotalCount)> FilterAndPaginateNews(int? categoryId, string searchString, int pageNumber, int pageSize) 
+            => await _newsDAO.FilterAndPaginateNews(categoryId, searchString, pageNumber, pageSize);
     }
 }

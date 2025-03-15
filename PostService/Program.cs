@@ -7,7 +7,6 @@ using PostService.Services.Interface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddScoped<CategoryNewsDAO>();
 builder.Services.AddScoped<CategoryPostDAO>();
 builder.Services.AddScoped<CommentPostDAO>();
@@ -33,6 +32,7 @@ builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IPostImageService, PostImageService>();
 builder.Services.AddScoped<IPostService, PostsService>();
 builder.Services.AddScoped<IViewService, ViewService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
