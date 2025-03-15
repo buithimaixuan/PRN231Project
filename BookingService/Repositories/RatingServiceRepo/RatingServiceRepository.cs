@@ -27,5 +27,9 @@ namespace BookingService.Repositories.RatingServiceRepo
         {
             return await _rateDAO.UpdateRating(item);
         }
+        public async Task<IEnumerable<ServiceRating>> GetAllRatingByServiceId(int id)
+        {
+            return await _rateDAO.GetAllRatingByServiceId(id);
+        }
     }
 }

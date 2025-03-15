@@ -18,10 +18,18 @@ namespace BookingService.Controllers
         }
 
         // Lấy dánh sách tất cả service
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<ServiceRating>>> GetRatingServices()
         {
             var ratingServices = await _servicingService.GetAllRating();
+            return Ok(ratingServices);
+        }
+
+        // Lấy dánh sách tất cả service
+        [HttpGet("all-by-serId/{id}")]
+        public async Task<ActionResult<IEnumerable<ServiceRating>>> GetRatingServicesBySerId(int id)
+        {
+            var ratingServices = await _servicingService.GetAllRatingByServiceId(id);
             return Ok(ratingServices);
         }
 

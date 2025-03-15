@@ -11,6 +11,12 @@ namespace RequestService.DAOs
             return await _context.Services.ToListAsync();
         }
 
+        // Lấy danh sách dịch vụ chưa xóa
+        public async Task<IEnumerable<Service>> GetAllServiceAvailable()
+        {
+            return await _context.Services.Where(c => c.IsDeleted == false && c.IsEnable == true).ToListAsync();
+        }
+
         // Lấy dịch vụ theo Id
         public async Task<Service> GetById(int id)
         {
@@ -34,18 +40,6 @@ namespace RequestService.DAOs
         public async Task<int> GetTotalServicesCount()
         {
             return await _context.Services.CountAsync(s => s.IsDeleted == false && s.IsEnable == true);
-        }
-
-        // Đếm tổng số dịch vụ đã được sử dụng
-        public async Task<int> CountServicecConfirm(int id)
-        {
-            return await _context.BookingServices.Where(b => b.ServiceId == id && b.BookingStatus.Equals("confirmed")).CountAsync();
-        }
-
-        // Lấy danh sách đánh giá của 1 dịch vụ
-        public async Task<IEnumerable<ServiceRating>> GetAllRatingByServiceId(int id)
-        {
-            return await _context.ServiceRatings.Where(sr => sr.ServiceId == id).ToListAsync();
         }
 
         // Lấy danh sách dịch vụ theo accountId
@@ -86,12 +80,6 @@ namespace RequestService.DAOs
             _context.Entry(item).CurrentValues.SetValues(item);
             //_context.Services.Remove(item);
             await _context.SaveChangesAsync();
-        }
-
-        // Lấy danh sách dịch vụ chưa xóa
-        public async Task<IEnumerable<Service>> GetAllServiceAvailable()
-        {
-            return await _context.Services.Where(c => c.IsDeleted == false && c.IsEnable == true).ToListAsync();
         }
     }
 }

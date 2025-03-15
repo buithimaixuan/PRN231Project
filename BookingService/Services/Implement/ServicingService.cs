@@ -42,14 +42,6 @@ namespace BookingService.Services.Implement
         {
             return await _servicingService.GetTotalServicesCount();
         }
-        public async Task<int> CountServicecConfirm(int id)
-        {
-            return await _servicingService.CountServicecConfirm(id);
-        }
-        public async Task<IEnumerable<ServiceRating>> GetAllRatingByServiceId(int id)
-        {
-            return await _servicingService.GetAllRatingByServiceId(id);
-        }
         public async Task<IEnumerable<BookingService.Models.Service>> GetAllServiceByAccId(int id)
         {
             return await _servicingService.GetAllServiceByAccId(id);
@@ -83,6 +75,10 @@ namespace BookingService.Services.Implement
         {
             return await _ratingServicingService.UpdateRating(item);
         }
+        public async Task<IEnumerable<ServiceRating>> GetAllRatingByServiceId(int id)
+        {
+            return await _ratingServicingService.GetAllRatingByServiceId(id);
+        }
         // CategoryService
         public async Task<IEnumerable<CategoryService>> GetAllCategoryService() => await _categoryServicingService.GetAllCategoryService();
 
@@ -115,6 +111,18 @@ namespace BookingService.Services.Implement
         public async Task UpdateStatusBooking(BookingService.Models.BookingService item)
         {
             await _bookingServicingService.UpdateStatusBooking(item);
+        }
+        public async Task<int> CountBookingConfirmBySerId(int id)
+        {
+            return await _bookingServicingService.CountBookingConfirmBySerId(id);
+        }
+        public async Task<IEnumerable<BookingService.Models.BookingService>> GetAllBookingByAccId(int id)
+        {
+            return await _bookingServicingService.GetAllBookingByAccId(id);
+        }
+        public async Task<IEnumerable<BookingService.Models.BookingService>> GetAllBookingBySerId(int id)
+        {
+            return await _bookingServicingService.GetAllBookingBySerId(id);
         }
     }
 }
