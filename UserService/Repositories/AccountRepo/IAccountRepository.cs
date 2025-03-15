@@ -5,6 +5,7 @@ namespace UserService.Repositories
     public interface IAccountRepository
     {
         Task<IEnumerable<Account>> GetAll();
+        Task<IEnumerable<Account>> GetAllAccountAvailable();
         Task<Account?> GetByUsername(string username);
         Task<Account?> GetAccountByEmail(string email);
         Task<IEnumerable<Account>> GetListAccByRoleId(int id);

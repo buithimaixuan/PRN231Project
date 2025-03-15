@@ -4,6 +4,7 @@ namespace PostService.Services.Interface
 {
     public interface INewsService
     {
+        Task<IEnumerable<News>> GetAllNewsAvailable();
         Task<IEnumerable<News>> GetAllNews();
         Task<IEnumerable<CategoryNews>> GetAllCategoryNews();
         Task<News> GetByIdNews(int id);

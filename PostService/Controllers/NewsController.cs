@@ -19,7 +19,14 @@ namespace PostService.Controllers
         }
 
         // GET: api/news
-        [HttpGet]
+        [HttpGet("Available")]
+        public async Task<IActionResult> GetAllNewsAvailable()
+        {
+            var newsList = await _newsService.GetAllNewsAvailable();
+            return Ok(newsList);
+        }
+
+        [HttpGet("All")]
         public async Task<IActionResult> GetAllNews()
         {
             var newsList = await _newsService.GetAllNews();

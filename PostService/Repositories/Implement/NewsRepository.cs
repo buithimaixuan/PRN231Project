@@ -20,6 +20,11 @@ namespace PostService.Repositories.Implement
             _newsDAO = newsDAO;
         }
 
+        public async Task<IEnumerable<News>> GetAllNewsAvailable()
+        {
+            return await _newsDAO.GetAllNewsAvailable();
+        }
+
         public async Task<IEnumerable<News>> GetAllNews()
         {
             return await _newsDAO.GetAllNews();

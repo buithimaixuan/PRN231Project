@@ -12,11 +12,11 @@ namespace PostService.DAOs
     public class NewsDAO : SingletonBaseDAO<NewsDAO>
     {
 
-        public async Task<IEnumerable<News>> GetAllNews()
+        public async Task<IEnumerable<News>> GetAllNewsAvailable()
         {
             return await _context.News.Where(n => n.IsDeleted == false).ToListAsync();
         }
-        public async Task<IEnumerable<News>> GetAll()
+        public async Task<IEnumerable<News>> GetAllNews()
         {
             return await _context.News.ToListAsync();
         }
