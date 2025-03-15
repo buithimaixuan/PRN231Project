@@ -15,6 +15,8 @@ namespace UserService.Services.Interface
         Task UpdateAccount(Account item);
         Task DeleteAccount(Account item);
         Task<Account?> GetAccountByEmail(string email);
+        Task<Account?> GetAccountByPhone(string phone);
+        Task<Account?> GetAccountByIdentifier(string identifier); // Username, Email hoặc Phone
         Task<int> GetTotalFarmerService();
         Task<string?> GetFullNameByUsername(string username);
         Task<int> GetTotalExpertService();

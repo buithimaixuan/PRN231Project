@@ -8,6 +8,7 @@ namespace UserService.Repositories
         Task<IEnumerable<Account>> GetAllAccountAvailable();
         Task<Account?> GetByUsername(string username);
         Task<Account?> GetAccountByEmail(string email);
+        Task<Account?> GetAccountByPhone(string phone);
         Task<IEnumerable<Account>> GetListAccByRoleId(int id);
         Task<Account> GetById(int? id);
         Task<Account> GetByFbId(string id);

@@ -56,7 +56,7 @@ namespace UserService.Controllers
 
             string hashedPassword = _passwordHasher.HashPassword(accountDTO.Password);
 
-            existingAccount.RoleId = accountDTO.RoleId; // mặc định 3 (Farmer)
+            existingAccount.RoleId = existingAccount.RoleId; // mặc định 3 (Farmer)
             existingAccount.Username = accountDTO.Username;
             existingAccount.Password = hashedPassword;
             existingAccount.Email = accountDTO.Email;

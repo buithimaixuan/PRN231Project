@@ -34,6 +34,13 @@ namespace UserService.DAOs
             return account;
         }
 
+        public async Task<Account?> GetAccountByPhone(string phone)
+        {
+            var account = await _context.Accounts.FirstOrDefaultAsync(acc => acc.Phone.Equals(phone));
+            if (account == null) return null;
+            return account;
+        }
+
         public async Task<Account> GetById(int? id)
         {
             var item = await _context.Accounts.FirstOrDefaultAsync(c => c.AccountId == id && c.IsDeleted == false);
