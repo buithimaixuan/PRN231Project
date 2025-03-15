@@ -22,10 +22,7 @@ namespace UserService.Repositories.AccountRepo
             return await _accountDAO.getAllAccountAvailable();
         }
 
-        public async Task<Account?> GetByUsername(string username)
-        {
-            return await _accountDAO.getByUsername(username);
-        }
+        public async Task<Account?> GetByUsername(string username) => await _accountDAO.getByUsername(username);
 
         public async Task<IEnumerable<Account>> GetListAccByRoleId(int role_id) => await _accountDAO.GetListAccountByRoleId(role_id);
         public async Task<Account> GetById(int? id) => await _accountDAO.GetById(id);
@@ -34,27 +31,16 @@ namespace UserService.Repositories.AccountRepo
         public async Task Update(Account account) => await _accountDAO.Update(account);
         public async Task Delete(Account account) => await _accountDAO.Delete(account);
         public async Task<string?> GetFullnameByUsername(string username) => await _accountDAO.GetFullNameByUsername(username);
-        public async Task<Account?> GetAccountByEmail(string email)
-        {
-            return await _accountDAO.GetAccountByEmail(email);
-        }
+        public async Task<Account?> GetAccountByEmail(string email) => await _accountDAO.GetAccountByEmail(email);
+        public async Task<Account?> GetAccountByPhone(string phone) => await _accountDAO.GetAccountByPhone(phone);
 
-        public async Task<int> GetTotalFarmerRepo()
-        {
-            return await _accountDAO.GetTotalFarmerCountAsync();
-        }
-        public async Task<int> GetTotalExpertRepo()
-        {
-            return await _accountDAO.GetTotalFarmerCountAsync();
-        }
-        public async Task<Account> GetByFbId(string fbId)
-        {
-            return await _accountDAO.GetByFbId(fbId);
-        }
-        public async Task<Account?> GetAccountByEmailForReset(string email)
-        {
-            return await _accountDAO.GetAccountByEmailForReset(email);
-        }
+        public async Task<int> GetTotalFarmerRepo() => await _accountDAO.GetTotalFarmerCountAsync();
+        
+        public async Task<int> GetTotalExpertRepo() => await _accountDAO.GetTotalFarmerCountAsync();
+        
+        public async Task<Account> GetByFbId(string fbId) => await _accountDAO.GetByFbId(fbId);
+        
+        public async Task<Account?> GetAccountByEmailForReset(string email) => await _accountDAO.GetAccountByEmailForReset(email);
 
         public async Task<List<Account>> GetAccountsByIds(List<int> ids) => await _accountDAO.GetAccountsByIds(ids);
     }

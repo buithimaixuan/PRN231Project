@@ -31,6 +31,13 @@ namespace UserService.Controllers
                 }
 
                 // Kiểm tra xem email hoặc username đã tồn tại chưa
+                var existingAccountByPhone = await _accountService.GetAccountByPhone(accountDTO.Phone);
+                if (existingAccountByPhone != null)
+                {
+                    return Conflict("Phone already exists.");
+                }
+
+                // Kiểm tra xem email hoặc username đã tồn tại chưa
                 var existingAccountByEmail = await _accountService.GetAccountByEmail(accountDTO.Email);
                 if (existingAccountByEmail != null)
                 {
@@ -74,6 +81,55 @@ namespace UserService.Controllers
                 await _accountService.AddAccount(account);
 
                 return Ok(new { Message = "Registration successful." });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}\nInner Exception: {ex.InnerException?.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
+        {
+            try
+            {
+                // Kiểm tra dữ liệu đầu vào
+                if (string.IsNullOrEmpty(loginDTO?.Identifier) || string.IsNullOrEmpty(loginDTO?.Password))
+                {
+                    return BadRequest("Identifier (Email, Username, or PhoneNumber) and password are required.");
+                }
+
+                // Tìm tài khoản bằng identifier (Email, Username, hoặc PhoneNumber)
+                var account = await _accountService.GetAccountByIdentifier(loginDTO.Identifier);
+                if (account == null)
+                {
+                    return Unauthorized("Invalid identifier or password.");
+                }
+
+                // Kiểm tra trạng thái tài khoản
+                if (account.IsDeleted.HasValue && account.IsDeleted.Value)
+                {
+                    return Unauthorized("Account has been deleted.");
+                }
+
+                // Xác minh password
+                bool isPasswordValid = _passwordHasher.VerifyPassword(loginDTO.Password, account.Password);
+                if (!isPasswordValid)
+                {
+                    return Unauthorized("Invalid identifier or password.");
+                }
+
+                // Đăng nhập thành công, trả về thông tin cơ bản (có thể mở rộng để trả về token JWT)
+                return Ok(new
+                {
+                    Message = "Login successful.",
+                    AccountId = account.AccountId,
+                    Username = account.Username,
+                    Email = account.Email,
+                    Phone = account.Phone,
+                    RoleId = account.RoleId
+                });
             }
             catch (Exception ex)
             {
