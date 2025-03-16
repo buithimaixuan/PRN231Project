@@ -3,15 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommunicateService.DAOs
 {
-    public class MessageDAO:SingletonBase<MessageDAO>
+    public class MessageDAO : SingletonBase<MessageDAO>
     {
-        private readonly MicroserviceCommunicateDbContext _context;
+        //private readonly MicroserviceCommunicateDbContext _context;
 
-        // Constructor sử dụng SingletonBase để lấy DbContext
-        public MessageDAO()
-        {
-            _context = SingletonBase<MicroserviceCommunicateDbContext>.Instance;
-        }
+        //public MessageDAO(MicroserviceCommunicateDbContext context)
+        //{
+        //    _context = context;
+        //}
 
         public async Task<IEnumerable<Message>> GetAllMessageByConvId(int conv)
         {
@@ -23,6 +22,13 @@ namespace CommunicateService.DAOs
             _context.Messages.Add(item);
             await _context.SaveChangesAsync();
             return item;
+        }
+
+        public async Task<Message> GetMessageByMesId(int id)
+        {
+            return await _context.Messages.FindAsync(id);
+
+
         }
 
 

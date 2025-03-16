@@ -3,19 +3,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommunicateService.DAOs
 {
-    public class AccountConversationDAO:SingletonBase<AccountConversationDAO>
+    public class AccountConversationDAO : SingletonBase<AccountConversationDAO>
     {
-        private readonly MicroserviceCommunicateDbContext _context;
+        //private readonly MicroserviceCommunicateDbContext _context;
 
-        // Constructor sử dụng SingletonBase để lấy DbContext
-        public AccountConversationDAO()
-        {
-            _context = SingletonBase<MicroserviceCommunicateDbContext>.Instance;
-        }
+        //public AccountConversationDAO(MicroserviceCommunicateDbContext context)
+        //{
+        //    _context = context;
+        //}
+
         // Lấy tất cả AccountConversation (Async)
         public async Task<List<AccountConversation>> GetAllAccConversation()
         {
             return await _context.AccountConversations.ToListAsync();
+        }
+
+        public async Task<List<AccountConversation>> GetAllAccConversationByAccId(int id)
+        {
+            return await _context.AccountConversations.Where(c => c.AccountId == id).ToListAsync();
         }
 
         //Lấy AccountConversation theo ID (Async)
