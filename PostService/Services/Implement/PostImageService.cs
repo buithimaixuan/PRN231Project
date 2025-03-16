@@ -13,19 +13,20 @@ namespace PostService.Services.Implement
             _postImageRepository = postImageRepository;
         }
 
-        public async Task AddPostImage(int postId, string urlImage)
+        public async Task AddPostImage(int postId, string urlImage, string publicId)
         {
             var postImage = new PostImage();
             postImage.PostId = postId;
             postImage.ImageUrl = urlImage;
+            postImage.PublicId = publicId;
             postImage.IsDeleted = false;
 
             await _postImageRepository.AddPostImage(postImage);
         }
 
-        public async Task<int> DeletePostImage(PostImage postImage)
+        public async Task<int> DeletePostImage(int postImageId)
         {
-            return await _postImageRepository.DeleteImage(postImage);
+            return await _postImageRepository.DeleteImage(postImageId);
         }
 
         public async Task<IEnumerable<PostImage>> GetPostImagesByPostId(int postId)

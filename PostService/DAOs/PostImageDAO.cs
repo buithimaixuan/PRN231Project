@@ -21,8 +21,14 @@ namespace PostService.DAOs
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<int> Delete(PostImage postImage)
+        public async Task<int> Delete(int postImageId)
         {
+            var postImage = await _context.PostImages.FindAsync(postImageId);
+            if (postImage == null)
+            {
+                return -1; // Không tìm thấy ảnh
+            }
+
             _context.PostImages.Remove(postImage);
             return await _context.SaveChangesAsync();
         }

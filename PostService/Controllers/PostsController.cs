@@ -110,20 +110,12 @@ namespace PostService.Controllers
             return (isSuccess > 0) ? Ok(isSuccess) : BadRequest("Output message: Fail to delete post.");
         }
 
-
-
-
         [HttpGet("total-post")]
         public async Task<IActionResult> GetTotalExperts()
         {
             int totalExperts = await _postService.GetTotalPostService();
             return Ok(totalExperts);
         }
-
-
-
-
-
 
     }
 }

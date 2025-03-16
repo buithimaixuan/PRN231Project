@@ -9,9 +9,9 @@ namespace PostService.Config
 
         public CloudinaryConfig(IConfiguration configuration)
         {
-            var cloudName = configuration["Cloudinary:CloudName"];
-            var apiKey = configuration["Cloudinary:ApiKey"];
-            var apiSecret = configuration["Cloudinary:ApiSecret"];
+            var cloudName = configuration.GetValue<string>("Cloudinary:CloudName");
+            var apiKey = configuration.GetValue<string>("Cloudinary:ApiKey");
+            var apiSecret = configuration.GetValue<string>("Cloudinary:ApiSecret");
 
             var account = new Account(cloudName, apiKey, apiSecret);
             _cloudinary = new Cloudinary(account);
@@ -23,7 +23,7 @@ namespace PostService.Config
                 throw new ArgumentException("File không hợp lệ.");
 
             using var stream = file.OpenReadStream(); // Chuyển đổi IFormFile thành Stream
-            var publicId = $"post_images/{Guid.NewGuid()}"; // Tạo Public ID
+            var publicId = $"Home/PRN231/{Guid.NewGuid()}"; // Tạo Public ID
 
             var uploadParams = new ImageUploadParams
             {
