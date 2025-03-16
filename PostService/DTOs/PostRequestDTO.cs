@@ -17,5 +17,17 @@
         public bool? IsDeleted { get; set; }
 
         public DateTime? DeletedAt { get; set; }
+
+        public PostRequestDTO(int postId, int categoryPostId, int? accountId, DateTime? createdAt, DateTime? updateAt, string? postContent, bool? isDeleted, DateTime? deletedAt)
+        {
+            PostId = postId;
+            CategoryPostId = categoryPostId;
+            AccountId = accountId;
+            CreatedAt = createdAt;
+            UpdateAt = updateAt;
+            PostContent = postContent;
+            IsDeleted = isDeleted;
+            DeletedAt = deletedAt;
+        }
     }
 }

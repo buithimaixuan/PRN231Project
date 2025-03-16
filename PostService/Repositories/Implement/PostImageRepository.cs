@@ -17,9 +17,9 @@ namespace PostService.Repositories.Implement
             return await _postImageDAO.Add(postImage);
         }
 
-        public Task<int> DeleteImage(PostImage postImage)
+        public async Task<int> DeleteImage(int postImageId)
         {
-            return _postImageDAO.Delete(postImage);
+            return await _postImageDAO.Delete(postImageId);
         }
 
         public async Task<IEnumerable<PostImage>> GetAll()
