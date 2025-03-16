@@ -50,6 +50,52 @@ namespace PostService.DAOs
             return await _context.Posts.Where(p => p.AccountId == id).ToListAsync();
         }
 
+
+        //****************minhuyen************
+
+
+
+
+        public async Task<int> GetTotalPostCountAsync()
+        {
+            return await _context.Posts.CountAsync(n => n.IsDeleted != true);
+        }
+
+        public async Task<int?> GetAccountWithMostPostsThisMonth()
+        {
+            var currentYear = DateTime.Now.Year;
+            var currentMonth = DateTime.Now.Month;
+
+            var accountWithMostPosts = await _context.Posts
+                .Where(p => p.IsDeleted == false &&
+                            p.CreatedAt.HasValue &&
+                            p.CreatedAt.Value.Year == currentYear &&
+                            p.CreatedAt.Value.Month == currentMonth)
+                .GroupBy(p => p.AccountId)
+                .Select(g => new
+                {
+                    AccountId = g.Key,
+                    PostCount = g.Count()
+                })
+                .OrderByDescending(g => g.PostCount)
+                .FirstOrDefaultAsync();
+
+            return accountWithMostPosts?.AccountId;
+        }
+
+
+
+
+        public async Task<Dictionary<int, int>> CountPostsByAccount()
+        {
+            return await _context.Posts
+                .Where(p => p.AccountId != null && p.IsDeleted == false)
+                .GroupBy(p => p.AccountId)
+                .Select(g => new { AccountId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.AccountId.Value, x => x.Count);
+        }
+
+
         //public async Task<Account?> FarmerWithMostPosts()
         //{
         //    var currentYear = DateTime.Now.Year;
@@ -155,6 +201,8 @@ namespace PostService.DAOs
         //    Debug.WriteLine("No accounts found with posts.");
         //    return null; // Trả về null nếu không tìm thấy
         //}
+        //****************minhuyen************
+
 
     }
 }

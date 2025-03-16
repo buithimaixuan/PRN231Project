@@ -10,5 +10,8 @@ namespace PostService.Repositories.Interface
         Task<int> UpdatePost(Post post);
         Task<int> DeletePost(int postId);
         Task<IEnumerable<Post>> GetAllPostByAccountId(int id);
+
+        Task<int> GetTotalPostRepo();
+        Task<Dictionary<int, int>> CountPostsByAccount();
     }
 }

@@ -23,6 +23,8 @@ namespace UserService.Repositories
         Task<string?> GetFullnameByUsername(string username);
         Task<Account?> GetAccountById(int? accountId);
         Task<List<Account>> GetAccountsByIds(List<int> ids);
+        Task<List<Account>> GetAccountsByRoleId(int roleId);
+         Task<Dictionary<int, int>> GetPostCounts();
 
     }
 }

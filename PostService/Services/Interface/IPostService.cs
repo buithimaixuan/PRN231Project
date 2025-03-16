@@ -25,5 +25,11 @@ namespace PostService.Services.Interface
         Task AddComment(Comment item);
         Task UpdateComment(Comment item);
         Task DeleteComment(int id);
+
+
+     
+
+        Task<int> GetTotalPostService();
+        Task<Dictionary<int, int>> CountPostsByAccount();
     }
 }

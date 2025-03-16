@@ -67,21 +67,18 @@ namespace PostService.DAOs
             return result.Select(item => (item.Month, item.Count));
         }
 
-
-        public async Task<int> GetTotalNewsCountAsync()
+        //****************minhuyen************
+        public async Task<int> GetTotalNewsCount()
         {
-            return await _context.News.CountAsync(n => n.IsDeleted == false);
+            return await _context.News.CountAsync(s => s.IsDeleted == false);
         }
-        
+
         public async Task<IEnumerable<News>> GetAllNewsByCategoryId(int categoryId)
         {
             return await _context.News.Where(n => n.CategoryNewsId == categoryId).ToListAsync();
         }
 
-        public async Task<int> GetTotalNewsCount()
-        {
-            return await _context.News.CountAsync(s => s.IsDeleted == false);
-        }
+
 
         public async Task<(IEnumerable<News> News, int TotalCount)> FilterAndPaginateNews(int? categoryId, string searchString, int pageNumber, int pageSize)
         {

@@ -42,7 +42,7 @@ namespace PostService.Repositories.Implement
 
         public async Task<CategoryNews> GetCategoryNewsById(int id) => await _categoryNewsDAO.GetCategoryNewsById(id);
 
-        public async Task<int> GetTotalNewsRepo() => await _newsDAO.GetTotalNewsCountAsync();
+        public async Task<int> GetTotalNewsRepo() => await _newsDAO.GetTotalNewsCount();
         public async Task<IEnumerable<CategoryNews>> GetAllCategoryNews() => await _categoryNewsDAO.GetAllCategoryNews();
 
         public Task<int> GetTotalNewsCount() => _newsDAO.GetTotalNewsCount();

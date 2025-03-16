@@ -1,5 +1,6 @@
 ﻿using UserService.Models;
 using UserService.Repositories;
+using UserService.Repositories.AccountRepo;
 using UserService.Services.Interface;
 
 namespace UserService.Services.Implement
@@ -59,6 +60,38 @@ namespace UserService.Services.Implement
             };
             await _accountRepo.Add(newAcc);
         }
+        public async Task CreateNewFarmerAccount(string username, string password, string fullName, string email, string phone, string address, string avatar)
+        {
+            Account newFarmer = new Account
+            {
+                AccountId = 0,
+                RoleId = 2,  // 2 là Farmer
+                Username = username,
+                Password = password,
+                FullName = fullName,
+                Email = email,
+                EmailConfirmed = 0,
+                Phone = phone,
+                PhoneConfirmed = 0,
+                Gender = null,
+                DateOfBirth = null,
+                ShortBio = null,
+                EducationUrl = null,
+                YearOfExperience = 0,
+                DegreeUrl = null,
+                Avatar = avatar,
+                Major = null,
+                Address = address,
+                IsDeleted = false,
+                Otp = null,
+                FacebookId = null,
+                Role = null  // Gán null để tránh lỗi validation
+            };
+
+            await _accountRepo.Add(newFarmer);
+        }
+
+
 
         public async Task<string?> GetFullNameByUsername(string username) => await _accountRepo.GetFullnameByUsername(username);
 
@@ -84,5 +117,22 @@ namespace UserService.Services.Implement
 
             return null;
         }
+
+        public Task<List<Account>> GetAccountsByRoleId(int roleId)
+        {
+            return _accountRepo.GetAccountsByRoleId(roleId);
+        }
+
+        public async Task<Account?> GetTopFarmer()
+        {
+            var allFarmers = await _accountRepo.GetAccountsByRoleId(1);
+            var postCounts = await _accountRepo.GetPostCounts();
+
+            return allFarmers
+                .Where(f => postCounts.ContainsKey(f.AccountId))
+                .OrderByDescending(f => postCounts[f.AccountId])
+                .FirstOrDefault();
+        }
+
     }
 }
