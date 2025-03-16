@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookingService", "BookingSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommunicateService", "CommunicateService\CommunicateService.csproj", "{FB24E8C0-926F-4F03-8EB4-B4FBF6FA2F2B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{AD8B854A-1B34-4C6F-AE21-CF1AABDEB6E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{FB24E8C0-926F-4F03-8EB4-B4FBF6FA2F2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB24E8C0-926F-4F03-8EB4-B4FBF6FA2F2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB24E8C0-926F-4F03-8EB4-B4FBF6FA2F2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD8B854A-1B34-4C6F-AE21-CF1AABDEB6E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD8B854A-1B34-4C6F-AE21-CF1AABDEB6E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD8B854A-1B34-4C6F-AE21-CF1AABDEB6E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD8B854A-1B34-4C6F-AE21-CF1AABDEB6E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
