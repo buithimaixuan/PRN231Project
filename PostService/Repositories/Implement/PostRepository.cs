@@ -1,6 +1,8 @@
-﻿using PostService.DAOs;
+﻿using Microsoft.AspNetCore.Mvc;
+using PostService.DAOs;
 using PostService.Models;
 using PostService.Repositories.Interface;
+using PostService.Services.Interface;
 
 namespace PostService.Repositories.Implement
 {
@@ -16,6 +18,8 @@ namespace PostService.Repositories.Implement
         {
             return await _postDAO.Add(post);
         }
+
+
 
         public Task<int> DeletePost(int postId)
         {
@@ -37,6 +41,19 @@ namespace PostService.Repositories.Implement
         public async Task<int> UpdatePost(Post post)
         {
             return await _postDAO.Update(post);
+        }
+
+
+        //****************minhuyen************
+        public async Task<int> GetTotalPostRepo() => await _postDAO.GetTotalPostCountAsync();
+
+
+  
+   
+
+        public Task<Dictionary<int, int>> CountPostsByAccount()
+        {
+            return _postDAO.CountPostsByAccount();
         }
     }
 }

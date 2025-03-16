@@ -37,7 +37,7 @@ namespace PostService.Services.Implement
         
         public async Task<int> GetTotalNewsService() => await _newsRepo.GetTotalNewsRepo();
         
-        public Task<int> GetTotalNewsCount() => _newsRepo.GetTotalNewsCount();
+        public Task<int> GetTotalNewsCount() => _newsRepo.GetTotalNewsRepo();
         
         public async Task<IEnumerable<(string Month, int Count)>> GetNewsCountByMonth() => await _newsRepo.GetNewsCountByMonth();
         

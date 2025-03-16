@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PostService.DAOs;
 using PostService.DTOs;
 using PostService.Models;
+using PostService.Services.Implement;
 using PostService.Services.Interface;
 
 namespace PostService.Controllers
@@ -114,6 +115,14 @@ namespace PostService.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("total-news")]
+        public async Task<IActionResult> GetTotalExperts()
+        {
+            int totalExperts = await _newsService.GetTotalNewsCount();
+            return Ok(totalExperts);
+        }
+
 
     }
 }

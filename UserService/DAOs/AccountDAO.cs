@@ -76,14 +76,14 @@ namespace UserService.DAOs
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> GetTotalFarmerCountAsync()
+        public async Task<int> GetTotalExpertCountAsync()
         {
-            return await _context.Accounts.CountAsync(n => n.IsDeleted == false && n.RoleId == 1);
+            return await _context.Accounts.CountAsync(n => n.IsDeleted != true && n.RoleId == 3);
         }
 
-        public async Task<int> GetTotaExpertCountAsync()
+        public async Task<int> GetTotalFarmerCountAsync()
         {
-            return await _context.Accounts.CountAsync(n => n.IsDeleted == false && n.RoleId == 2);
+            return await _context.Accounts.CountAsync(n => n.IsDeleted != true && n.RoleId == 2);
         }
 
 
@@ -120,5 +120,15 @@ namespace UserService.DAOs
                 .Where(account => ids.Contains(account.AccountId))
                 .ToListAsync();
         }
+
+        public async Task<List<Account>> GetAccountsByRoleId(int roleId)
+        {
+            return await _context.Accounts
+                .Where(a => a.RoleId == roleId)
+                .ToListAsync();
+        }
+
+
+
     }
 }

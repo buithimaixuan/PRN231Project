@@ -17,7 +17,6 @@ namespace PostService.Repositories.Interface
         Task Delete(int id);
         Task<IEnumerable<News>> GetAllNewsByCategoryId(int categoryId);
         Task<int> GetTotalNewsRepo();
-        Task<int> GetTotalNewsCount();
         Task<IEnumerable<(string Month, int Count)>> GetNewsCountByMonth();
         Task<(IEnumerable<News> News, int TotalCount)> FilterAndPaginateNews(int? categoryId, string searchString, int pageNumber, int pageSize);
     }

@@ -1,4 +1,5 @@
-﻿using PostService.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using PostService.DTOs;
 using PostService.Models;
 using PostService.Repositories.Interface;
 using PostService.Services.Interface;
@@ -199,6 +200,18 @@ namespace PostService.Services.Implement
             };
 
             return await _postRepository.UpdatePost(post);
+        }
+
+        public async Task<int> GetTotalExpertService() => await _postRepository.GetTotalPostRepo();
+
+       public Task<Dictionary<int, int>> CountPostsByAccount()
+    {
+        return _postRepository.CountPostsByAccount();
+    }
+
+        public Task<int> GetTotalPostService()
+        {
+            throw new NotImplementedException();
         }
     }
 }

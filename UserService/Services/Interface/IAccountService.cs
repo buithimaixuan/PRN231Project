@@ -20,5 +20,8 @@ namespace UserService.Services.Interface
         Task<int> GetTotalFarmerService();
         Task<string?> GetFullNameByUsername(string username);
         Task<int> GetTotalExpertService();
+        Task CreateNewFarmerAccount(string username, string password, string fullName, string email, string phone, string address, string avatar);
+        Task<List<Account>> GetAccountsByRoleId(int roleId);
+  Task<Account?> GetTopFarmer();
     }
 }
