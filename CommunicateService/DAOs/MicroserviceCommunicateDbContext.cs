@@ -5,13 +5,13 @@ namespace CommunicateService.DAOs
 {
     public partial class MicroserviceCommunicateDbContext : DbContext
     {
-     
-        private readonly IConfiguration _configuration;
+        public MicroserviceCommunicateDbContext()
+        {
+        }
 
-        public MicroserviceCommunicateDbContext(DbContextOptions<MicroserviceCommunicateDbContext> options, IConfiguration configuration)
+        public MicroserviceCommunicateDbContext(DbContextOptions<MicroserviceCommunicateDbContext> options)
             : base(options)
         {
-            _configuration = configuration;
         }
 
         public virtual DbSet<AccountConversation> AccountConversations { get; set; }
@@ -21,13 +21,8 @@ namespace CommunicateService.DAOs
         public virtual DbSet<Message> Messages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                var connectionString = _configuration.GetConnectionString("DefaultConnection");
-                optionsBuilder.UseSqlServer(connectionString);
-            }
-        }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+            => optionsBuilder.UseSqlServer("Server=DESKTOP-EV8RQ78\\SQLEXPRESS;Database=Microservice_CommunicateDB;uid=sa;pwd=123456;encrypt=true;trustServerCertificate=true;");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -94,6 +89,4 @@ namespace CommunicateService.DAOs
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
-
-
 }

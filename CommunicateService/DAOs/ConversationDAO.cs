@@ -3,15 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommunicateService.DAOs
 {
-    public class ConversationDAO:SingletonBase<ConversationDAO>
+    public class ConversationDAO : SingletonBase<ConversationDAO>
     {
-        private readonly MicroserviceCommunicateDbContext _context;
+        //private readonly MicroserviceCommunicateDbContext _context;
 
-        // Constructor sử dụng SingletonBase để lấy DbContext
-        public ConversationDAO()
-        {
-            _context = SingletonBase<MicroserviceCommunicateDbContext>.Instance;
-        }
+        //public ConversationDAO(MicroserviceCommunicateDbContext context)
+        //{
+        //    _context = context;
+        //}
+
 
         public async Task<IEnumerable<Conversation>> GetAllConversationByAccId(int accId)
         {
@@ -25,11 +25,11 @@ namespace CommunicateService.DAOs
 
         public async Task<AccountConversation> GetAccConversationByAccOId(int convId, int accId)
         {
-            var item = await _context.AccountConversations.FirstOrDefaultAsync(c => c.ConversationId == convId && c.AccountId != accId);
+            var item = await _context.AccountConversations.FirstOrDefaultAsync(c => c.ConversationId == convId && c.AccountId == accId);
             if (item == null) return null;
             return item;
         }
 
-     
+
     }
 }

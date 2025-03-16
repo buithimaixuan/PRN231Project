@@ -3,7 +3,7 @@ using CommunicateService.Models;
 
 namespace CommunicateService.Repository.MessageRepo
 {
-    public class MessageRepository:IMessageRepoository
+    public class MessageRepository : IMessageRepository
     {
         private MessageDAO messageDAO;
 
@@ -16,8 +16,9 @@ namespace CommunicateService.Repository.MessageRepo
             return await messageDAO.GetAllMessageByConvId(accId);
         }
         public async Task DeleteMessage(int id) => await messageDAO.DeleteMessage(id);
-        
+
         public async Task<Message> AddMessage(Message item) => await messageDAO.AddMessage(item);
+        public async Task<Message> GetMessageByMesId(int id) => await messageDAO.GetMessageByMesId(id);
     }
 }
 

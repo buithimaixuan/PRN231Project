@@ -1,13 +1,14 @@
 ﻿using CommunicateService.DAOs;
 using CommunicateService.Models;
+using CommunicateService.Repository.AccountConversationRepo;
 using CommunicateService.Services.Interface;
 
 namespace CommunicateService.Services.Implement
 {
-    public class AccountConversationService:IAccountConversationService
+    public class AccountConversationService : IAccountConversationService
     {
-        private readonly IAccountConversationService accountConversationService;
-        public AccountConversationService(IAccountConversationService accountRepo)
+        private readonly IAccountConversationRepository accountConversationService;
+        public AccountConversationService(IAccountConversationRepository accountRepo)
         {
             accountConversationService = accountRepo;
         }
@@ -15,7 +16,12 @@ namespace CommunicateService.Services.Implement
         {
             return await accountConversationService.GetAllAccountConversation();
         }
-        public async Task<AccountConversation> GetByIdAccountConversation(int accId, int conversationId) => await accountConversationService.GetByIdAccountConversation(accId, conversationId);
+
+        public async Task<List<AccountConversation>> GetAllAccConversationByAccId(int accId)
+        {
+            return await accountConversationService.GetAllAccConversationByAccId(accId);
+        }
+        public async Task<AccountConversation> GetAccConverByAccIdAndConverId(int accId, int conversationId) => await accountConversationService.GetByIdAccountConversation(accId, conversationId);
         public async Task<AccountConversation> AddAccConversation(AccountConversation accountConversation)
         {
             return await accountConversationService.AddAccConversation(accountConversation);

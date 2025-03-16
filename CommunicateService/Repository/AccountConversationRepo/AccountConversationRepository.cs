@@ -3,7 +3,7 @@ using CommunicateService.Models;
 
 namespace CommunicateService.Repository.AccountConversationRepo
 {
-    public class AccountConversationRepository:IAccountConversationRepository
+    public class AccountConversationRepository : IAccountConversationRepository
     {
         private AccountConversationDAO accountConversationDAO;
 
@@ -14,6 +14,11 @@ namespace CommunicateService.Repository.AccountConversationRepo
         public async Task<List<AccountConversation>> GetAllAccountConversation()
         {
             return await accountConversationDAO.GetAllAccConversation();
+        }
+
+        public async Task<List<AccountConversation>> GetAllAccConversationByAccId(int accId)
+        {
+            return await accountConversationDAO.GetAllAccConversationByAccId(accId);
         }
         public async Task<AccountConversation> GetByIdAccountConversation(int accId, int conversationId) => await accountConversationDAO.GetByIdAccountConversation(accId, conversationId);
         public async Task<AccountConversation> AddAccConversation(AccountConversation accountConversation)

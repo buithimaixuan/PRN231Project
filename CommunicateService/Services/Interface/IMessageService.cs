@@ -6,6 +6,7 @@ namespace CommunicateService.Services.Interface
     {
         Task<IEnumerable<Message>> GetAllMessageByConvId(int accId);
         Task<Message> AddMessage(Message message);
+        Task<Message> GetMessageByMesId(int id);
         Task DeleteMessage(int id);
     }
 }
