@@ -22,11 +22,21 @@ namespace PostService.DAOs
             return item;
         }
 
-        public async Task Add(Comment item)
+        public async Task<Comment> Add(int? accountId, int? postId, string content)
         {
-            item.IsDeleted = false;
-            _context.Comments.Add(item);
+            var comment = new Comment
+            {
+                AccountId = accountId,
+                PostId = postId,
+                Content = content,
+                CreatedAt = DateOnly.FromDateTime(DateTime.Now),
+                UpdatedAt = null,
+                IsDeleted = false
+            };
+
+            _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
+            return comment;
         }
 
         public async Task Update(Comment item)

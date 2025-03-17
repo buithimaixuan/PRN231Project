@@ -110,6 +110,94 @@ namespace PostService.Controllers
             return (isSuccess > 0) ? Ok(isSuccess) : BadRequest("Output message: Fail to delete post.");
         }
 
+        [HttpPost("comment-on-post")]
+        public async Task<IActionResult> CommentOnPost([FromBody] Comment comment)
+        {
+            try
+            {
+                var cmt = await _postService.AddComment(comment.AccountId, comment.PostId, comment.Content);
+                return Ok(cmt);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("comments/{postId}")]
+        public async Task<IActionResult> GetCommentsByPostId(int postId)
+        {
+            try
+            {
+                var comments = await _postService.GetAllCommentPostByPostId(postId);
+                // Đếm số lượng bình luận
+                var commentCount = comments.Count();
+                return Ok(new
+                {
+                    CommentCount = commentCount,
+                    Comments = comments
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Thêm Like
+        [HttpPost("like")]
+        public async Task<IActionResult> AddLike([FromBody] LikePost like)
+        {
+            try
+            {
+                var l = await _postService.AddLike(like.AccountId, like.PostId);
+                return Ok(new { Message = "Like added successfully.", LikePostId = l.LikePostId });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Remove Like
+        [HttpDelete("unlike")]
+        public async Task<IActionResult> RemoveLike([FromQuery] int accountId, [FromQuery] int postId)
+        {
+            try
+            {
+                await _postService.RemoveLike(accountId, postId);
+                return Ok(new { Message = "Like removed successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Tất cả like trong 1 bài post
+        [HttpGet("all-likes/{postId}")]
+        public async Task<IActionResult> GetAllLikePostByPostId(int postId)
+        {
+            try
+            {
+                // Lấy danh sách lượt thích
+                var likes = await _postService.GetAllLikePostByPostId(postId);
+
+                // Đếm số lượng lượt thích (loại trừ UnLike)
+                var likeCount = likes.Count();
+
+                return Ok(new
+                {
+                    LikeCount = likeCount,
+                    Likes = likes
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpGet("total-post")]
         public async Task<IActionResult> GetTotalExperts()
         {

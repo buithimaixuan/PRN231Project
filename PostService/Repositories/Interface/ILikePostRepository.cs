@@ -10,9 +10,9 @@ namespace PostService.Repositories.Interface
     public interface ILikePostRepository
     {
         Task<IEnumerable<LikePost>> GetAllLikePostByPostId(int id);
-        Task<bool> LikePost(int postId, int accountId);
-        Task<bool> UnlikePost(int postId, int accountId);
-        Task<bool> IsPostLikedByUser(int postId, int accountId);
-        Task<int> GetLikeCountByPostId(int postId);
+        Task<LikePost> FindById(int id);
+        Task<LikePost> AddLike(int accountId, int postId, bool isLike = true);
+        Task RemoveLike(int accountId, int postId);
+        Task UpdateLike(int likePostId, bool isLike);
     }
 }

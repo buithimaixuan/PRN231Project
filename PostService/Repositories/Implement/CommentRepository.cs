@@ -18,7 +18,10 @@ namespace PostService.Repositories.Implement
             _commentPostDAO = commentPostDAO;
         }
 
-        public async Task Add(Comment item) => await _commentPostDAO.Add(item);
+        public async Task<Comment> Add(int? accountId, int? postId, string content)
+        {
+            return await _commentPostDAO.Add(accountId, postId, content); // Trả về Comment
+        }
 
         public async Task Delete(int id) => await _commentPostDAO.Delete(id);
 

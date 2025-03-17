@@ -11,7 +11,7 @@ namespace PostService.Repositories.Interface
     {
         Task<IEnumerable<Comment>> GetAllCommentPostByPostId(int id);
         Task<Comment> FindById(int id);
-        Task Add(Comment item);
+        Task<Comment> Add(int? accountId, int? postId, string content); // Thay đổi đây
         Task Update(Comment item);
         Task Delete(int id);
     }
