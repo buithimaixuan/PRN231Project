@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using UserService.DAOs;
 using UserService.DTOs;
 using UserService.PasswordHashing;
 using UserService.Services.Interface;
@@ -36,9 +37,9 @@ namespace UserService.Controllers
             return Ok(accounts);
         }
 
+        
 
-
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<IActionResult> UpdateAccount(int id, [FromBody] AccountDTO accountDTO)
         {
             if (accountDTO == null)
@@ -71,6 +72,25 @@ namespace UserService.Controllers
             await _accountService.UpdateAccount(existingAccount);
             return Ok(existingAccount);
         }
+
+        // GET: api/account
+        [HttpPut("ChangePassword/{id}")]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDTO changePasswordDTO)
+        {
+            var existingAccount = await _accountService.GetByIdAccount(id);
+            if (existingAccount == null)
+                return NotFound("No Account found!");
+
+            if (!_passwordHasher.VerifyPassword(changePasswordDTO.currentPassword, existingAccount.Password))
+                return BadRequest("Current password is incorrect!");
+
+            if (changePasswordDTO.newPassword != changePasswordDTO.confirmNewPassword)
+                return BadRequest("Confirm password does not match!");
+
+            existingAccount.Password = _passwordHasher.HashPassword(changePasswordDTO.newPassword);
+            return Ok("Password changed successfully!");
+        }
+
 
         //*****************MINH UYEN***********
 
