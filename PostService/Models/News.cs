@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace PostService.Models;
 
@@ -22,6 +23,6 @@ public partial class News
     public DateOnly? DeletedAt { get; set; }
 
     public bool? IsDeleted { get; set; }
-
+    [JsonIgnore]
     public virtual CategoryNews CategoryNews { get; set; } = null!;
 }
