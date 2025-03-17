@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace PostService.Models;
 
@@ -11,5 +12,6 @@ public partial class CategoryNews
 
     public string? CategoryNewsDescription { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<News> News { get; set; } = new List<News>();
 }
