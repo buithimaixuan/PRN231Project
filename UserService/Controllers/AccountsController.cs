@@ -91,6 +91,47 @@ namespace UserService.Controllers
             return Ok("Password changed successfully!");
         }
 
+        [HttpGet("personal-page/{accountId}")]
+        public async Task<IActionResult> GetUserPersonalPage(int accountId)
+        {
+            try
+            {
+                var profile = await _accountService.GetPersonalPageDTO(accountId);
+                return Ok(profile);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("all-photos/{accountId}")]
+        public async Task<IActionResult> GetAccountAllPhotos(int accountId)
+        {
+            try
+            {
+                var photos = await _accountService.GetAccountPhotos(accountId);
+                return Ok(photos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("all-friends/{accountId}")]
+        public async Task<IActionResult> GetAccountAllFriends(int accountId)
+        {
+            try
+            {
+                var photos = await _accountService.GetListFriends(accountId);
+                return Ok(photos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
         //*****************MINH UYEN***********
 

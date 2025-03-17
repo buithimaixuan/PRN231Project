@@ -1,4 +1,7 @@
-﻿using UserService.Models;
+﻿using System.Net.Http;
+using System.Text.Json;
+using UserService.DTOs;
+using UserService.Models;
 using UserService.Repositories;
 using UserService.Repositories.AccountRepo;
 using UserService.Services.Interface;
@@ -8,9 +11,11 @@ namespace UserService.Services.Implement
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepo;
-        public AccountService(IAccountRepository accountRepo)
+        private readonly HttpClient _postServiceClient;
+        public AccountService(IAccountRepository accountRepo, IHttpClientFactory httpClientFactory)
         {
             _accountRepo = accountRepo;
+            _postServiceClient = httpClientFactory.CreateClient("PostService"); ;
         }
         public async Task<IEnumerable<Account>> GetListAllAccount()
         {
@@ -133,6 +138,79 @@ namespace UserService.Services.Implement
                 .OrderByDescending(f => postCounts[f.AccountId])
                 .FirstOrDefault();
         }
+        public async Task<IEnumerable<FriendRequest>> GetListFriends(int accountId) => await _accountRepo.GetListFriends(accountId);
+
+        public async Task<PersonalPageDTO> GetPersonalPageDTO(int accountId)
+        {
+            // Lấy thông tin tài khoản
+            var account = await _accountRepo.GetById(accountId);
+            if (account == null)
+                throw new Exception("Account not found or deleted.");
+
+            var accountDTO = new AccountDTO
+            {
+                RoleId = account.RoleId,
+                Username = account.Username,
+                Password = "", // Lưu ý: Không nên trả password thực tế
+                Email = account.Email,
+                Phone = account.Phone,
+                Gender = account.Gender,
+                FullName = account.FullName,
+                DateOfBirth = account.DateOfBirth,
+                ShortBio = account.ShortBio,
+                EducationUrl = account.EducationUrl,
+                YearOfExperience = account.YearOfExperience,
+                DegreeUrl = account.DegreeUrl,
+                Avatar = account.Avatar,
+                Major = account.Major,
+                Address = account.Address
+            };
+
+            // Lấy danh sách bạn bè, yêu cầu gửi/nhận (giả định đã có logic trong repository)
+            var friendRequestReceivers = await _accountRepo.GetFriendRequestReceivers(accountId);
+            var friendRequestSenders = await _accountRepo.GetFriendRequestSenders(accountId);
+            var listFriends = await _accountRepo.GetListFriends(accountId);
+
+            // Gọi API của PostService để lấy danh sách bài viết
+            var postApiUrl = $"all/by-account?accountId={accountId}";
+            var response = await _postServiceClient.GetAsync(postApiUrl);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Failed to fetch posts: {response.ReasonPhrase}");
+
+            var content = await response.Content.ReadAsStringAsync();
+            var postDTOs = JsonSerializer.Deserialize<IEnumerable<PostDTO>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<PostDTO>();
+
+            // Tạo và trả về UserProfileWithPostsDTO
+            return new PersonalPageDTO(accountDTO, friendRequestReceivers, friendRequestSenders, listFriends, postDTOs);
+        }
+
+        public async Task<AccountPhotosDTO> GetAccountPhotos(int accountId)
+        {
+            // Kiểm tra tài khoản có tồn tại không
+            var account = await _accountRepo.GetById(accountId);
+            if (account == null)
+                throw new Exception("Account not found or deleted.");
+
+            // Gọi API của PostService để lấy danh sách bài viết
+            var postApiUrl = $"all/by-account?accountId={accountId}";
+            var response = await _postServiceClient.GetAsync(postApiUrl);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Failed to fetch posts: {response.ReasonPhrase}");
+
+            var content = await response.Content.ReadAsStringAsync();
+            var postDTOs = JsonSerializer.Deserialize<IEnumerable<PostDTO>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<PostDTO>();
+
+            // Trích xuất tất cả ảnh từ danh sách bài viết
+            var photos = postDTOs
+                .SelectMany(postDTO => postDTO.postImages ?? new List<PostDTO.PostImage>())
+                .Where(image => !image.IsDeleted.GetValueOrDefault()) // Chỉ lấy ảnh chưa bị xóa
+                .ToList();
+
+            return new AccountPhotosDTO(accountId, photos);
+        }
+
 
     }
 }

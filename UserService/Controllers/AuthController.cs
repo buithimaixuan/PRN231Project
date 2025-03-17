@@ -61,7 +61,7 @@ namespace UserService.Controllers
                     Password = hashedPassword,
                     Email = accountDTO.Email,
                     EmailConfirmed = 0, // Mặc định chưa xác nhận email
-                    Phone = accountDTO.Phone ?? null, // Sử dụng giá trị từ DTO hoặc null
+                    Phone = accountDTO.Phone ?? null,
                     PhoneConfirmed = 0,
                     Gender = accountDTO.Gender ?? null,
                     FullName = accountDTO.FullName ?? null,
@@ -70,7 +70,7 @@ namespace UserService.Controllers
                     EducationUrl = accountDTO.EducationUrl ?? null,
                     YearOfExperience = accountDTO.YearOfExperience ?? null,
                     DegreeUrl = accountDTO.DegreeUrl ?? null,
-                    Avatar = accountDTO.Avatar ?? null,
+                    Avatar = accountDTO.Avatar ?? "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2F638665051034994468_av.jpg?alt=media&token=be337fe1-d4bb-4e4b-9495-dbb921b4779a",
                     Major = accountDTO.Major ?? null,
                     Address = accountDTO.Address ?? null,
                     IsDeleted = false,

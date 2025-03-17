@@ -34,13 +34,13 @@ public partial class PostDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-CTS44AC\\MAIN;Initial Catalog=Microservice_UserDB;Persist Security Info=True;User ID=sa;Password=0789616573;encrypt=true;trustServerCertificate=true;");
+        => optionsBuilder.UseSqlServer("Data Source=THUC;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=1234;Encrypt=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CategoryNews>(entity =>
         {
-            entity.HasKey(e => e.CategoryNewsId).HasName("PK__Category__9D9BEED88EBC6C19");
+            entity.HasKey(e => e.CategoryNewsId).HasName("PK__Category__9D9BEED8D8CDA9C5");
 
             entity.Property(e => e.CategoryNewsId).HasColumnName("category_news_id");
             entity.Property(e => e.CategoryNewsDescription)
@@ -53,7 +53,7 @@ public partial class PostDbContext : DbContext
 
         modelBuilder.Entity<CategoryPost>(entity =>
         {
-            entity.HasKey(e => e.CategoryPostId).HasName("PK__Category__02AEB4E31912E361");
+            entity.HasKey(e => e.CategoryPostId).HasName("PK__Category__02AEB4E3D40D96F7");
 
             entity.ToTable("CategoryPost");
 
@@ -68,7 +68,7 @@ public partial class PostDbContext : DbContext
 
         modelBuilder.Entity<Comment>(entity =>
         {
-            entity.HasKey(e => e.CommentId).HasName("PK__Comment__E79576878C796057");
+            entity.HasKey(e => e.CommentId).HasName("PK__Comment__E7957687B222C7AA");
 
             entity.ToTable("Comment");
 
@@ -90,7 +90,7 @@ public partial class PostDbContext : DbContext
 
         modelBuilder.Entity<LikePost>(entity =>
         {
-            entity.HasKey(e => e.LikePostId).HasName("PK__LikePost__8F1D2FE8A9A69111");
+            entity.HasKey(e => e.LikePostId).HasName("PK__LikePost__8F1D2FE806CCD133");
 
             entity.ToTable("LikePost");
 
@@ -107,7 +107,7 @@ public partial class PostDbContext : DbContext
 
         modelBuilder.Entity<News>(entity =>
         {
-            entity.HasKey(e => e.NewsId).HasName("PK__News__4C27CCD8B0722237");
+            entity.HasKey(e => e.NewsId).HasName("PK__News__4C27CCD8109004D1");
 
             entity.Property(e => e.NewsId).HasColumnName("news_id");
             entity.Property(e => e.CategoryNewsId).HasColumnName("category_news_id");
@@ -133,7 +133,7 @@ public partial class PostDbContext : DbContext
 
         modelBuilder.Entity<Post>(entity =>
         {
-            entity.HasKey(e => e.PostId).HasName("PK__Post__3ED7876642C4BB20");
+            entity.HasKey(e => e.PostId).HasName("PK__Post__3ED787668C5DD69D");
 
             entity.ToTable("Post");
 
@@ -162,7 +162,7 @@ public partial class PostDbContext : DbContext
 
         modelBuilder.Entity<PostImage>(entity =>
         {
-            entity.HasKey(e => e.PostImageId).HasName("PK__PostImag__CD0DD56041708451");
+            entity.HasKey(e => e.PostImageId).HasName("PK__PostImag__CD0DD560D5AA74FA");
 
             entity.ToTable("PostImage");
 
@@ -173,17 +173,12 @@ public partial class PostDbContext : DbContext
                 .HasColumnName("image_url");
             entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
             entity.Property(e => e.PostId).HasColumnName("post_id");
-            entity.Property(e => e.PublicId).HasColumnName("PublicId");
-
-            entity.HasOne(d => d.Post).WithMany(p => p.PostImages)
-                .HasForeignKey(d => d.PostId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PostImage__post___3C69FB99");
+            entity.Property(e => e.PublicId).HasMaxLength(255);
         });
 
         modelBuilder.Entity<SharePost>(entity =>
         {
-            entity.HasKey(e => e.SharePostId).HasName("PK__SharePos__3B880F32AD404FC3");
+            entity.HasKey(e => e.SharePostId).HasName("PK__SharePos__3B880F324061A306");
 
             entity.ToTable("SharePost");
 
@@ -201,7 +196,7 @@ public partial class PostDbContext : DbContext
 
         modelBuilder.Entity<View>(entity =>
         {
-            entity.HasKey(e => e.CountViewId).HasName("PK__Views__C5F7EC92FBC6FCA1");
+            entity.HasKey(e => e.CountViewId).HasName("PK__Views__C5F7EC927324785E");
 
             entity.Property(e => e.CountViewId).HasColumnName("count_view_id");
             entity.Property(e => e.AccountId).HasColumnName("account_id");
