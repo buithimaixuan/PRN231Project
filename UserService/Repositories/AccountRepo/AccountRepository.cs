@@ -9,11 +9,13 @@ namespace UserService.Repositories.AccountRepo
     {
         private readonly AccountDAO _accountDAO;
         private readonly HttpClient _httpClient;
+        private readonly FriendRequestDAO _friendRequestDAO;
 
-        public AccountRepository(AccountDAO accountDAO, HttpClient httpClient)
+        public AccountRepository(AccountDAO accountDAO, HttpClient httpClient, FriendRequestDAO friendRequestDAO)
         {
             _accountDAO = accountDAO;
             _httpClient = httpClient;
+            _friendRequestDAO = friendRequestDAO;
         }
 
         public async Task<IEnumerable<Account>> GetAll()
@@ -60,5 +62,9 @@ namespace UserService.Repositories.AccountRepo
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Dictionary<int, int>>(json);
         }
+
+        public async Task<IEnumerable<FriendRequest>> GetFriendRequestReceivers(int accountId) => await _friendRequestDAO.GetFriendRequestReceivers(accountId);
+        public async Task<IEnumerable<FriendRequest>> GetFriendRequestSenders(int accountId) => await _friendRequestDAO.GetFriendRequestSenders(accountId);
+        public async Task<IEnumerable<FriendRequest>> GetListFriends(int accountId) => await _friendRequestDAO.GetListFriends(accountId);
     }
 }
