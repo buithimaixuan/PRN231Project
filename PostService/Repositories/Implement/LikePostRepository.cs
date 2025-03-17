@@ -19,13 +19,9 @@ namespace PostService.Repositories.Implement
         }
 
         public async Task<IEnumerable<LikePost>> GetAllLikePostByPostId(int id) => await _likePostDAO.GetAllLikePostByPostId(id);
-
-        public async Task<int> GetLikeCountByPostId(int postId) => await _likePostDAO.GetLikeCountByPostId(postId);
-
-        public async Task<bool> IsPostLikedByUser(int postId, int accountId) => await _likePostDAO.IsPostLikedByUser(postId, accountId);
-
-        public async Task<bool> LikePost(int postId, int accountId) => await _likePostDAO.LikePost(postId, accountId);
-
-        public async Task<bool> UnlikePost(int postId, int accountId) => await _likePostDAO.UnlikePost(postId, accountId);
+        public async Task<LikePost> FindById(int id) => await _likePostDAO.FindById(id);
+        public async Task<LikePost> AddLike(int accountId, int postId, bool isLike = true) => await _likePostDAO.AddLike(accountId, postId, isLike);
+        public async Task RemoveLike(int accountId, int postId) => await _likePostDAO.RemoveLike(accountId, postId);
+        public async Task UpdateLike(int likePostId, bool isLike) => await _likePostDAO.UpdateLike(likePostId, isLike);
     }
 }
