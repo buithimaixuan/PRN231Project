@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UserService.DAOs;
 using UserService.DTOs;
+using UserService.Models;
 using UserService.PasswordHashing;
 using UserService.Services.Interface;
 
@@ -292,6 +293,31 @@ namespace UserService.Controllers
             });
         }
 
+        // Mai Xuân crud expert
+        [HttpGet("ALlExpert/{roleId}")]
+        public async Task<ActionResult<IEnumerable<Account>>> GetAllExpert(int roleId)
+        {
+            IEnumerable<Account> List = await _accountService.GetListAccountByRoleId(roleId);
+            return Ok(List);
+        }
 
+        [HttpPost("Experts/Create")]
+        public async Task<IActionResult> CreateExpertAccount([FromBody] AccountDTO accountDTO)
+        {
+            if (accountDTO == null)
+                return BadRequest("Invalid account data.");
+
+            var existingAccount = await _accountService.GetAccountByIdentifier(accountDTO.Email);
+            if (existingAccount != null)
+                return Conflict("Account already exists.");
+
+            string hashedPassword = _passwordHasher.HashPassword(accountDTO.Password);
+
+            accountDTO.Password = hashedPassword;
+
+            await _accountService.CreateNewExpertAccount(accountDTO);
+
+            return Ok("Farmer account created successfully!");
+        }
     }
 }
