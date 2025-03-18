@@ -24,9 +24,12 @@ namespace UserService.Services.Interface
         Task CreateNewFarmerAccount(string username, string password, string fullName, string email, string phone, string address, string avatar);
         Task<List<Account>> GetAccountsByRoleId(int roleId);
         Task<Account?> GetTopFarmer();
-        Task<IEnumerable<FriendRequest>> GetListFriends(int accountId);
+        Task<IEnumerable<FriendRequestDTO>> GetFriendRequestReceivers(int accountId);
+        Task<IEnumerable<FriendRequestDTO>> GetFriendRequestSenders(int accountId);
+        Task<IEnumerable<FriendRequestDTO>> GetListFriends(int accountId);
         Task<PersonalPageDTO> GetPersonalPageDTO(int accountId);
         Task<AccountPhotosDTO> GetAccountPhotos(int accountId);
-
+        Task<FriendRequest> SendFriendRequest(int senderId, int receiverId);
+        Task UpdateFriendRequestStatus(int senderId, int receiverId, string status);
     }
 }
