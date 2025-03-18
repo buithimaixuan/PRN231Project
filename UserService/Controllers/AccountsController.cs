@@ -104,7 +104,7 @@ namespace UserService.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
+      
         [HttpGet("all-photos/{accountId}")]
         public async Task<IActionResult> GetAccountAllPhotos(int accountId)
         {
@@ -119,13 +119,71 @@ namespace UserService.Controllers
             }
         }
 
-        [HttpGet("all-friends/{accountId}")]
-        public async Task<IActionResult> GetAccountAllFriends(int accountId)
+        [HttpGet("friend-requests/received/{accountId}")]
+        public async Task<IActionResult> GetFriendRequestReceivers(int accountId)
         {
             try
             {
-                var photos = await _accountService.GetListFriends(accountId);
-                return Ok(photos);
+                var friendRequests = await _accountService.GetFriendRequestReceivers(accountId);
+                return Ok(friendRequests);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("friend-requests/sent/{accountId}")]
+        public async Task<IActionResult> GetFriendRequestSenders(int accountId)
+        {
+            try
+            {
+                var friendRequests = await _accountService.GetFriendRequestSenders(accountId);
+                return Ok(friendRequests);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("all-friends/{accountId}")]
+        public async Task<IActionResult> GetListFriends(int accountId)
+        {
+            try
+            {
+                var friends = await _accountService.GetListFriends(accountId);
+                return Ok(friends);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Gửi yêu cầu kết bạn
+        [HttpPost("friend-request/send")]
+        public async Task<IActionResult> SendFriendRequest([FromBody] FriendRequestDTO request)
+        {
+            try
+            {
+                var friendRequest = await _accountService.SendFriendRequest(request.SenderId, request.ReceiverId);
+                return Ok(new { Message = "Friend request sent successfully.", RequestId = friendRequest.RequestId });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Chấp nhận hoặc từ chối yêu cầu kết bạn
+        [HttpPut("friend-request/update")]
+        public async Task<IActionResult> UpdateFriendRequest([FromBody] FriendRequestDTO request)
+        {
+            try
+            {
+                await _accountService.UpdateFriendRequestStatus(request.SenderId, request.ReceiverId, request.RequestStatus);
+                return Ok(new { Message = $"Friend request {request.RequestStatus} successfully." });
             }
             catch (Exception ex)
             {

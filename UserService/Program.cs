@@ -18,6 +18,7 @@ builder.Services.AddScoped<PasswordHasher>();
 
 // Friend DI
 builder.Services.AddScoped<FriendRequestDAO>();
+builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
 
 
 builder.Services.AddHttpClient();
