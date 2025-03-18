@@ -1,0 +1,617 @@
+﻿@model Client.DTOs.ServiceListViewModel
+@using Microsoft.AspNetCore.Http;
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Farm Family</title>
+    <!-- ==== Favicon ==== -->
+    <link rel="icon" href="favicon.png" type="image/png">
+    <!-- ==== Google Font ==== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700%7CRoboto:300,400,400i,500,700">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ProjectPRNClient.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/plugins.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/responsive-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/colors/color-1.css" asp-append-version="true" id="changeColorScheme" />
+    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css//personalPage.css" asp-append-version="true" />
+    <link href="~/image/logo.jpg" rel="icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.0/css/boxicons.min.css"
+          integrity="sha512-pVCM5+SN2+qwj36KonHToF2p1oIvoU3bsqxphdOIWMYmgr4ZqD3t5DjKvvetKhXGc/ZG5REYTT6ltKfExEei/Q=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/css/modalFormBookingStyle.css" />
+
+    <script src="https://kit.fontawesome.com/1bd9fa3a2e.js" crossorigin="anonymous"></script>
+    <style>
+        .chat-online {
+            color: #34ce57
+        }
+
+        .chat-offline {
+            color: #e4606d
+        }
+
+
+
+        .flex-grow-0 {
+            flex-grow: 0 !important;
+        }
+
+        .border-top {
+            border-top: 1px solid #dee2e6 !important;
+        }
+
+        #popupListChat {
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            width: 300px;
+            /* height : 500px; */
+            margin-top: 59px;
+            margin-right: 5px;
+            background-color: #6ed941;
+            border: 2px dashed #000000;
+        }
+    </style>
+
+</head>
+<body class="wrapper">
+    <!-- Header Section Start -->
+    <header class="header--section style--1">
+
+        <!-- Header Topbar Start -->
+        <div id="header--toppart" class="header--topbar bg-white">
+            <div class="container">
+                <!-- Header Topbar Links Start -->
+                <ul class="header--topbar-links nav ff--primary float--left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span>VIE</span>
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li class="active"><a href="#">VIE</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- Header Topbar Links End -->
+                <!-- Header Topbar Social Start -->
+                <ul class="header--topbar-social nav float--left hidden-xs">
+                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                    <li><a href="#"><i class="fa fa-rss"></i></a></li>
+                    <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+                </ul>
+                <!-- Header Topbar Social End -->
+                <!-- Header Topbar Links Start -->
+                @* <ul class="header--topbar-links nav ff--primary float--right">
+
+                    @if (isLoggedIn)
+                    {
+                        <li>
+                            <a asp-page="/Profile/PersonalPage" asp-route-id="@getAcc?.AccountId" class="btn-link">
+                                <i class="fa mr--8 fa-user-o"></i>
+                                <span>Tài khoản của tôi</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/Access/Login?handler=Logout" class="btn-link">
+                                <i class="fa mr--8 fa-user-o"></i>
+                                <span>Đăng xuất</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a id="chatButton" href="#" class="btn-link" onclick="showListChat()">
+                                <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                                <span>Tin Nhắn</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a href="/Access/Login" class="btn-link">
+                                <i class="fa mr--8 fa-user-o"></i>
+                                <span>Đăng nhập</span>
+                            </a>
+                        </li>
+                    }
+                </ul> *@
+                <!-- Header Topbar Links End -->
+            </div>
+        </div>
+        <div id="popupListChat" style="display: none;">
+        </div>
+
+        <div id="popup2" style="display: none;">
+        </div>
+
+        <script>
+            function hideListChat() {
+                document.getElementById('popupListChat').style.display = 'none';
+            }
+
+
+            function hideConversation() {
+                document.getElementById('popup2').style.display = 'none';
+            }
+
+            document.addEventListener('click', function (event) {
+                var popup = document.getElementById('popupListChat');
+                var chatButton = document.getElementById('chatButton');
+
+                if (!popup.contains(event.target) && !chatButton.contains(event.target)) {
+                    hideListChat();
+                }
+            });
+
+            document.getElementById('popupListChat').addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+            document.getElementById('chatButton').addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+
+        </script>
+
+        <style>
+            #popup2 {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                z-index: 999;
+                width: 300px;
+                overflow-y: auto;
+                max-width: 400px;
+                max-height: 400px;
+            }
+
+            .card {
+                margin: 0;
+                padding: 0;
+                border-radius: 15px;
+            }
+
+            .card-body {
+                height: 300px;
+                overflow-y: auto;
+            }
+
+            .card-footer {
+                border-top: 1px solid rgba(0, 0, 0, 0.125);
+                background-color: #f7f7f7;
+            }
+
+            .form-control-lg {
+                border-radius: 10px;
+            }
+
+        </style>
+        <!-- Header Topbar End -->
+        <!-- Header Navbar Start -->
+        <div id="sticky--wrapper" class="header--navbar">
+            <div class="container d-flex justify-content-around" style="padding-left: 100px">
+
+                <div class="navbar-header">
+                    <!-- Header Navbar Logo Start -->
+                    <div class="header--navbar-logo navbar-brand">
+                        <a href="/">
+                            <img src="~/image/logo.jpg" class="normal" alt="" style="width: auto; height: 80px;">
+                            <img src="~/image/logo.jpg" class="sticky" alt="">
+                        </a>
+                    </div>
+                    <!-- Header Navbar Logo End -->
+                </div>
+
+                @* SEARCH BOX *@
+                <div class="search-container">
+
+                    <div class="head-search">
+                        <button type="button" id="backBtn" class="back-btn" onclick="exitSearch()">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+
+                        <form id="form-search" action="" method="get">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Tìm kiếm trên trang chủ" id="searchInput" class="search-input" onfocus="expandSearch()" onblur="collapseSearch()">
+                        </form>
+                    </div>
+
+                </div>
+
+                <div id="headerNav" class="float--right">
+                    <!-- Header Nav Links Start -->
+                    <ul class="header--nav-links style--1 nav ff--primary">
+                        <li class="dropdown">
+                            <a href="/Index">
+                                <span>Trang chủ</span>
+                            </a>
+
+                        @* <li class="dropdown">
+                            <a href="/News/ListNews" class="dropdown-toggle"><span>Tin tức</span></a>
+                            <ul class="dropdown-menu">
+                                @foreach (var category in categories)
+                                {
+                                    <li>
+                                        <a asp-page="/News/ListNews" asp-route-cat="@category.CategoryNewsId">@category.CategoryNewsName</a>
+                                    </li>
+                                }
+                            </ul>
+                        </li> *@
+
+                        @* <li class="dropdown">
+                            @if (getAcc != null && getAcc.RoleId == 2)
+                            {
+                                <a href="/Service/ListServices" class="dropdown-toggle">
+                                    <span>Dịch vụ</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/Service/ListServiceExpert">Tùy chỉnh dịch vụ</a></li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <a href="/Service/ListServices">
+                                    <span>Dịch vụ</span>
+                                </a>
+                            }
+                        </li> *@
+                        <li><a href=""><span>Liên hệ hỗ trợ</span></a></li>
+                    </ul>
+                    <!-- Header Nav Links End -->
+                </div>
+            </div>
+        </div>
+        <!-- Header Navbar End -->
+
+    </header>
+    <!-- Header Section End -->
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            <section class="page--wrapper pt--80 pb--20">
+                <div class="container">
+                    <div class="row">
+                        <!-- Main Content Start -->
+                        <div class="main--content col-md-8 pb--60" data-trigger="stickyScroll">
+                            <div class="main--content-inner drop--shadow">
+                                <!-- Topics List Start -->
+                                <div class="topics--list">
+                                    <table class="table">
+                                        <thead class="ff--primary fs--14 text-darkest">
+                                            <tr>
+                                                <th>Dịch vụ</th>
+                                                <th class="price-th">Giá</th>
+                                                <th>Tác giả</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @foreach (var service in Model.ServiceList)
+                                            {
+                                                // Lấy tài khoản liên kết với dịch vụ này
+                                                @* var account = Model.ServiceCreatorAccounts[service.ServiceId]; *@
+
+                                                // Tính số lượng sao đầy dựa trên average_rating
+                                                int fullStars = (int)Math.Floor(service.AverageRating ?? 0); // Lấy phần nguyên
+                                                int emptyStars = 5 - fullStars; // Tính số sao còn lại
+                                                <tr>
+                                                    <td>
+                                                        <h4 class="h6 fw--500 text-darkest"><a asp-page="/Service/ServiceDetail" asp-route-id="@service.ServiceId" class="btn-link">@service.Title</a></h4>
+
+                                                        <!-- <p>Started by <a href="member-activity-personal.html">Alice A. Baker</a> in <a href="#">sports</a> forum</p> -->
+                                                        <!-- hiển thị sao được đánh giá -->
+                                                        <div class="rate">
+
+                                                            @for (int i = 0; i < fullStars; i++)
+                                                            {
+                                                                <label title="Full star">★</label>
+                                                            }
+
+                                                            @if (emptyStars > 0)
+                                                            {
+                                                                @for (int i = 0; i < emptyStars; i++)
+                                                                {
+                                                                    <label title="Empty star" style="color: #ccc;">★</label> <!-- Sao trống (màu xám) -->
+                                                                }
+                                                            }
+
+                                                        </div>
+                                                        <p class="count-rate">(@service.RatingCount)</p>
+                                                    </td>
+                                                    <td class="price-td">
+                                                        <div class="ff--primary fw--500 fs--14 text-darkest d-flex-price">
+                                                            <p>@service.Price</p>
+                                                            <p>đ</p>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p>Đang hoạt động</p>
+
+                                                       @*  <a href="member-activity-personal.html" class="topic--author">
+                                                            <span class="name">@account.FullName</span>
+                                                            <span class="avatar"><img src="@account.Avatar" alt=""></span>
+                                                        </a> *@
+                                                    </td>
+                                                    <td>
+                                                        @* <div>
+                                                            @if (isLoggedIn)
+                                                            {
+                                                                <button class="booking-btn btn btn-primary" onclick="showModalForm(@service.ServiceId);">Đặt lịch</button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button class="booking-btn btn btn-primary" onclick="window.dialog.showModal();">Đặt lịch</button>
+                                                            }
+                                                        </div> *@
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="requestModal" class="modal" style="display: none;">
+                                    <form class="modal-content" method="post" asp-page-handler="RequestService">
+                                        @* <input type="hidden" id="serviceIdInput" asp-for="InputServiceId" value="" /> *@
+                                        <span class="close" onclick="closeModalForm()">&times;</span>
+                                        <h2>Nhập yêu cầu của bạn</h2>
+                                        @* <textarea id="userRequest" rows="4" placeholder="Nhập yêu cầu..." asp-for="InputRequestContent"></textarea> *@
+                                        <button id="submitRequest">Gửi yêu cầu</button>
+                                    </form>
+                                </div>
+                                <!-- Topics List End -->
+                                <!-- Page Count Start -->
+                                <div class="page--count pt--30">
+                                    <label class="ff--primary fs--14 fw--500 text-darker">
+                                        <span>Hiển thị @Model.ServiceList.Count() dịch vụ - @Model.CurrentPage trong @Model.TotalPages</span>
+
+                                        @if (Model.CurrentPage > 1)
+                                        {
+                                            <a asp-page="/Service/ListServices" asp-page-handler="Pagination" asp-route-p="@(Model.CurrentPage - 1)" asp-route-PriceFilter="@Model.PriceFilter" asp-route-RateFilter="@Model.RateFilter" class="btn-link previous-page">
+                                                <i class="fa fa-caret-left"></i>
+                                            </a>
+                                        }
+                                        <input type="number" name="page-count" value="@Model.CurrentPage" class="form-control form-sm" readonly>
+                                        @if (Model.CurrentPage < Model.TotalPages)
+                                        {
+                                            <a asp-page="/Service/ListServices" asp-page-handler="Pagination" asp-route-p="@(Model.CurrentPage + 1)" asp-route-PriceFilter="@Model.PriceFilter" asp-route-RateFilter="@Model.RateFilter" class="btn-link previous-page">
+                                                <i class="fa fa-caret-right"></i>
+                                            </a>
+                                        }
+
+                                        <span>@Model.TotalPages</span>
+                                    </label>
+                                </div>
+
+                                <dialog id="dialog">
+                                    <h2>Bạn chưa đăng nhập</h2>
+                                    <p>Cần tài khoản để tiến hành đăng nhập</p>
+                                    <a asp-page="/Access/Login" class="login-btn">Đăng nhập</a>
+                                    <button onclick="window.dialog.close();" aria-label="close" class="x">❌</button>
+                                </dialog>
+                                <!-- Page Count End -->
+                            </div>
+                        </div>
+                        <!-- Main Content End -->
+                        <!-- Main Sidebar Start -->
+                        <div class="main--sidebar col-md-4 pb--60" data-trigger="stickyScroll">
+                            <!-- Widget Start -->
+                            <div class="widget">
+                                <h2 class="h4 fw--700 widget--title">Lọc dịch vụ</h2>
+
+                                <!-- Buddy Finder Widget Start -->
+                                <div class="buddy-finder--widget">
+                                    <form method="get">
+                                        @* <input type="hidden" name="handler" value="ServiceFilter" /> *@
+                                        <div class="row">
+                                            <div class="col-xs-6 col-xxs-12">
+                                                <div class="form-group">
+                                                    <label>
+                                                        <span class="text-darker ff--primary fw--500">Chi phí</span>
+                                                        <select asp-for="PriceFilter" class="form-control form-sm">
+                                                            <option value="">Chọn danh mục</option>
+                                                            <option value="1">Giá thấp nhất</option>
+                                                            <option value="2">Giá cao nhất</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-6 col-xxs-12">
+                                                <div class="form-group">
+                                                    <label>
+                                                        <span class="text-darker ff--primary fw--500">Đánh giá</span>
+                                                        <select asp-for="RateFilter" class="form-control form-sm">
+                                                            <option value="">Chọn danh mục</option>
+                                                            <option value="1">1 sao</option>
+                                                            <option value="2">2 sao</option>
+                                                            <option value="3">3 sao</option>
+                                                            <option value="4">4 sao</option>
+                                                            <option value="5">5 sao</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12">
+                                                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                                <!-- Buddy Finder Widget End -->
+                            </div>
+                            <!-- Widget End -->
+                        </div>
+                        <!-- Main Sidebar End -->
+                    </div>
+                </div>
+            </section>
+            <!-- Page Wrapper End -->
+        </main>
+    </div>
+
+    <footer class="footer--section">
+        
+        <!-- Footer Extra Start -->
+        <div class="footer--extra bg-darker pt--30 pb--40 text-center">
+            <div class="container">
+                <!-- Widget Start -->
+                <div class="widget">
+                    <h2 class="h4 fw--700 widget--title">Recent Active Members</h2>
+
+                    <!-- Recent Active Members Widget Start -->
+                    <div class="recent-active-members--widget style--2">
+                        <div class="owl-carousel" data-owl-items="12" data-owl-nav="true" data-owl-speed="1200" data-owl-responsive='{"0": {"items": "3"}, "481": {"items": "6"}, "768": {"items": "8"}, "992": {"items": "12"}}'>
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/01.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/02.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/03.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/04.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/05.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/06.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/07.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/08.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/09.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/10.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/11.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/12.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/13.jpg" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Recent Active Members Widget End -->
+                </div>
+                <!-- Widget End -->
+            </div>
+        </div>
+        <!-- Footer Extra End -->
+        <!-- Footer Copyright Start -->
+        <div class="footer--copyright pt--30 pb--30 bg-darkest">
+            <div class="container">
+                <div class="text fw--500 fs--14 text-center">
+                    <p>&copy; Copyright 2024 Farm<span>Family</span>. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Footer Copyright End -->
+    </footer>
+
+    <script src="~/js/site.js"></script>
+    <script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    @* PERSONAL PAGE *@
+    <script src="~/js/personalPage.js"></script>
+    @* Search box js *@
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/plugins.min.js"></script>
+    <!-- ==== Main Script ==== -->
+    <script src="~/js/main.js"></script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/mainServiceDetail.js"></script>
+    @* <script type="text/javascript">
+        if (window.location.hash === '#_=_') {
+            if (history.replaceState) {
+                var cleanUrl = window.location.href.split("#")[0];
+                history.replaceState(null, null, cleanUrl);
+            } else {
+                window.location.hash = '';
+            }
+        }
+
+        var getConversList = document.getElementById("chatButton");
+
+        getConversList.addEventListener('click', loadConversList);
+            function loadConversList() {
+                document.getElementById('popupListChat').style.display = 'block';
+                console.log("check chat");
+                $.ajax({
+                    type: 'GET',
+                    url: '/Chat/Conversation?handler=LoadConversationList',
+                    data: {
+                        accId: @getIdAccount
+                    },
+                    success: function (data) {
+                        // Append the new reviews to the container
+                        $('#popupListChat').html(data);
+                    }
+                });
+            }
+    </script> *@
+    <script type="text/javascript">
+        function showModalForm(serviceId) {
+            document.getElementById('serviceIdInput').value = serviceId;
+            document.getElementById("requestModal").style.display = "block";
+        }
+
+        function closeModalForm() {
+            document.getElementById("requestModal").style.display = "none";
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+   @*  @await RenderSectionAsync("Scripts", required: false) *@
+</body>
+</html>
