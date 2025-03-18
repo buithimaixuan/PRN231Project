@@ -11,11 +11,13 @@ namespace UserService.Services.Implement
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepo;
+        private readonly IFriendRequestRepository _friendRequestRepository;
         private readonly HttpClient _postServiceClient;
-        public AccountService(IAccountRepository accountRepo, IHttpClientFactory httpClientFactory)
+        public AccountService(IAccountRepository accountRepo, IHttpClientFactory httpClientFactory, IFriendRequestRepository friendRequestRepository)
         {
             _accountRepo = accountRepo;
             _postServiceClient = httpClientFactory.CreateClient("PostService"); ;
+            _friendRequestRepository = friendRequestRepository;
         }
         public async Task<IEnumerable<Account>> GetListAllAccount()
         {
@@ -138,8 +140,20 @@ namespace UserService.Services.Implement
                 .OrderByDescending(f => postCounts[f.AccountId])
                 .FirstOrDefault();
         }
-        public async Task<IEnumerable<FriendRequest>> GetListFriends(int accountId) => await _accountRepo.GetListFriends(accountId);
+        public async Task<IEnumerable<FriendRequestDTO>> GetFriendRequestReceivers(int accountId)
+        {
+            return await _friendRequestRepository.GetFriendRequestReceivers(accountId);
+        }
 
+        public async Task<IEnumerable<FriendRequestDTO>> GetFriendRequestSenders(int accountId)
+        {
+            return await _friendRequestRepository.GetFriendRequestSenders(accountId);
+        }
+
+        public async Task<IEnumerable<FriendRequestDTO>> GetListFriends(int accountId)
+        {
+            return await _friendRequestRepository.GetListFriends(accountId);
+        }
         public async Task<PersonalPageDTO> GetPersonalPageDTO(int accountId)
         {
             // Lấy thông tin tài khoản
@@ -167,9 +181,9 @@ namespace UserService.Services.Implement
             };
 
             // Lấy danh sách bạn bè, yêu cầu gửi/nhận (giả định đã có logic trong repository)
-            var friendRequestReceivers = await _accountRepo.GetFriendRequestReceivers(accountId);
-            var friendRequestSenders = await _accountRepo.GetFriendRequestSenders(accountId);
-            var listFriends = await _accountRepo.GetListFriends(accountId);
+            var friendRequestReceivers = await _friendRequestRepository.GetFriendRequestReceivers(accountId);
+            var friendRequestSenders = await _friendRequestRepository.GetFriendRequestSenders(accountId);
+            var listFriends = await _friendRequestRepository.GetListFriends(accountId);
 
             // Gọi API của PostService để lấy danh sách bài viết
             var postApiUrl = $"all/by-account?accountId={accountId}";
@@ -185,6 +199,26 @@ namespace UserService.Services.Implement
             return new PersonalPageDTO(accountDTO, friendRequestReceivers, friendRequestSenders, listFriends, postDTOs);
         }
 
+        public async Task<FriendRequest> SendFriendRequest(int senderId, int receiverId)
+        {
+            // Kiểm tra đầu vào
+            if (senderId <= 0 || receiverId <= 0)
+                throw new ArgumentException("SenderId and ReceiverId must be positive.");
+            if (senderId == receiverId)
+                throw new ArgumentException("Cannot send friend request to yourself.");
+
+            return await _friendRequestRepository.SendFriendRequest(senderId, receiverId);
+        }
+
+        public async Task UpdateFriendRequestStatus(int senderId, int receiverId, string status)
+        {
+            if (senderId <= 0 || receiverId <= 0)
+                throw new ArgumentException("SenderId and ReceiverId must be positive.");
+            if (status != "accepted" && status != "rejected")
+                throw new ArgumentException("Status must be either 'accepted' or 'rejected'.");
+
+            await _friendRequestRepository.UpdateFriendRequestStatus(senderId, receiverId, status);
+        }
         public async Task<AccountPhotosDTO> GetAccountPhotos(int accountId)
         {
             // Kiểm tra tài khoản có tồn tại không
@@ -201,16 +235,15 @@ namespace UserService.Services.Implement
 
             var content = await response.Content.ReadAsStringAsync();
             var postDTOs = JsonSerializer.Deserialize<IEnumerable<PostDTO>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<PostDTO>();
-
             // Trích xuất tất cả ảnh từ danh sách bài viết
             var photos = postDTOs
                 .SelectMany(postDTO => postDTO.postImages ?? new List<PostDTO.PostImage>())
                 .Where(image => !image.IsDeleted.GetValueOrDefault()) // Chỉ lấy ảnh chưa bị xóa
                 .ToList();
 
-            return new AccountPhotosDTO(accountId, photos);
+            int countPhotos = photos.Count();
+
+            return new AccountPhotosDTO(accountId, countPhotos, photos);
         }
-
-
     }
 }

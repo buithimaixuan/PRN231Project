@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Text.Json;
 using UserService.DAOs;
+using UserService.DTOs;
 using UserService.Models;
 
 namespace UserService.Repositories.AccountRepo
@@ -62,9 +63,5 @@ namespace UserService.Repositories.AccountRepo
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Dictionary<int, int>>(json);
         }
-
-        public async Task<IEnumerable<FriendRequest>> GetFriendRequestReceivers(int accountId) => await _friendRequestDAO.GetFriendRequestReceivers(accountId);
-        public async Task<IEnumerable<FriendRequest>> GetFriendRequestSenders(int accountId) => await _friendRequestDAO.GetFriendRequestSenders(accountId);
-        public async Task<IEnumerable<FriendRequest>> GetListFriends(int accountId) => await _friendRequestDAO.GetListFriends(accountId);
     }
 }

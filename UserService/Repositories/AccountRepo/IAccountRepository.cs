@@ -1,4 +1,5 @@
-﻿using UserService.Models;
+﻿using UserService.DTOs;
+using UserService.Models;
 
 namespace UserService.Repositories
 {
@@ -23,9 +24,5 @@ namespace UserService.Repositories
         Task<List<Account>> GetAccountsByIds(List<int> ids);
         Task<List<Account>> GetAccountsByRoleId(int roleId);
         Task<Dictionary<int, int>> GetPostCounts();
-        Task<IEnumerable<FriendRequest>> GetFriendRequestReceivers(int accountId);
-        Task<IEnumerable<FriendRequest>> GetFriendRequestSenders(int accountId);
-        Task<IEnumerable<FriendRequest>> GetListFriends(int accountId);
-
     }
 }
