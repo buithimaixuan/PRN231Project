@@ -1,0 +1,125 @@
+﻿
+/* Đảm bảo lớp overlay có z-index thấp hơn modal */
+.modal-backdrop {
+    z-index: 1040; /* Giá trị z-index cho overlay */
+}
+
+#popupUpdatePost {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Giá trị z-index cho modal cao hơn */
+}
+
+    #popupUpdatePost .popup-content-update {
+        background: white;
+        width: 700px;
+        max-height: 80%; /* Giới hạn chiều cao tối đa thành 80% của viewport */
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        overflow: hidden; /* Không cho phép cuộn */
+    }
+
+        #popupUpdatePost .popup-content-update .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            float: right;
+            cursor: pointer;
+        }
+
+        #popupUpdatePost .popup-content-update textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            outline: none;
+            height: 180px;
+        }
+
+        #popupUpdatePost .popup-content-update .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+            #popupUpdatePost .popup-content-update .actions button {
+                background: none;
+                border: none;
+                font-size: 14px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+            }
+
+                #popupUpdatePost .popup-content-update .actions button img {
+                    width: 20px;
+                    margin-right: 5px;
+                }
+
+#imageUpdatePreview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Khoảng cách giữa các ảnh */
+    max-height: 150px; /* Giới hạn chiều cao */
+    overflow-y: auto; /* Cho phép cuộn nếu có nhiều ảnh */
+    overflow-x: hidden; /* Ẩn cuộn ngang */
+}
+
+#clearImagesUpdateBtn {
+    padding: 10px 15px;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgb(234, 109, 109);
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* SELECT INPUT */
+#select-input-update {
+    appearance: none;
+    outline: 10px red;
+    border: 0;
+    box-shadow: none;
+    flex: 1;
+    padding: 0 1em;
+    color: #fff;
+    background-color: #2c3e50;
+    cursor: pointer;
+    height: 100%;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+.select {
+    display: flex;
+    width: 20em;
+    height: 3em;
+    border-radius: .25em;
+    overflow: hidden;
+    gap: 20px;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+/*STYLE CHO button CONTROL POST */
+.controlPostBtn {
+    padding: 5px 10px;
+    background: #45aaf2;
+    color: white;
+    margin-right: 5px;
+}
