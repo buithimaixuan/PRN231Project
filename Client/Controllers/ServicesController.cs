@@ -87,7 +87,7 @@ namespace Client.Controllers
                 ServiceList = services.Skip((page - 1) * PageSize).Take(PageSize);
 
                 // Khởi tạo dictionary để lưu tài khoản của người tạo dịch vụ
-                var serviceCreatorAccounts = new Dictionary<int, Account?>();
+                ServiceCreatorAccounts = new Dictionary<int, Account?>();
 
                 foreach (var service in ServiceList)
                 {
@@ -115,15 +115,17 @@ namespace Client.Controllers
 
                 var viewModel = new ServiceListViewModel
                 {
-                    ServiceList = services,
-                    ServiceCreatorAccounts = serviceCreatorAccounts,
+                    ServiceList = ServiceList,
+                    ServiceCreatorAccounts = ServiceCreatorAccounts,
                     CurrentPage = page,
                     TotalPages = totalPage, 
                     PriceFilter = PriceFilter,  // ✅ Truyền dữ liệu vào model
                     RateFilter = RateFilter     // ✅ Truyền dữ liệu vào model
                 };
 
-                return View(viewModel);
+                /*return View(viewModel);*/
+                return View("ServiceList", viewModel);
+
 
             }
             return View();
