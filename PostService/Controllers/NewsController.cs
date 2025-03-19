@@ -123,6 +123,15 @@ namespace PostService.Controllers
             return Ok(totalExperts);
         }
 
+        // phần này của mai xưng
+        //category News
+
+        [HttpGet("NewsCategory/All")]
+        public async Task<IActionResult> GetAllNewsCategory()
+        {
+            var newsList = await _newsService.GetAllCategoryNews();
+            return Ok(newsList);
+        }
 
     }
 }

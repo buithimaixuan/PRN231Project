@@ -44,9 +44,9 @@ namespace Client.Controllers
             var part3 = Request.Form.Files.GetFile("EducationFile");
             //Upload avatar
 
-            string avatar = await UploadImage(part1, client);
-            string degree = await UploadImage(part2, client2);
-            string education = await UploadImage(part3, client3);
+            string avatar = part1 != null ? await UploadImage(part1, client) : null;
+            string degree = part2 != null ? await UploadImage(part2, client2) : null;
+            string education = part3 != null ? await UploadImage(part3, client3) : null;
 
             DateTime? nullableDateTime = book.DateOfBirth;
             DateOnly? dateOnly = nullableDateTime.HasValue ? DateOnly.FromDateTime(nullableDateTime.Value) : null;

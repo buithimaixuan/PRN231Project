@@ -15,11 +15,13 @@
                     <label asp-for="FullName">What is your full name?</label>
                 <input type="text" class="form-control" asp-for="FullName" 
                            placeholder="Enter full name at here">
+                <span class="text-danger" asp-validation-for="FullName"></span>
 
                 </div>
                 <div class="form-group  w-50">
                     <label asp-for="Username">Username</label>
                 <input asp-for="Username" type="text" class="form-control" placeholder="Enter your username at here">
+                <span class="text-danger" asp-validation-for="Username"></span>
                 </div>
             </div>
             <div class="d-flex ">
@@ -30,6 +32,7 @@
                         We'll never share your email with anyone
                         else.
                     </small>
+                <span class="text-danger" asp-validation-for="Email"></span>
                 </div>
                 <div class="form-group  w-50">
                 <label asp-for="Phone">Can I have your phone number?</label>
@@ -41,6 +44,7 @@
                 <div class="form-group w-50">
                 <label asp-for="DateOfBirth">When is your birthday?</label>
                 <input asp-for="DateOfBirth" class="form-control" />
+                <span class="text-danger" asp-validation-for="DateOfBirth"></span>
                 </div>
             <div class="form-group w-50">
                 <label asp-for="Gender">And your gender is?</label>
@@ -66,6 +70,7 @@
                 <div class="form-group w-50">
                 <label asp-for="Address">Where do you live?</label>
                 <input asp-for="Address" class="form-control"  placeholder="Enter your address at here">
+                <span class="text-danger" asp-validation-for="Address"></span>
 
                 </div>
                 <div class="form-group  w-50">
@@ -77,10 +82,12 @@
                 <div class="form-group w-50">
                     <label asp-for="Major" >Your major is:</label>
                     <input asp-for="Major" class="form-control" placeholder="Enter your major at here">
+                <span class="text-danger" asp-validation-for="Major"></span>
                 </div>
                 <div class="form-group  w-50">
                     <label asp-for="Password">What is your password?</label>
                 <input asp-for="Password" type="password" class="form-control">
+                <span class="text-danger" asp-validation-for="Password"></span>
                 </div>
             </div>
             <div class="d-flex">
@@ -98,10 +105,12 @@
                 <div class="form-group w-50">
                 <label asp-for="YearOfExperience">The number of years experience is:</label>
                 <input asp-for="YearOfExperience" class="form-control">
+                <span class="text-danger" asp-validation-for="YearOfExperience"></span>
                 </div>
                 <div class="form-group  w-50">
                 <label asp-for="ShortBio">Can I get your short bio?</label>
                 <input asp-for="ShortBio" class="form-control">
+                <span class="text-danger" asp-validation-for="ShortBio"></span>
                 </div>
             </div>
 
