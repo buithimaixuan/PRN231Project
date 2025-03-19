@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using UserService.DAOs;
 using UserService.DTOs;
 using UserService.Models;
 using UserService.PasswordHashing;
 using UserService.Services.Interface;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UserService.Controllers
 {
@@ -92,12 +94,32 @@ namespace UserService.Controllers
             return Ok("Password changed successfully!");
         }
 
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            try
+            {
+                var account = await _accountService.GetAccountByEmail(email);
+                if (account == null)
+                    return NotFound($"No account found with email {email}");
+                
+                return Ok(account);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpGet("personal-page/{accountId}")]
         public async Task<IActionResult> GetUserPersonalPage(int accountId)
         {
             try
             {
                 var profile = await _accountService.GetPersonalPageDTO(accountId);
+                if (profile == null)
+                    return NotFound($"No account found with account_id {accountId}");
+                
                 return Ok(profile);
             }
             catch (Exception ex)
@@ -105,13 +127,16 @@ namespace UserService.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-      
+
         [HttpGet("all-photos/{accountId}")]
         public async Task<IActionResult> GetAccountAllPhotos(int accountId)
         {
             try
             {
                 var photos = await _accountService.GetAccountPhotos(accountId);
+                if (photos == null)
+                    return NotFound($"No photos found with account_id {accountId}");
+                
                 return Ok(photos);
             }
             catch (Exception ex)
@@ -126,6 +151,9 @@ namespace UserService.Controllers
             try
             {
                 var friendRequests = await _accountService.GetFriendRequestReceivers(accountId);
+                if (friendRequests == null)
+                    return NotFound($"No friend ferquests found with account {accountId}");
+                
                 return Ok(friendRequests);
             }
             catch (Exception ex)
@@ -140,6 +168,9 @@ namespace UserService.Controllers
             try
             {
                 var friendRequests = await _accountService.GetFriendRequestSenders(accountId);
+                if (friendRequests == null)
+                    return NotFound($"No friend ferquests found with account {accountId}");
+                
                 return Ok(friendRequests);
             }
             catch (Exception ex)
@@ -154,6 +185,9 @@ namespace UserService.Controllers
             try
             {
                 var friends = await _accountService.GetListFriends(accountId);
+                if (friends == null)
+                    return NotFound($"No friends found with account {accountId}");
+
                 return Ok(friends);
             }
             catch (Exception ex)
@@ -169,6 +203,12 @@ namespace UserService.Controllers
             try
             {
                 var friendRequest = await _accountService.SendFriendRequest(request.SenderId, request.ReceiverId);
+                if (request == null)
+                    return NotFound($"No friends found with account");
+
+                if (request.SenderId == request.RequestId)
+                    return NotFound($"Cannot send a friend requset to yourself.");
+
                 return Ok(new { Message = "Friend request sent successfully.", RequestId = friendRequest.RequestId });
             }
             catch (Exception ex)
