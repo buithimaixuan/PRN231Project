@@ -10,6 +10,9 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UserService.Controllers
 {
+    //đổi trong DBContext , appsetting, docker compose
+
+
     [Route("api/[controller]")]
     [ApiController]
     public class AccountsController : ControllerBase
