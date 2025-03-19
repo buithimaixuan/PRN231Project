@@ -71,7 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.Urls.Add("http://0.0.0.0:5007");
 app.UseDeveloperExceptionPage();
 
 app.UseHttpsRedirection();

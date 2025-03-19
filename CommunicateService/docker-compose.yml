@@ -5,4 +5,4 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=Microservice_CommunicateDB;User Id=sa;Password=123456;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=Microservice_CommunicateDB;User Id=sa;Password=1234;TrustServerCertificate=True
