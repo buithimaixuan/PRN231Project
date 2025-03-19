@@ -1,6 +1,6 @@
 ﻿version: "3.8"
 services:
-  app:
+  postservice:
     build: .
     ports:
       - "5007:5007"

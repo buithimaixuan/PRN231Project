@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using UserService.Config;
 using UserService.DTOs;
 using UserService.Models;
 using UserService.PasswordHashing;
@@ -13,10 +18,13 @@ namespace UserService.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly PasswordHasher _passwordHasher;
-        public AuthController(IAccountService accountService)
+        private readonly AuthenConfig _config;
+
+        public AuthController(IAccountService accountService, AuthenConfig config)
         {
             _accountService = accountService;
             _passwordHasher = new PasswordHasher();
+            _config = config;
         }
 
         [HttpPost("register")]
@@ -120,15 +128,18 @@ namespace UserService.Controllers
                     return Unauthorized("Invalid identifier or password.");
                 }
 
+                string token = _config.GenerateToken(loginDTO);
+
                 // Đăng nhập thành công, trả về thông tin cơ bản (có thể mở rộng để trả về token JWT)
-                return Ok(new
+                return Ok(new LoginResponseDTO
                 {
                     Message = "Login successful.",
                     AccountId = account.AccountId,
                     Username = account.Username,
                     Email = account.Email,
                     Phone = account.Phone,
-                    RoleId = account.RoleId
+                    RoleId = account.RoleId,
+                    Token = token
                 });
             }
             catch (Exception ex)
@@ -137,5 +148,8 @@ namespace UserService.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
             }
         }
+
+        
+
     }
 }
