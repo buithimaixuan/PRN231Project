@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿@* <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -44,6 +44,642 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+ *@
+@* @using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@inject PRN221_BusinessLogic.Interface.INewsService _newsService
+@inject PRN221_BusinessLogic.Interface.IAccountService _acccountService
+
+@{
+    IEnumerable<PRN221_Models.Models.CategoryNews> categories;
+    var isLoggedIn = HttpContextAccessor.HttpContext.Session.GetString("UserSession") != null;
+    categories = await _newsService.GetCategoriesHaveNews();
+    int? getIdAccount = null;
+    if (HttpContextAccessor.HttpContext.Session.GetString("AccountID") != null)
+    {
+        getIdAccount = Convert.ToInt32(HttpContextAccessor.HttpContext.Session.GetInt32("AccountID"));
+    }
+    PRN221_Models.Models.Account getAcc = null;
+    if (getIdAccount.HasValue)
+    {
+        // Retrieve the account based on the account ID
+        getAcc = await _acccountService.GetByIdAccount(getIdAccount.Value);
+    }
+} *@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Farm Family</title>
+    <!-- ==== Favicon ==== -->
+    <link rel="icon" href="favicon.png" type="image/png">
+    <!-- ==== Google Font ==== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700%7CRoboto:300,400,400i,500,700">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ProjectPRNClient.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/plugins.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/responsive-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/colors/color-1.css" asp-append-version="true" id="changeColorScheme" />
+    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css//personalPage.css" asp-append-version="true" />
+    <link href="~/image/logo.jpg" rel="icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.0/css/boxicons.min.css"
+          integrity="sha512-pVCM5+SN2+qwj36KonHToF2p1oIvoU3bsqxphdOIWMYmgr4ZqD3t5DjKvvetKhXGc/ZG5REYTT6ltKfExEei/Q=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src="https://kit.fontawesome.com/1bd9fa3a2e.js" crossorigin="anonymous"></script>
+    <style>
+        .chat-online {
+            color: #34ce57
+        }
+
+        .chat-offline {
+            color: #e4606d
+        }
+
+
+
+        .flex-grow-0 {
+            flex-grow: 0 !important;
+        }
+
+        .border-top {
+            border-top: 1px solid #dee2e6 !important;
+        }
+
+        #popupListChat {
+            position: fixed;
+            right: 0;
+            top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            width: 300px;
+            /* height : 500px; */
+            margin-top: 59px;
+            margin-right: 5px;
+            background-color: #6ed941;
+            border: 2px dashed #000000;
+        }
+    </style>
+
+</head>
+<body class="wrapper">
+    <!-- Header Section Start -->
+    <header class="header--section style--1">
+
+        <!-- Header Topbar Start -->
+        <div id="header--toppart" class="header--topbar bg-white">
+            <div class="container">
+                <!-- Header Topbar Links Start -->
+                <ul class="header--topbar-links nav ff--primary float--left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span>VIE</span>
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li class="active"><a href="#">VIE</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- Header Topbar Links End -->
+                <!-- Header Topbar Social Start -->
+                <ul class="header--topbar-social nav float--left hidden-xs">
+                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                    <li><a href="#"><i class="fa fa-rss"></i></a></li>
+                    <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+                </ul>
+                <!-- Header Topbar Social End -->
+                <!-- Header Topbar Links Start -->
+                <ul class="header--topbar-links nav ff--primary float--right">
+
+                    @* @if (isLoggedIn)
+                    {
+                        <li>
+                            <a asp-page="/Profile/PersonalPage" asp-route-id="@getAcc?.AccountId" class="btn-link">
+                                <i class="fa mr--8 fa-user-o"></i>
+                                <span>Tài khoản của tôi</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/Access/Login?handler=Logout" class="btn-link">
+                                <i class="fa mr--8 fa-user-o"></i>
+                                <span>Đăng xuất</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a id="chatButton" href="#" class="btn-link" onclick="showListChat()">
+                                <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                                <span>Tin Nhắn</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    { *@
+                        <li>
+                            <a href="/Access/Login" class="btn-link">
+                                <i class="fa mr--8 fa-user-o"></i>
+                                <span>Đăng nhập</span>
+                            </a>
+                        </li>
+                    @* } *@
+                </ul>
+                <!-- Header Topbar Links End -->
+            </div>
+        </div>
+        <div id="popupListChat" style="display: none;">
+        </div>
+
+        <div id="popup2" style="display: none;">
+        </div>
+
+        <script>
+            function hideListChat() {
+                document.getElementById('popupListChat').style.display = 'none';
+            }
+
+
+            function hideConversation() {
+                document.getElementById('popup2').style.display = 'none';
+            }
+
+            document.addEventListener('click', function (event) {
+                var popup = document.getElementById('popupListChat');
+                var chatButton = document.getElementById('chatButton');
+
+                if (!popup.contains(event.target) && !chatButton.contains(event.target)) {
+                    hideListChat();
+                }
+            });
+
+            document.getElementById('popupListChat').addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+            document.getElementById('chatButton').addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+
+        </script>
+
+        <style>
+            #popup2 {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                z-index: 999;
+                width: 300px;
+                overflow-y: auto;
+                max-width: 400px;
+                max-height: 400px;
+            }
+
+            .card {
+                margin: 0;
+                padding: 0;
+                border-radius: 15px;
+            }
+
+            .card-body {
+                height: 300px;
+                overflow-y: auto;
+            }
+
+            .card-footer {
+                border-top: 1px solid rgba(0, 0, 0, 0.125);
+                background-color: #f7f7f7;
+            }
+
+            .form-control-lg {
+                border-radius: 10px;
+            }
+
+        </style>
+        <!-- Header Topbar End -->
+        <!-- Header Navbar Start -->
+        <div id="sticky--wrapper" class="header--navbar">
+            <div class="container d-flex justify-content-around" style="padding-left: 100px">
+
+                <div class="navbar-header">
+                    <!-- Header Navbar Logo Start -->
+                    <div class="header--navbar-logo navbar-brand">
+                        <a href="/">
+                            <img src="~/image/logo.jpg" class="normal" alt="" style="width: auto; height: 80px;">
+                            <img src="~/image/logo.jpg" class="sticky" alt="">
+                        </a>
+                    </div>
+                    <!-- Header Navbar Logo End -->
+                </div>
+
+                @* SEARCH BOX *@
+                <div class="search-container">
+
+                    <div class="head-search">
+                        <button type="button" id="backBtn" class="back-btn" onclick="exitSearch()">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+
+                        <form id="form-search" action="" method="get">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Tìm kiếm trên trang chủ" id="searchInput" class="search-input" onfocus="expandSearch()" onblur="collapseSearch()">
+                        </form>
+                    </div>
+
+
+                    @* <div id="searchSuggestions" class="suggestions-box">
+                    <a href="">hello</a>
+                    <a href="">hello</a>
+                    <a href="">hello</a>
+                    </div> *@
+
+                </div>
+
+                <div id="headerNav" class="float--right">
+                    <!-- Header Nav Links Start -->
+                    <ul class="header--nav-links style--1 nav ff--primary">
+                        <li class="dropdown">
+                            <a href="/Index">
+                                <span>Trang chủ</span>
+                            </a>
+                            @* <a href="/index" class="dropdown-toggle" data-toggle="dropdown">
+                            <span>trang chủ</span>
+                            </a>
+
+                            <ul class="dropdown-menu">
+                            <li><a href="/"><span>activity</span></a></li>
+                            <li><a href=""><span>members</span></a></li>
+                            <li><a href=""><span>groups</span></a></li>
+                            </ul> *@
+                        </li>
+                        @* <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <span>BBPress</span>
+                        </a>
+
+                        <ul class="dropdown-menu">
+                        <li><a href="">Forums</a></li>
+                        <li><a href="">Sub Forums</a></li>
+                        <li><a href="">Topics</a></li>
+                        <li><a href="">Topic Replies</a></li>
+                        </ul>
+                        </li> *@
+
+                        <li class="dropdown">
+                            <a href="/News/ListNews" class="dropdown-toggle"><span>Tin tức</span></a>
+                            <ul class="dropdown-menu">
+                                @* @foreach (var category in categories)
+                                {
+                                    <li>
+                                        <a asp-page="/News/ListNews" asp-route-cat="@category.CategoryNewsId">@category.CategoryNewsName</a>
+                                    </li>
+                                } *@
+                            </ul>
+                        </li>
+
+                        <li class="dropdown">
+                            @* @if (getAcc != null && getAcc.RoleId == 2)
+                            {
+                                <a href="/Service/ListServices" class="dropdown-toggle">
+                                    <span>Dịch vụ</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/Service/ListServiceExpert">Tùy chỉnh dịch vụ</a></li>
+                                </ul>
+                            }
+                            else
+                            { *@
+                                <a href="/Service/ListServices">
+                                    <span>Dịch vụ</span>
+                                </a>
+                            @* } *@
+                        </li>
+                        <li><a href=""><span>Liên hệ hỗ trợ</span></a></li>
+                    </ul>
+                    <!-- Header Nav Links End -->
+                </div>
+            </div>
+        </div>
+        <!-- Header Navbar End -->
+
+    </header>
+    <!-- Header Section End -->
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer--section">
+        @* <!-- Footer Widgets Start -->
+        <div class="footer--widgets pt--70 pb--20 bg-lightdark" data-bg-img="img/footer-img/footer-widgets-bg.png">
+        <div class="container">
+        <div class="row AdjustRow">
+        <div class="col-md-3 col-xs-6 col-xxs-12 pb--60">
+        <!-- Widget Start -->
+        <div class="widget">
+        <h2 class="h4 fw--700 widget--title">About Us</h2>
+
+        <!-- Text Widget Start -->
+        <div class="text--widget">
+        <p>Ipsum is simply dummy text of the printing indusLorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+
+        <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
+        </div>
+        <!-- Text Widget End -->
+        </div>
+        <!-- Widget End -->
+        <!-- Widget Start -->
+        <div class="widget">
+        <h2 class="h4 fw--700 widget--title">Subscribe To Our Newsletter</h2>
+
+        <!-- Newsletter Widget Start -->
+        <div class="newsletter--widget style--1" data-form="validate">
+        <form action="https://themelooks.us13.list-manage.com/subscribe/post?u=79f0b132ec25ee223bb41835f&amp;id=f4e0e93d1d" method="post" name="mc-embedded-subscribe-form" target="_blank">
+        <div class="input-group">
+        <input type="email" name="EMAIL" placeholder="Enter your emil address" class="form-control" autocomplete="off" required>
+
+        <div class="input-group-btn">
+        <button type="submit" class="btn-link"><i class="fa fa-send-o"></i></button>
+        </div>
+        </div>
+        </form>
+        </div>
+        <!-- Newsletter Widget End -->
+        </div>
+        <!-- Widget End -->
+        </div>
+
+        <div class="col-md-3 col-xs-6 col-xxs-12 pb--60">
+        <!-- Widget Start -->
+        <div class="widget">
+        <h2 class="h4 fw--700 widget--title">Recent Post</h2>
+
+        <!-- Recent Posts Widget Start -->
+        <div class="recent-posts--widget">
+        <ul class="nav">
+        <li>
+        <p class="date fw--300">
+        <a href="#"><i class="fa mr--8 fa-file-text-o"></i>19 Jan 2017</a>
+        </p>
+        <p class="title fw--700">
+        <a href="blog-details.html">I look at you and see the rest of my life in front</a>
+        </p>
+        </li>
+        <li>
+        <p class="date fw--300">
+        <a href="#"><i class="fa mr--8 fa-file-text-o"></i>19 Jan 2017</a>
+        </p>
+        <p class="title fw--700">
+        <a href="blog-details.html">If I know what love is, it is because of you</a>
+        </p>
+        </li>
+        <li>
+        <p class="date fw--300">
+        <a href="#"><i class="fa mr--8 fa-file-text-o"></i>19 Jan 2017</a>
+        </p>
+        <p class="title fw--700">
+        <a href="blog-details.html">At the touch of love everyone becomes a poet</a>
+        </p>
+        </li>
+        </ul>
+        </div>
+        <!-- Recent Posts Widget End -->
+        </div>
+        <!-- Widget End -->
+        <!-- Widget Start -->
+        <div class="widget">
+        <h2 class="h4 fw--700 widget--title">Tags</h2>
+
+        <!-- Tags Widget Start -->
+        <div class="tags--widget">
+        <ul class="nav">
+        <li><a href="#">BuddyPress</a></li>
+        <li><a href="#">HTML</a></li>
+        <li><a href="#">Music</a></li>
+        <li><a href="#">Technology</a></li>
+        <li><a href="#">Movies</a></li>
+        <li><a href="#">Photography</a></li>
+        <li><a href="#">WordPress</a></li>
+        </ul>
+        </div>
+        <!-- Tags Widget End -->
+        </div>
+        <!-- Widget End -->
+        </div>
+
+        <div class="col-md-3 col-xs-6 col-xxs-12 pb--60">
+        <!-- Widget Start -->
+        <div class="widget">
+        <h2 class="h4 fw--700 widget--title">Some of Catagories</h2>
+
+        <!-- Nav Widget Start -->
+        <div class="nav--widget">
+        <ul class="nav">
+        <li>
+        <a href="#">
+        <i class="fa fa-folder-o"></i>
+        <span class="text">Social Media</span>
+        <span class="count">(26)</span>
+        </a>
+        </li>
+
+        </ul>
+        </div>
+        <!-- Nav Widget End -->
+        </div>
+        <!-- Widget End -->
+        <!-- Widget Start -->
+        <div class="widget">
+        <h2 class="h4 fw--700 widget--title">From Archives</h2>
+
+        <!-- Nav Widget Start -->
+        <div class="nav--widget">
+        <ul class="nav">
+        <li>
+        <a href="#">
+        <i class="fa fa-calendar-o"></i>
+        <span class="text">Jan - July 2017</span>
+        <span class="count">(86)</span>
+        </a>
+        </li>
+        </ul>
+        </div>
+        <!-- Nav Widget End -->
+        </div>
+        <!-- Widget End -->
+        </div>
+
+        <div class="col-md-3 col-xs-6 col-xxs-12 pb--60">
+        <!-- Widget Start -->
+        <div class="widget">
+        <h2 class="h4 fw--700 widget--title">Forums</h2>
+
+        <!-- Links Widget Start -->
+        <div class="links--widget">
+        <ul class="nav">
+        <li><a href="sub-forums.html">User Interface Design</a></li>
+        <li><a href="sub-forums.html">Front-End Engineering</a></li>
+        </ul>
+        </div>
+        <!-- Links Widget End -->
+        </div>
+        <!-- Widget End -->
+        <!-- Widget Start -->
+        <div class="widget">
+        <a href="#"><img src="~/image/logo.jpg" class="normal" alt="" style="height: 150px"></a>
+        </div>
+        <!-- Widget End -->
+        </div>
+        </div>
+        </div>
+        </div>
+        <!-- Footer Widgets End --> *@
+        <!-- Footer Extra Start -->
+        <div class="footer--extra bg-darker pt--30 pb--40 text-center">
+            <div class="container">
+                <!-- Widget Start -->
+                <div class="widget">
+                    <h2 class="h4 fw--700 widget--title">Recent Active Members</h2>
+
+                    <!-- Recent Active Members Widget Start -->
+                    <div class="recent-active-members--widget style--2">
+                        <div class="owl-carousel" data-owl-items="12" data-owl-nav="true" data-owl-speed="1200" data-owl-responsive='{"0": {"items": "3"}, "481": {"items": "6"}, "768": {"items": "8"}, "992": {"items": "12"}}'>
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/01.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/02.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/03.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/04.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/05.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/06.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/07.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/08.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/09.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/10.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/11.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/12.jpg" alt=""></a>
+                            </div>
+
+                            <div class="img">
+                                <a href="member-activity-personal.html"><img src="img/widgets-img/recent-active-members/13.jpg" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Recent Active Members Widget End -->
+                </div>
+                <!-- Widget End -->
+            </div>
+        </div>
+        <!-- Footer Extra End -->
+        <!-- Footer Copyright Start -->
+        <div class="footer--copyright pt--30 pb--30 bg-darkest">
+            <div class="container">
+                <div class="text fw--500 fs--14 text-center">
+                    <p>&copy; Copyright 2024 Farm<span>Family</span>. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Footer Copyright End -->
+    </footer>
+
+    <script src="~/js/site.js"></script>
+    <script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    @* PERSONAL PAGE *@
+    <script src="~/js/personalPage.js"></script>
+    @* Search box js *@
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/plugins.min.js"></script>
+    <!-- ==== Main Script ==== -->
+    <script src="~/js/main.js"></script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/mainServiceDetail.js"></script>
+    @* <script type="text/javascript">
+        if (window.location.hash === '#_=_') {
+            if (history.replaceState) {
+                var cleanUrl = window.location.href.split("#")[0];
+                history.replaceState(null, null, cleanUrl);
+            } else {
+                window.location.hash = '';
+            }
+        }
+
+        var getConversList = document.getElementById("chatButton");
+
+        getConversList.addEventListener('click', loadConversList);
+        function loadConversList() {
+            document.getElementById('popupListChat').style.display = 'block';
+            console.log("check chat");
+            $.ajax({
+                type: 'GET',
+                url: '/Chat/Conversation?handler=LoadConversationList',
+                data: {
+                    accId: @getIdAccount
+                            },
+                success: function (data) {
+                    // Append the new reviews to the container
+                    $('#popupListChat').html(data);
+                }
+            });
+        }
+    </script> *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
