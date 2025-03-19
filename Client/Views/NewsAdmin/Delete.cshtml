@@ -1,0 +1,72 @@
+﻿@using Client.DTOs
+@model NewsAdminDTO
+@{
+    ViewData["Title"] = "Delete";
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="NewsId">Id of news</label>
+                <input type="text" class="form-control" asp-for="NewsId" readonly>
+
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="Title">Title of news</label>
+                <input type="text" class="form-control" asp-for="Title" readonly>
+
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="CategoryNewsId">Catogory Name</label>
+                <select asp-for="CategoryNewsId" class="form-control">
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <option value="@cat.CategoryNewsId">@cat.CategoryNewsName</option>
+                    }
+
+                </select>
+            </div>
+
+        </div>
+
+        <div>
+
+
+            <div class="form-group w-100">
+                <label>Image for this news</label>
+            </div>
+            <div class="form-group w-100">
+                <div style="width: 100px; heigh: 100px;">
+                    <img style="width: 100px; heigh: 100px;" src="@Model.ImageUrl" alt="img" />
+                </div>
+            </div>
+        </div>
+        <div class="d-flex">
+
+            <div class="form-group w-100">
+                <label asp-for="Content">Content:</label>
+                <textarea asp-for="Content" class="form-control" rows="5" readonly>@Model.Content</textarea>
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="@Model.NewsId" />
+                <input type="submit" value="Delete"/> |
+                <a  asp-action="Index">Back to List</a>
+            </form>
+           
+            
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
