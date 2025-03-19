@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Client.Controllers
 {
+    [Route("Services")] // Định nghĩa base route cho controller
     public class ServicesController : Controller
     {
         private readonly HttpClient client = null;
@@ -42,7 +43,7 @@ namespace Client.Controllers
         public int RateFilter { get; set; }
 
 
-        [HttpGet]
+        [HttpGet("ListServices")]
         public async Task<IActionResult> Services(int PriceFilter, int RateFilter)
         {
             int page = 1;
@@ -52,6 +53,8 @@ namespace Client.Controllers
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var services = JsonSerializer.Deserialize<IEnumerable<Service>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                int countService = services?.Count() ?? 0;
 
                 // Lọc giá trước
                 if (PriceFilter == 1)
@@ -75,7 +78,7 @@ namespace Client.Controllers
 
                 // Tính tổng số trang
                 int totalServices = services.Count();
-                TotalPages = (int)Math.Ceiling(totalServices / (double)PageSize);
+                int totalPage = (int)Math.Ceiling(totalServices / (double)PageSize);
 
                 // Thiết lập trang hiện tại
                 CurrentPage = page;
@@ -84,7 +87,7 @@ namespace Client.Controllers
                 ServiceList = services.Skip((page - 1) * PageSize).Take(PageSize);
 
                 // Khởi tạo dictionary để lưu tài khoản của người tạo dịch vụ
-                ServiceCreatorAccounts = new Dictionary<int, Account?>();
+                var serviceCreatorAccounts = new Dictionary<int, Account?>();
 
                 foreach (var service in ServiceList)
                 {
@@ -93,10 +96,7 @@ namespace Client.Controllers
                     if (response1.IsSuccessStatusCode) // Kiểm tra xem API có trả về thành công không
                     {
                         var content1 = await response1.Content.ReadAsStringAsync();
-
-                        if (!string.IsNullOrWhiteSpace(content1)) // Kiểm tra nếu content không rỗng
-                        {
-                            var account = JsonSerializer.Deserialize<Account>(content1, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        var account = JsonSerializer.Deserialize<Account>(content1, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                             if (account != null) // Đảm bảo account không bị null
                             {
@@ -106,11 +106,6 @@ namespace Client.Controllers
                             {
                                 Console.WriteLine($"⚠️ Lỗi: Không thể giải mã JSON từ API cho ServiceID: {service.ServiceId}");
                             }
-                        }
-                        else
-                        {
-                            Console.WriteLine($"⚠️ Lỗi: Phản hồi rỗng từ API cho ServiceID: {service.ServiceId}");
-                        }
                     }
                     else
                     {
@@ -118,8 +113,18 @@ namespace Client.Controllers
                     }
                 }
 
+                var viewModel = new ServiceListViewModel
+                {
+                    ServiceList = services,
+                    ServiceCreatorAccounts = serviceCreatorAccounts,
+                    CurrentPage = page,
+                    TotalPages = totalPage, 
+                    PriceFilter = PriceFilter,  // ✅ Truyền dữ liệu vào model
+                    RateFilter = RateFilter     // ✅ Truyền dữ liệu vào model
+                };
 
-                return View(services);
+                return View(viewModel);
+
             }
             return View();
         }
