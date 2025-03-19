@@ -43,7 +43,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.Urls.Add("http://0.0.0.0:5122");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

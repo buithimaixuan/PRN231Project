@@ -5,6 +5,10 @@ builder.Services.AddControllersWithViews();
 //new
 builder.Services.AddHttpClient();
 
+builder.Services.AddSession();
+builder.Services.AddDistributedMemoryCache(); // For storing session data in memory
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -19,6 +23,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
