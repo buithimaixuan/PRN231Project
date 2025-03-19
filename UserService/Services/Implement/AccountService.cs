@@ -98,7 +98,38 @@ namespace UserService.Services.Implement
             await _accountRepo.Add(newFarmer);
         }
 
+        // mai xuan create expert
+        public async Task CreateNewExpertAccount(AccountDTO account)
+        {
 
+            Account newFarmer = new Account
+            {
+                AccountId = 0,
+                RoleId = 3,  // expert
+                Username = account.Username,
+                Password = account.Password,
+                FullName = account.FullName,
+                Email = account.Email,
+                EmailConfirmed = 0,
+                Phone = account.Phone,
+                PhoneConfirmed = 0,
+                Gender = account.Gender,
+                DateOfBirth = account.DateOfBirth,
+                ShortBio = account.ShortBio,
+                EducationUrl = account.EducationUrl,
+                YearOfExperience = account.YearOfExperience,
+                DegreeUrl = account.DegreeUrl,
+                Avatar = account.Avatar,
+                Major = account.Major,
+                Address = account.Address,
+                IsDeleted = false,
+                Otp = null,
+                FacebookId = null,
+                Role = null  // Gán null để tránh lỗi validation
+            };
+
+            await _accountRepo.Add(newFarmer);
+        }
 
         public async Task<string?> GetFullNameByUsername(string username) => await _accountRepo.GetFullnameByUsername(username);
 
