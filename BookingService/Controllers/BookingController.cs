@@ -152,8 +152,5 @@ namespace BookingService.Controllers
             await _servicingService.DeleteService(id);
             return NoContent();
         }
-
-        
-
     }
 }

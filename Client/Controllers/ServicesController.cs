@@ -217,7 +217,7 @@ namespace Client.Controllers
         public async Task<IActionResult> OnPostRequestService()
         {
             // Lấy AccountID từ Session
-            int? accountId = HttpContext.Session.GetInt32("AccountID");
+            int? accountId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
             if (accountId == null)
             {
                 Console.WriteLine("⚠️ Không tìm thấy AccountID trong session.");
@@ -408,6 +408,225 @@ namespace Client.Controllers
             }
 
             return RedirectToPage("/Service/ServiceDetail", new { id = InputServiceId });
+        }
+
+        public async Task<PartialViewResult> OnGetLoadMoreReview(int serviceId, int skip, int take)
+        {
+            Console.WriteLine($"LoadMoreReview called with serviceId: {serviceId}, skip: {skip}, take: {take}");
+
+            var response = await client.GetAsync($"{RatingApiUrl}/service/{serviceId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonContent = await response.Content.ReadAsStringAsync();
+                var ratings = JsonSerializer.Deserialize<IEnumerable<ServiceRating>>(jsonContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (ratings != null && ratings.Any())
+                {
+                    MoreRatingList = ratings
+                                        .OrderByDescending(r => r.RatedAt)
+                                        .Skip(skip)
+                                        .Take(take);
+                }
+                else
+                {
+                    MoreRatingList = new List<ServiceRating>();
+                }
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ API trả về lỗi {response.StatusCode} khi lấy đánh giá dịch vụ {serviceId}");
+                MoreRatingList = new List<ServiceRating>();
+            }
+
+            return PartialView("_ReviewLoadMore", MoreRatingList);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ListServiceByAccount()
+        {
+            int getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
+
+            var response = await client.GetAsync($"{ServiceApiUrl}/all-by-accId/{getAccId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonContent = await response.Content.ReadAsStringAsync();
+                var serviceList = JsonSerializer.Deserialize<IEnumerable<Service>>(jsonContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return View(serviceList);
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ API trả về lỗi {response.StatusCode} khi lấy danh sách dịch vụ của tài khoản {getAccId}");
+                return View(new List<Service>()); // Trả về danh sách rỗng nếu lỗi
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ServiceOwnDetails(int id)
+        {
+            var response = await client.GetAsync($"{ServiceApiUrl}/get-by-id/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var ownServiceDetail = JsonSerializer.Deserialize<Service>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true});
+
+                return View(ownServiceDetail);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateService(Service serviceItem)
+        {
+            if (serviceItem.Price <= 0)
+            {
+                ModelState.AddModelError("PriceNotZero", "Giá phải lớn hơn 0");
+            }
+            else if (serviceItem.Price % 1 != 0)
+            {
+                Console.WriteLine("In lỗi");
+                ModelState.AddModelError("PriceInteger", "Giá phải là số nguyên.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(serviceItem);
+            }
+
+            int getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
+
+            serviceItem.CreatorId = getAccId;
+            serviceItem.UpdatedAt = DateTime.Now;
+            serviceItem.IsDeleted = false;
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(serviceItem), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{ServiceApiUrl}/update/{serviceItem.ServiceId}", jsonContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"✅ Cập nhật thành công: {serviceItem.Title}");
+                return RedirectToAction("ListServiceByAccount"); // Chuyển hướng về danh sách dịch vụ
+            }
+            else
+            {
+                Console.WriteLine($"❌ Cập nhật thất bại! Mã lỗi: {response.StatusCode}");
+                return View(serviceItem); // Giữ lại trang nếu thất bại
+            }
+        }
+
+        public async Task<IActionResult> OnGetDisableService(int id)
+        {
+            var response = await client.GetAsync($"{ServiceApiUrl}/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Đổi trạng thái thất bại: Không tìm thấy dịch vụ");
+                return RedirectToPage("/Services/ListServiceExpert");
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            var service = JsonSerializer.Deserialize<Service>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            service.IsEnable = false;
+
+            var updateResponse = await client.PutAsJsonAsync($"{ServiceApiUrl}/update/{id}", service);
+
+            if (!updateResponse.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Cập nhật trạng thái dịch vụ thất bại");
+            }
+
+            return RedirectToPage("/Service/ListServiceExpert");
+        }
+
+        public async Task<IActionResult> OnGetEnableService(int id)
+        {
+            var response = await client.GetAsync($"{ServiceApiUrl}/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Đổi trạng thái thất bại: Không tìm thấy dịch vụ");
+                return RedirectToPage("/Service/ListServiceExpert");
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            var service = JsonSerializer.Deserialize<Service>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (service == null)
+            {
+                Console.WriteLine("Đổi trạng thái thất bại: Dịch vụ null");
+                return RedirectToPage("/Service/ListServiceExpert");
+            }
+
+            service.IsEnable = true;
+
+            var updateResponse = await client.PutAsJsonAsync($"{ServiceApiUrl}/update/{id}", service);
+
+            if (!updateResponse.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Cập nhật trạng thái dịch vụ thất bại");
+            }
+
+            return RedirectToPage("/Service/ListServiceExpert");
+        }
+
+        // Xóa dịch vụ phía
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteService(int id)
+        {
+            var deleteResponse = await client.PutAsync($"{ServiceApiUrl}/soft-delete/{id}", null);
+
+            if (!deleteResponse.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Xóa dịch vụ thất bại!");
+                TempData["ErrorMessage"] = "Không thể xóa dịch vụ. Vui lòng thử lại!";
+                return RedirectToPage("/Service/ListServiceExpert");
+            }
+
+            Console.WriteLine($"Dịch vụ {id} đã được xóa mềm thành công!");
+            TempData["SuccessMessage"] = "Dịch vụ đã được xóa thành công!";
+
+            return RedirectToPage("/Service/ListServiceExpert");
+        }
+
+        [HttpGet]
+        public IActionResult AddService()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddService(Service service)
+        {
+            int getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
+
+            service.CreatorId = getAccId;
+
+            if (service.Price <= 0)
+            {
+                ModelState.AddModelError("PriceNotZero", "Giá phải lớn hơn 0");
+            }
+            else if (service.Price % 1 != 0)
+            {
+                Console.WriteLine("In loi");
+                ModelState.AddModelError("PriceInteger", "Giá phải là số nguyên.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var jsonContent = new StringContent(JsonSerializer.Serialize(service), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(ServiceApiUrl, jsonContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToPage("/Service/ListServiceExpert");
+                }
+                ModelState.AddModelError("", "Không thể tạo. Vui lòng thử lại.");
+            }
+            return View(service);
         }
 
         /*[HttpGet]
