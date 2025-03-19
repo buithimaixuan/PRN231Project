@@ -14,13 +14,9 @@ namespace Client.Controllers
         {
             //_httpClientFactory = httpClientFactory;
 
-
             client = new HttpClient();
 
             VoucherODataUri = "http://localhost:5157/api/Accounts";
-
-
-
 
         }
 
