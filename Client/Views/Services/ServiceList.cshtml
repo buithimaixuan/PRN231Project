@@ -27,8 +27,13 @@
                             <tbody>
                                 @foreach (var service in Model.ServiceList)
                                 {
-                                    // Lấy tài khoản liên kết với dịch vụ này
-                                    var account = Model.ServiceCreatorAccounts[service.ServiceId];
+
+                                    Account? account = null;
+                                    if (Model.ServiceCreatorAccounts.ContainsKey(service.ServiceId))
+                                    {
+                                        // Lấy tài khoản liên kết với dịch vụ này
+                                        account = Model.ServiceCreatorAccounts[service.ServiceId];
+                                    }
 
                                     // Tính số lượng sao đầy dựa trên average_rating
                                     int fullStars = (int)Math.Floor(service.AverageRating ?? 0); // Lấy phần nguyên
@@ -66,10 +71,17 @@
                                         <td>
                                             <p>Đang hoạt động</p>
 
-                                            <a href="member-activity-personal.html" class="topic--author">
-                                                <span class="name">@account.FullName</span>
-                                                <span class="avatar"><img src="@account.Avatar" alt=""></span>
-                                            </a>
+                                            @if (account != null)
+                                            {
+                                                <a href="member-activity-personal.html" class="topic--author">
+                                                    <span class="name">@account.FullName</span>
+                                                    <span class="avatar"><img src="@account.Avatar" alt=""></span>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-danger">Không có thông tin tài khoản</p>
+                                            }
                                         </td>
                                         <td>
                                             <div>
