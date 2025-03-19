@@ -3,6 +3,6 @@ services:
   app:
     build: .
     ports:
-      - "5000:5000"
+      - "5007:5007"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=food;User Id=sa;Password=123456;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=Microservice_PostDB;User Id=sa;Password=khoa31102003;TrustServerCertificate=True

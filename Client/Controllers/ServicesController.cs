@@ -7,6 +7,7 @@ using Azure;
 using Client.DTOs;
 using Client.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Client.Controllers
 {
@@ -42,7 +43,6 @@ namespace Client.Controllers
         [BindProperty(SupportsGet = true)]
         public int RateFilter { get; set; }
 
-
         [HttpGet("ListServices")]
         public async Task<IActionResult> Services(int PriceFilter, int RateFilter)
         {
@@ -53,8 +53,6 @@ namespace Client.Controllers
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var services = JsonSerializer.Deserialize<IEnumerable<Service>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                int countService = services?.Count() ?? 0;
 
                 // Lọc giá trước
                 if (PriceFilter == 1)
@@ -67,14 +65,22 @@ namespace Client.Controllers
                 }
 
                 // Lọc đánh giá
-                if (RateFilter > 0 && RateFilter < 5)
+                if (RateFilter > 0 && RateFilter <= 5)
                 {
-                    services = services.Where(s => s.AverageRating >= RateFilter && s.AverageRating < (RateFilter + 1));
+                    int minStar = (int)Math.Round((double)RateFilter, MidpointRounding.AwayFromZero); // Làm tròn giống như hiển thị sao
+                    int maxStar = minStar + 1;
+
+                    if (minStar == 5)
+                    {
+                        services = services.Where(s => Math.Round(s.AverageRating ?? 0, MidpointRounding.AwayFromZero) == 5);
+                    }
+                    else
+                    {
+                        services = services.Where(s =>
+                            Math.Round(s.AverageRating ?? 0, MidpointRounding.AwayFromZero) == minStar);
+                    }
                 }
-                else if (RateFilter == 5)
-                {
-                    services = services.Where(s => s.AverageRating == RateFilter);
-                }
+
 
                 // Tính tổng số trang
                 int totalServices = services.Count();
@@ -98,14 +104,14 @@ namespace Client.Controllers
                         var content1 = await response1.Content.ReadAsStringAsync();
                         var account = JsonSerializer.Deserialize<Account>(content1, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                            if (account != null) // Đảm bảo account không bị null
-                            {
-                                ServiceCreatorAccounts[service.ServiceId] = account;
-                            }
-                            else
-                            {
-                                Console.WriteLine($"⚠️ Lỗi: Không thể giải mã JSON từ API cho ServiceID: {service.ServiceId}");
-                            }
+                        if (account != null) // Đảm bảo account không bị null
+                        {
+                            ServiceCreatorAccounts[service.ServiceId] = account;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"⚠️ Lỗi: Không thể giải mã JSON từ API cho ServiceID: {service.ServiceId}");
+                        }
                     }
                     else
                     {
@@ -118,26 +124,24 @@ namespace Client.Controllers
                     ServiceList = ServiceList,
                     ServiceCreatorAccounts = ServiceCreatorAccounts,
                     CurrentPage = page,
-                    TotalPages = totalPage, 
+                    TotalPages = totalPage,
                     PriceFilter = PriceFilter,  // ✅ Truyền dữ liệu vào model
                     RateFilter = RateFilter     // ✅ Truyền dữ liệu vào model
                 };
 
-                /*return View(viewModel);*/
                 return View("ServiceList", viewModel);
-
-
             }
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("ListServices/Pagination")]
         public async Task<IActionResult> ServicesPagination(int p, int priceFilter, int rateFilter)
         {
             CurrentPage = p;
 
             var response = await client.GetAsync($"{ServiceApiUrl}/available");
-            if (response.IsSuccessStatusCode) {
+            if (response.IsSuccessStatusCode)
+            {
                 var content = await response.Content.ReadAsStringAsync();
                 var services = JsonSerializer.Deserialize<IEnumerable<Service>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
@@ -152,28 +156,30 @@ namespace Client.Controllers
                 }
 
                 // Lọc đánh giá
-                if (RateFilter > 0 && RateFilter < 5)
+                if (RateFilter > 0 && RateFilter <= 5)
                 {
-                    services = services.Where(s => s.AverageRating >= RateFilter && s.AverageRating < (RateFilter + 1));
-                }
-                else if (RateFilter == 5)
-                {
-                    services = services.Where(s => s.AverageRating == RateFilter);
-                }
+                    int minStar = (int)Math.Round((double)RateFilter, MidpointRounding.AwayFromZero); // Làm tròn giống như hiển thị sao
+                    int maxStar = minStar + 1;
 
-                // Tính tổng dịch vụ
-
-                var respone1 = await client.GetAsync($"{ServiceApiUrl}/count-all");
-
-                if (!respone1.IsSuccessStatusCode)
-                {
-                    var content1 = await respone1.Content.ReadAsStringAsync();
-                    int totalServices = JsonSerializer.Deserialize<int>(content1, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    TotalPages = (int)Math.Ceiling(totalServices / (double)PageSize);
+                    if (minStar == 5)
+                    {
+                        services = services.Where(s => Math.Round(s.AverageRating ?? 0, MidpointRounding.AwayFromZero) == 5);
+                    }
+                    else
+                    {
+                        services = services.Where(s =>
+                            Math.Round(s.AverageRating ?? 0, MidpointRounding.AwayFromZero) == minStar);
+                    }
                 }
 
+                // Tính tổng số trang
+                int totalServices = services.Count();
+                int totalPage = (int)Math.Ceiling(totalServices / (double)PageSize);
+
+                // Lấy các dịch vụ đã khai báo cho trang hiện tại
                 ServiceList = services.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
 
+                // Khởi tạo dictionary để lưu tài khoản của người tạo dịch vụ
                 ServiceCreatorAccounts = new Dictionary<int, Account?>();
 
                 foreach (var service in ServiceList)
@@ -184,54 +190,56 @@ namespace Client.Controllers
                     {
                         var content1 = await response1.Content.ReadAsStringAsync();
 
-                        if (!string.IsNullOrWhiteSpace(content1)) // Kiểm tra nếu content không rỗng
-                        {
-                            var account = JsonSerializer.Deserialize<Account>(content1, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                            if (account != null) // Đảm bảo account không bị null
-                            {
-                                ServiceCreatorAccounts[service.ServiceId] = account;
-                            }
-                            else
-                            {
-                                Console.WriteLine($"⚠️ Lỗi: Không thể giải mã JSON từ API cho ServiceID: {service.ServiceId}");
-                            }
+                        var account = JsonSerializer.Deserialize<Account>(content1, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        if (account != null) // Đảm bảo account không bị null
+                        {
+                            ServiceCreatorAccounts[service.ServiceId] = account;
                         }
                         else
                         {
-                            Console.WriteLine($"⚠️ Lỗi: Phản hồi rỗng từ API cho ServiceID: {service.ServiceId}");
+                            Console.WriteLine($"⚠️ Lỗi: Không thể giải mã JSON từ API cho ServiceID: {service.ServiceId}");
                         }
+
                     }
                     else
                     {
                         Console.WriteLine($"⚠️ API trả về lỗi {response1.StatusCode} cho ServiceID: {service.ServiceId}");
                     }
                 }
-                PriceFilter = priceFilter;
-                RateFilter = rateFilter;
 
-                return View();
+                var viewModel = new ServiceListViewModel
+                {
+                    ServiceList = ServiceList,
+                    ServiceCreatorAccounts = ServiceCreatorAccounts,
+                    CurrentPage = p,
+                    TotalPages = totalPage,
+                    PriceFilter = PriceFilter,  // ✅ Truyền dữ liệu vào model
+                    RateFilter = RateFilter     // ✅ Truyền dữ liệu vào model
+                };
+
+                return View("ServiceList", viewModel);
             }
             return View();
         }
+
 
         [BindProperty]
         public string InputRequestContent { get; set; }
         [BindProperty]
         public int InputServiceId { get; set; }
 
-        [HttpPost]
+        [HttpPost("RequestService")]
         public async Task<IActionResult> OnPostRequestService()
         {
             // Lấy AccountID từ Session
-            int? accountId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
-            if (accountId == null)
-            {
-                Console.WriteLine("⚠️ Không tìm thấy AccountID trong session.");
-                return RedirectToPage("/Account/Login");
-            }
+            // Để tạm mốt có code r làm
+            /*int? accountId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
 
-            int getAccId = accountId.Value;
+            int getAccId = accountId.Value;*/
+
+            int getAccId = 2;
 
             // Lấy thông tin tài khoản từ API
             var accountResponse = await client.GetAsync($"{AccountApiUrl}/DetailFarmer{getAccId}");
@@ -263,8 +271,6 @@ namespace Client.Controllers
             };
 
             // Chuyển đổi sang JSON
-            /*var jsonBooking = JsonSerializer.Serialize(newBooking);
-            var content = new StringContent(jsonBooking, Encoding.UTF8, "application/json");*/
             var jsonBooking = new StringContent(JsonSerializer.Serialize(newBooking), Encoding.UTF8, "application/json");
 
             // Gửi API POST request
@@ -281,7 +287,14 @@ namespace Client.Controllers
 
             Console.WriteLine("✅ Book thành công!");
 
-            return RedirectToPage("/Services/BookingSuccess");
+            /*return RedirectToPage("/Services/BookingSuccess");*/
+            return View("BookingSuccess");
+        }
+
+        [HttpGet("BookingSuccess")]
+        public IActionResult BookingSuccess()
+        {
+            return View(); // Trả về trang Create.cshtml
         }
 
         public Client.Models.Service ServiceDetail { get; set; }
@@ -289,7 +302,7 @@ namespace Client.Controllers
         public IEnumerable<ServiceRating> MoreRatingList { get; set; }
         public int CountBookingService { get; set; }
         public Account CreatorService { get; set; }
-        [HttpGet]
+        [HttpGet("ServiceDetails/{id}")]
         public async Task<IActionResult> ServiceDetails(int id)
         {
             if (id == null)
@@ -297,11 +310,30 @@ namespace Client.Controllers
                 RedirectToPage("/Index");
             }
 
+            // Tạm không có 
+            // int? accountId = HttpContext.Session.GetInt32("AccountID");
+            int accountId = 2;
+
+            if (accountId == null)
+            {
+                return RedirectToPage("/Login"); // Chuyển hướng nếu chưa đăng nhập
+            }
+
+            // Lấy thông tin dịch vụ
             var serviceResponse = await client.GetAsync($"{ServiceApiUrl}/get-by-id/{id}");
-            if (!serviceResponse.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
                 var serviceJson = await serviceResponse.Content.ReadAsStringAsync();
                 ServiceDetail = JsonSerializer.Deserialize<Service>(serviceJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            // Lấy thông tin người đăng nhập
+            var accLoginResponse = await client.GetAsync($"{AccountApiUrl}/DetailFarmer{accountId}");
+            Account accLogin = null;
+            if (accLoginResponse.IsSuccessStatusCode)
+            {
+                var accountJson = await accLoginResponse.Content.ReadAsStringAsync();
+                accLogin = JsonSerializer.Deserialize<Account>(accountJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
 
             if (ServiceDetail == null)
@@ -317,6 +349,7 @@ namespace Client.Controllers
                 CreatorService = JsonSerializer.Deserialize<Account>(accountJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
 
+            // Lấy các thông tin liên quan đến Request
             var bookingResponse = await client.GetAsync($"{BookingApiUrl}/count-confirm/{ServiceDetail.ServiceId}");
             if (bookingResponse.IsSuccessStatusCode)
             {
@@ -324,6 +357,7 @@ namespace Client.Controllers
                 CountBookingService = JsonSerializer.Deserialize<int>(bookingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
 
+            // Lấy các thông tin đánh giá dịch vụ đó
             var ratingResponse = await client.GetAsync($"{RatingApiUrl}/all-by-serId/{ServiceDetail.ServiceId}");
             if (ratingResponse.IsSuccessStatusCode)
             {
@@ -332,8 +366,151 @@ namespace Client.Controllers
                 ServiceRatingList = ratings?.OrderByDescending(r => r.RatedAt).Take(5);
             }
 
-            return View();
+            var ReviewerAccounts = new Dictionary<int, Account>();
+            if (ServiceRatingList != null)
+            {
+                foreach (var rating in ServiceRatingList)
+                {
+                    if (!ReviewerAccounts.ContainsKey(rating.UserId))
+                    {
+                        int accIdRev = rating.UserId;
+                        var accountRevResponse = await client.GetAsync($"{AccountApiUrl}/DetailFarmer{rating.UserId}");
+                        if (accountRevResponse.IsSuccessStatusCode)
+                        {
+                            var accountJson = await accountRevResponse.Content.ReadAsStringAsync();
+                            var reviewAcc = JsonSerializer.Deserialize<Account>(accountJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                            ReviewerAccounts[rating.UserId] = reviewAcc;
+                        }
+                        else
+                        {
+                            ReviewerAccounts[rating.UserId] = null;
+                        }
+                    }
+                }
+            }
+
+            // 🔹 Gửi dữ liệu tới View
+            ViewData["AccountLogin"] = accLogin;
+            ViewData["AccountID"] = accountId;
+            ViewBag.AccountID = accountId;
+
+            var viewModel = new ServiceListViewModel
+            {
+                ServiceDetail = ServiceDetail,
+                InputServiceId = ServiceDetail.ServiceId,
+                CreatorService = CreatorService,
+                ServiceRatingList = ServiceRatingList, // Giữ nguyên danh sách bạn đã gán (chỉ 5 đánh giá mới nhất)
+                ReviewerAccounts = ReviewerAccounts
+            };
+
+            return View("ServiceDetails", viewModel);
         }
+        /*[HttpGet("ServiceDetails/{id}")]
+        public async Task<IActionResult> ServiceDetails(int id)
+        {
+            if (id == 0)
+            {
+                return RedirectToPage("/Index");
+            }
+
+            int accountId = 2; // Giả lập người dùng đang đăng nhập, bạn có thể thay bằng session
+            if (accountId == 0)
+            {
+                return RedirectToPage("/Login");
+            }
+
+            // 🔹 Lấy thông tin dịch vụ
+            var serviceResponse = await client.GetAsync($"{ServiceApiUrl}/get-by-id/{id}");
+            Service ServiceDetail = null;
+            if (serviceResponse.IsSuccessStatusCode)
+            {
+                var serviceJson = await serviceResponse.Content.ReadAsStringAsync();
+                ServiceDetail = JsonSerializer.Deserialize<Service>(serviceJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            if (ServiceDetail == null)
+            {
+                return RedirectToPage("/Index");
+            }
+
+            // 🔹 Lấy thông tin người tạo dịch vụ
+            var creatorResponse = await client.GetAsync($"{AccountApiUrl}/DetailFarmer/{ServiceDetail.CreatorId}");
+            Account CreatorService = null;
+            if (creatorResponse.IsSuccessStatusCode)
+            {
+                var creatorJson = await creatorResponse.Content.ReadAsStringAsync();
+                CreatorService = JsonSerializer.Deserialize<Account>(creatorJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            // 🔹 Lấy danh sách đánh giá dịch vụ
+            var ratingResponse = await client.GetAsync($"{RatingApiUrl}/all-by-serId/{ServiceDetail.ServiceId}");
+            IEnumerable<ServiceRating> ServiceRatingList = null;
+            if (ratingResponse.IsSuccessStatusCode)
+            {
+                var ratingJson = await ratingResponse.Content.ReadAsStringAsync();
+                ServiceRatingList = JsonSerializer.Deserialize<IEnumerable<ServiceRating>>(ratingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                    ?.OrderByDescending(r => r.RatedAt)
+                    .Take(5);
+            }
+
+            // 🔹 Lấy thông tin tài khoản của người đánh giá
+            var ReviewerAccounts = new Dictionary<int, Account>();
+            if (ServiceRatingList != null)
+            {
+                foreach (var rating in ServiceRatingList)
+                {
+                    if (!ReviewerAccounts.ContainsKey(rating.UserId))
+                    {
+                        var reviewerResponse = await client.GetAsync($"{AccountApiUrl}/DetailFarmer/{rating.UserId}");
+                        if (reviewerResponse.IsSuccessStatusCode)
+                        {
+                            var reviewerJson = await reviewerResponse.Content.ReadAsStringAsync();
+                            var reviewer = JsonSerializer.Deserialize<Account>(reviewerJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                            ReviewerAccounts[rating.UserId] = reviewer;
+                        }
+                        else
+                        {
+                            ReviewerAccounts[rating.UserId] = null; // Nếu không tìm thấy, set `null`
+                        }
+                    }
+                }
+            }
+
+            // 🔹 Lấy số lượng đặt dịch vụ
+            var bookingResponse = await client.GetAsync($"{BookingApiUrl}/count-confirm/{ServiceDetail.ServiceId}");
+            int CountBookingService = 0;
+            if (bookingResponse.IsSuccessStatusCode)
+            {
+                var bookingJson = await bookingResponse.Content.ReadAsStringAsync();
+                CountBookingService = JsonSerializer.Deserialize<int>(bookingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            // 🔹 Lấy thông tin tài khoản đăng nhập
+            var accLoginResponse = await client.GetAsync($"{AccountApiUrl}/DetailFarmer/{accountId}");
+            Account accLogin = null;
+            if (accLoginResponse.IsSuccessStatusCode)
+            {
+                var accountJson = await accLoginResponse.Content.ReadAsStringAsync();
+                accLogin = JsonSerializer.Deserialize<Account>(accountJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            // 🔹 Gửi dữ liệu đến View
+            ViewData["AccountLogin"] = accLogin;
+            ViewData["AccountID"] = accountId;
+            ViewData["ReviewerAccounts"] = ReviewerAccounts;
+
+            var viewModel = new ServiceListViewModel
+            {
+                ServiceDetail = ServiceDetail,
+                InputServiceId = ServiceDetail.ServiceId,
+                CreatorService = CreatorService,
+                ServiceRatingList = ServiceRatingList, // Giữ nguyên danh sách bạn đã gán (chỉ 5 đánh giá mới nhất)
+                ReviewerAccounts = ReviewerAccounts
+            };
+
+            return View("ServiceDetails", viewModel);
+        }*/
+
 
         [BindProperty]
         public decimal RatingPoint { get; set; }

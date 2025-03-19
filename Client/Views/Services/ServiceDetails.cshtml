@@ -1,0 +1,1829 @@
+﻿@model Client.DTOs.ServiceListViewModel
+@{
+    // Dùng tạm
+    var isLoggedIn = true;
+    var accountLogin = ViewData["AccountLogin"] as Account;
+    // var getIdAccount = ViewData["AccountID"] as int?;
+    var getIdAccount = ViewData.ContainsKey("AccountID") ? (ViewData["AccountID"] as int?) : null;
+}
+
+
+<link href="~/css/serviceDetailStyle.css" rel="stylesheet" />
+<link media="all" type="text/css" rel="preload" as="style" onload="this.onload=null;this.rel=&#039;stylesheet&#039;"
+      href="~/plugin/animatecss/animate.css">
+<link rel="stylesheet" href="~/plugin/animatecss/animate.css">
+<link media="all" type="text/css" rel="preload" as="style" onload="this.onload=null;this.rel=&#039;stylesheet&#039;"
+      href="~/plugin/bootstrap-select/bootstrap-select.min.css">
+<link rel="stylesheet" href="~/plugin/bootstrap-select/bootstrap-select.min.css">
+<link media="all" type="text/css" rel="preload" as="style" onload="this.onload=null;this.rel=&#039;stylesheet&#039;"
+      href="~/plugin/bootstrap-select/bootstrap-select.min.css">
+
+<link rel="stylesheet" href="~/css/gitiho_v20b1c.css?id=699f8eba12b405db1d4ec3838ed64f5f">
+
+<link rel="preload" href="~/plugin/awesome/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link rel="stylesheet" href="~/plugin/awesome/css/all.min.css">
+
+<link media="all" type="text/css" rel="preload" as="style" onload="this.onload=null;this.rel=&#039;stylesheet&#039;" href="~/plugin/animatecss/animate.css">
+<link rel="stylesheet" href="../frontend/plugin/animatecss/animate.css">
+
+<link media="all" type="text/css" rel="preload" as="style" onload="this.onload=null;this.rel=&#039;stylesheet&#039;" href="~/plugin/bootstrap-select/bootstrap-select.min.css">
+<link rel="stylesheet" href="~/plugin/bootstrap-select/bootstrap-select.min.css">
+
+<link rel="apple-touch-icon" sizes="57x57" href="~/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="~/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="~/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="~/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="~/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="~/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="~/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="~/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="~/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="~/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="~/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="~/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="~/favicon-16x16.png">
+<div id="page-content-wrapper" style="padding-top: 0px!important;">
+    <div class="line-header"></div>
+    <div class="nav-menu--show-course d-none">
+        <div style="max-width: 273px;min-width:273px;width:273px;overflow-y:auto;max-height: calc(75vh - 1rem);"
+             class="px-4">
+            <ul class="list-unstyled nav-level-two">
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div style="border-right: 1px solid #DCE2EE;"></div>
+
+        <div style="overflow-y:auto;max-height: calc(75vh - 1rem);" class="px-4 w-100">
+            <div class="nav-level-three">
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nav-menu--show-store d-none">
+        <div style="max-width: 273px;min-width:273px;width:273px;overflow-y:auto;max-height: 481px;"
+             class="px-4">
+            <ul class="list-unstyled nav-level-two">
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="nav-level-item py-2">
+                        <div style="height: 21px;background: #d5d5d5"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div style="border-right: 1px solid #DCE2EE;"></div>
+
+        <div style="overflow-y:auto;max-height: 481px;" class="px-4 w-100">
+            <div class="nav-level-three">
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div style="max-width: 225px">
+                            <div class="nav-level-item py-2">
+                                <div style="height: 21px;background: #d5d5d5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-relative">
+        <div class="banner-preview2 p-3">
+            <div class="container">
+                <div class="banner--container mx-auto">
+                    <div class="main-content breadcrumb-v2 breadcrumb-course pl-0 position-relative mb-4">
+                    </div>
+                    <div class="show-content--1080">
+                        <div class="try-content mb-4">
+                            <div class="position-relative d-flex">
+                                <img class="lazyload mx-auto"
+                                     src="../frontend/img/gitiho_v2/placehover_362x193.png" width="100%"
+                                     style="max-width: 600px;"
+                                     data-src="../caches/cc_xs_medium/cou_avatar/2022/03_16/40a2eb5c46cff003f19216c46d987e8f.png"
+                                     alt="EXG02 - Thủ thuật Excel cập nhật hàng tuần cho dân văn phòng" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="main-content">
+                        <h1 class="text-white-change f-26 fw-600">
+                            @Model.ServiceDetail.Title
+                        </h1>
+                    </div>
+
+                    <div class="main-content">
+                        <a href="#reviews">
+                            <div class="cou-rating d-inline-block text-white">
+                                <div class="gen-star gen-star-head">
+                                    <div class="stars-rate" id="star-container"></div>
+                                    <span class="review-count pull-left">
+                                        <strong>@Model.ServiceDetail.AverageRating</strong> (<u>
+                                            @Model.ServiceDetail.RatingCount đánh
+                                            giá
+                                        </u>)
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <ul class="detail-cou mt-4 main-content">
+                        <li>
+                            <img alt="Giảng viên" src="https://gitiho.com/frontend/img/gitiho_v2/icon/icon-custom-1.svg"
+                                 width="36px" height="36px" class="lazyload my-auto"
+                                 data-src="https://gitiho.com/frontend/img/gitiho_v2/icon/icon-custom-1.svg" />
+                            <div class="detail-cou-label">
+                                <span class="text-white">Chuyên gia</span><br />
+                                <span class="text-white">
+                                    <div class="text-white" style="color:#2997ff!important;">@Model.CreatorService.FullName</div>
+                                </span>
+                            </div>
+                        </li>
+                        <li>
+                            <img alt="Ngày update" src="https://gitiho.com/frontend/img/gitiho_v2/icon/icon-custom-2.svg"
+                                 width="36px" height="36px" class="lazyload my-auto"
+                                 data-src="https://gitiho.com/frontend/img/gitiho_v2/icon/icon-custom-2.svg" />
+                            <div class="detail-cou-label">
+                                <span class="text-white">Ngày bắt đầu</span><br />
+                                <span class="text-white">@Model.ServiceDetail.CreateAt?.ToString("dd/MM/yyyy")</span>
+                            </div>
+                        </li>
+                        <li>
+                            <img alt="Học viên đăng ký" src="https://gitiho.com/frontend/img/gitiho_v2/icon/icon-custom-3.svg"
+                                 width="36px" height="36px" class="lazyload my-auto"
+                                 data-src="https://gitiho.com/frontend/img/gitiho_v2/icon/icon-custom-3.svg" />
+                            <div class="detail-cou-label">
+                                <span class="text-white">Người đăng ký</span><br />
+                                <span class="text-white">@Model.CountBookingService</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="show-content--1080">
+                        <div class="py-3">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <p class="f-20 text-white mb-0 fw-700 sale-price-display-js"
+                                       style="color: #d91c5c!important;">@Model.ServiceDetail.Price<span>đ</span></p>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <p class="text-white mb-2">
+                                    <i class="far fa-alarm-clock mr-2"></i> Giá ưu đãi chỉ còn <b>1 ngày</b>
+                                </p>
+
+                                <div class="coupon-input-render">
+                                    <div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="button-cou-register">
+                                <button class="btn btn-custom-second text-uppercase w-100 btn-block text-bold"
+                                        style="padding: 0.375rem 0.75rem;" id="Preview_Button_Dangkyhocngay1"
+                                        onclick="registerCourse(this,'white')">
+                                    Đăng ký ngay
+                                </button>
+
+                                <p class="text-center my-2 text-muted">Hoặc</p>
+                                <a href="https://gitiho.com/hoi-vien?utm_source=Gitiho&amp;utm_campaign=Button_Course_Sub"
+                                   target="_blank" rel="noreferrer nofollow noopener">
+                                    <button class="btn btn-custom-white3 text-bold w-100 f-14 round-4"
+                                            style="border: 1px solid #fff">
+                                        <img alt="" data-src="../frontend/img/gitiho_v2/icon/fire_iris.gif"
+                                             src="../frontend/img/gitiho_v2/icon/fire_iris.gif" width="16px"
+                                             class="lazyload mr-1" style="margin-bottom: 9px">
+                                        Gói thành viên chỉ 199,000đ/tháng
+                                    </button>
+                                </a>
+                                <div class="form-registed-user text-center mt-3">
+                                    <div class="change-register hide">
+                                        <i class="fas fa-users-medical text-white"></i>
+                                        <span class="name_register text-white">Nguyễn Xuân Nam </span>
+                                        <span class="text-white">vừa đăng ký</span>
+                                    </div>
+                                    <div class="pending-register"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="py-3" style="border-top: 1px solid #fff">
+                            <p class="fw-700 text-white mb-1">Đăng ký cho doanh nghiệp</p>
+                            <p class="mb-3 text-white">
+                                Giúp nhân viên của bạn truy cập không giới hạn 450 khoá
+                                học,
+                                mọi lúc, mọi nơi
+                            </p>
+
+                            <a href="https://business.gitiho.com/?utm_source=Gitiho&amp;utm_campaign=Button_Course_Gbiz"
+                               target="_blank" rel="noreferrer nofollow noopener">
+                                <button class="btn btn-custom-white text-white w-100 round-4"
+                                        style="border: 1px solid #fff">
+                                    Tư vấn cho doanh nghiệp
+                                </button>
+                            </a>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-2 pointer"
+                             onclick="openCodeDiscount(this)">
+                            <u class="mb-0 pointer fw-700" style="color:#6CB1E5!important;">
+                                Áp dụng mã giảm
+                                giá
+                            </u>
+                        </div>
+                        <div class="form-code box-voucher voucher-item my-3 border-0"
+                             style="border-radius: 6px;">
+                            <div class="d-lg-flex justify-content-between">
+                                <div class="mt-0 d-flex justify-content-between w-100 bg-white"
+                                     style="border: 1px solid #90A0B7;border-radius: 6px">
+                                    <div class="my-auto mx-2">
+                                        <i class="far fa-badge-percent"></i>
+                                    </div>
+                                    <input type="text"
+                                           class="form-control coupon-input f-14 border-0 p-0 fw-600"
+                                           style="height:41px;outline: none;box-shadow: none;border-radius: 6px;border-color: #B8B8B8!important;"
+                                           name="coupon-input" placeholder="Mã giảm giá">
+
+                                    <button type="button"
+                                            class="fw-600 btn btn-gitiho-default ml-2 round-4 button-apply-coupon text-nowrap my-2"
+                                            data-course=""
+                                            style="outline: none;box-shadow: none;border-left: 1px solid #90A0B7;padding: 0 0.7rem;background:white;color: #90A0B7;font-size: 14px;border-radius: 0 4px 4px 0!important;"
+                                            onclick="applyCoupon(this)">
+                                        Áp dụng
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="body-content">
+            <div class="my-5">
+                <div class="container">
+                    <div class="main-content">
+                        <p class="f-32 fw-500 mb-3">Mô tả dịch vụ</p>
+                        <div class="show-more--container">
+                            <div class="cou-description ck-content show-more--with-gradient show-more--content  f-16">
+                                @Model.ServiceDetail.Content
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-5" id="reviews">
+                <div class="container">
+                    <div class="main-content">
+                        @if (isLoggedIn)
+                        {
+
+                            <p class="f-32 fw-500 mb-3">Đánh giá dịch vụ</p>
+                            <div class="d-flex align-items-center justify-content-center border my-3">
+                                <form class="card" method="post" asp-page-handler="RateService">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <img src="@accountLogin.Avatar" width="70" class="rounded-circle mt-2">
+                                        </div>
+                                        <div class="col-10">
+                                            <div class="comment-box ml-2">
+                                                <input type="hidden" asp-for="InputServiceId" value="@Model.InputServiceId" />
+                                                <h4>Thêm đánh giá</h4>
+
+                                                <div class="rating">
+                                                    <input type="radio" asp-for="RatingPoint" value="5" id="5"><label for="5">☆</label>
+                                                    <input type="radio" asp-for="RatingPoint" value="4" id="4"><label for="4">☆</label>
+                                                    <input type="radio" asp-for="RatingPoint" value="3" id="3"><label for="3">☆</label>
+                                                    <input type="radio" asp-for="RatingPoint" value="2" id="2"><label for="2">☆</label>
+                                                    <input type="radio" asp-for="RatingPoint" value="1" id="1"><label for="1">☆</label>
+                                                </div>
+
+                                                <div class="text-danger no-rating" style="margin-top:27px">
+                                                    @if (TempData["NoRating"] != null)
+                                                    {
+                                                        <span>@TempData["NoRating"]</span>
+                                                    }
+                                                </div>
+
+                                                <div class="comment-area">
+
+                                                    <textarea class="form-control" asp-for="CommentService" placeholder="Ý kiến của bạn" rows="4"></textarea>
+                                                    <span asp-validation-for="CommentService" class="text-danger"></span>
+                                                </div>
+
+                                                <div class="comment-btns mt-2">
+
+                                                    <div class="row">
+
+                                                        <div class="">
+
+                                                            <div class="pull-right">
+
+                                                                <button class="btn btn-success send btn-sm">
+                                                                    Gửi <i class="fa fa-long-arrow-right ml-1"></i>
+                                                                </button>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+
+                                </form>
+                            </div>
+                        }
+                        <p class="f-32 fw-500 mb-3 rate-customer">Đánh giá khách hàng</p>
+                        <div class="d-flex align-items-center justify-content-center border my-3">
+                            <div class="px-3 text-center" style="min-width: 30%">
+                                <p class="f-24">
+                                    <i class="fas fa-star mr-2" style="color: #F2C94C"></i>
+                                    <strong>@Model.ServiceDetail.AverageRating/5</strong>
+                                </p>
+                                <p class="f-16">
+                                    <strong>@Model.ServiceDetail.RatingCount</strong> Đánh giá và nhận xét
+                                </p>
+                            </div>
+
+                            <div class="container" style="border-left: 1px solid #dee2e6">
+                                <div class="col-lg-12">
+                                    <ul class="mb-0 list-unstyled" style="margin: 0 auto;">
+                                        <li class="my-2">
+                                            <div style="" class="d-flex color_label pointer show_review"
+                                                 onclick="viewMoreReview(5,this)">
+                                                <div class="progress w-100 my-auto rounded-0 mr-3"
+                                                     style="height: 8px;min-width: 65px">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="background: #f2c94c;width: 80%"
+                                                         aria-valuenow="80" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                                <div>
+                                                    <div class="cou-rating">
+                                                        <div class="gen-star">
+                                                            <div class="stars">
+                                                                <div class="stars-content">
+                                                                    <div class="fas fa-star star-on"
+                                                                         style="width: 92px"></div>
+                                                                    <div class="fas fa-star star-off"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 text-right my-auto fw-600 mx-2"
+                                                   style="min-width: 30px;text-decoration: none">
+                                                    83
+                                                    %
+                                                </p>
+
+                                            </div>
+                                        </li>
+                                        <li class="my-2">
+                                            <div style="" class="d-flex color_label pointer show_review"
+                                                 onclick="viewMoreReview(4,this)">
+                                                <div class="progress w-100 my-auto rounded-0 mr-3"
+                                                     style="height: 8px;min-width: 65px">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="background: #f2c94c;width: 15%"
+                                                         aria-valuenow="15" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                                <div>
+                                                    <div class="cou-rating">
+                                                        <div class="gen-star">
+                                                            <div class="stars">
+                                                                <div class="stars-content">
+                                                                    <div class="fas fa-star star-on"
+                                                                         style="width: 73.4px"></div>
+                                                                    <div class="fas fa-star star-off"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 text-right my-auto fw-600 mx-2"
+                                                   style="min-width: 30px;text-decoration: none">
+                                                    16
+                                                    %
+                                                </p>
+
+                                            </div>
+                                        </li>
+                                        <li class="my-2">
+                                            <div style="" class="d-flex color_label pointer show_review"
+                                                 onclick="viewMoreReview(3,this)">
+                                                <div class="progress w-100 my-auto rounded-0 mr-3"
+                                                     style="height: 8px;min-width: 65px">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="background: #f2c94c;width: 2%" aria-valuenow="2"
+                                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div>
+                                                    <div class="cou-rating">
+                                                        <div class="gen-star">
+                                                            <div class="stars">
+                                                                <div class="stars-content">
+                                                                    <div class="fas fa-star star-on"
+                                                                         style="width: 54.8px"></div>
+                                                                    <div class="fas fa-star star-off"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 text-right my-auto fw-600 mx-2"
+                                                   style="min-width: 30px;text-decoration: none">
+                                                    3
+                                                    %
+                                                </p>
+
+                                            </div>
+                                        </li>
+                                        <li class="my-2">
+                                            <div style="opacity: 0.5;cursor: not-allowed;"
+                                                 class="d-flex color_text2">
+                                                <div class="progress w-100 my-auto rounded-0 mr-3"
+                                                     style="height: 8px;min-width: 65px">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="background: #f2c94c;width: 0%" aria-valuenow="0"
+                                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div>
+                                                    <div class="cou-rating">
+                                                        <div class="gen-star">
+                                                            <div class="stars">
+                                                                <div class="stars-content">
+                                                                    <div class="fas fa-star star-on"
+                                                                         style="width: 36.2px"></div>
+                                                                    <div class="fas fa-star star-off"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 text-right my-auto fw-600 mx-2"
+                                                   style="min-width: 30px;text-decoration: none">
+                                                    0
+                                                    %
+                                                </p>
+
+                                            </div>
+                                        </li>
+                                        <li class="my-2">
+                                            <div style="opacity: 0.5;cursor: not-allowed;"
+                                                 class="d-flex color_text2">
+                                                <div class="progress w-100 my-auto rounded-0 mr-3"
+                                                     style="height: 8px;min-width: 65px">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="background: #f2c94c;width: 0%" aria-valuenow="0"
+                                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div>
+                                                    <div class="cou-rating">
+                                                        <div class="gen-star">
+                                                            <div class="stars">
+                                                                <div class="stars-content">
+                                                                    <div class="fas fa-star star-on"
+                                                                         style="width: 13.6px"></div>
+                                                                    <div class="fas fa-star star-off"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 text-right my-auto fw-600 mx-2"
+                                                   style="min-width: 30px;text-decoration: none">
+                                                    0
+                                                    %
+                                                </p>
+
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="list_reviews" id="reviewContainer">
+                            @foreach (var ratingList in Model.ServiceRatingList)
+                            {
+                                @* var getAccInList = await _accountService.GetByIdAccount(ratingList.UserId); *@
+                                var getAccInList = Model.ReviewerAccounts.ContainsKey(ratingList.UserId)
+                                ? Model.ReviewerAccounts[ratingList.UserId]
+                                : null;
+                                <div class="border p-3 mb-2">
+                                    <div class="d-flex mb-2">
+                                        <img src="@getAccInList.Avatar"
+                                             alt="" data-src="../caches/ua_small/users/1615037654.jpg"
+                                             class="my-auto rounded-circle lazyload mr-3" width="36px"
+                                             height="36px" />
+                                        <div class="user-right-new">
+                                            <p class="mb-0 f-16 user-name color_label fw-700">
+                                                <a target="_blank"
+                                                   href="https://gitiho.com/u/79716-lam-phuong-chi">
+                                                    @getAccInList.Username
+                                                </a>
+                                            </p>
+                                            <div class="d-flex">
+                                                <div class="cou-rating mr-3">
+                                                    <div class="gen-star">
+                                                        <div class="stars">
+                                                            @{
+                                                                // Tính số sao đầy và trống dựa trên Rating
+                                                                int fullStars = (int)Math.Floor(ratingList.Rating); // Lấy phần nguyên
+                                                                int emptyStars = 5 - fullStars; // Tính số sao còn lại
+                                                                Console.WriteLine($"{fullStars}, {emptyStars}");
+                                                            }
+                                                            <div class="stars-content">
+                                                                @for (int i = 1; i <= fullStars; i++)
+                                                                {
+                                                                    @* <div class="fas fa-star star-on"
+                                                            style="width: 92px"></div> *@
+                                                                    <label class="star-cmt" title="Full star">★</label>
+                                                                }
+                                                                @for (int i = 1; i <= emptyStars; i++)
+                                                                {
+                                                                }
+                                                                @* <div class="fas fa-star star-off"></div> *@
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 color_text2">@ratingList.RatedAt</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="f-16" style="word-break: break-word">
+                                        @ratingList.Comment
+                                    </div>
+
+                                    <div class="mt-2">
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        @* viewMoreReview *@
+
+                        @if (Model.ServiceRatingList.Count() < 5)
+                        {
+
+                        }
+                        else
+                        {
+                            <div class="m-auto btn--more-review" style="max-width: 200px">
+                                <button id="loadMoreReviews" class="round-10 py-2 px-3 w-100 color_label btn btn-more btn-default font-weight-bold text-decoration-none justify-content-center">
+                                    Xem thêm <i class="fal fa-angle-down"></i>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-5" id="teacher">
+                <div class="container">
+                    <div class="main-content">
+                        <p class="f-32 fw-500 mb-3">Chuyên gia:</p>
+
+                        <div>
+                            <div class="info-text mb-auto mt-4 mt-md-auto">
+                                <p class="color-label fw-600 mb-2 fw-700">
+                                    <a asp-page="/Profile/PersonalPage" asp-route-id="@Model.CreatorService.AccountId"
+                                       class="color_label"><u>@Model.CreatorService.FullName</u></a>
+                                </p>
+                            </div>
+
+                            <div class="d-flex mt-4">
+                                <div style="box-shadow: 0px 6px 22px 0px #BDCCE099;width: 125px;height: 125px"
+                                     class="rounded-circle mr-4 my-auto">
+                                    <img src="@Model.CreatorService.Avatar" width="125px"
+                                         height="125px" class="avatar rounded-circle lazyload mx-auto"
+                                         alt="G-LEARNING" data-src="../caches/ua_medium/users/1606461286.png" />
+                                </div>
+                                <div>
+                                    <ul class="list-unstyled">
+                                        <li>
+                                            <div class="d-flex mb-3">
+                                                <i class="fa-solid fa-phone my-auto mr-3" style="width: 17px"></i>
+                                                <p class="mb-0 my-auto">
+                                                    @Model.CreatorService.Phone
+                                                </p>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex mb-3">
+                                                <i class="fa-solid fa-envelope my-auto mr-3" style="width: 17px"></i>
+                                                <p class="mb-0 my-auto">
+                                                    @Model.CreatorService.Email
+                                                </p>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex mb-3">
+                                                <i class="fa-solid fa-graduation-cap my-auto mr-3" style="width: 17px"></i>
+                                                <p class="mb-0 my-auto">@Model.CreatorService.Major</p>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex">
+                                                <i class="fa-solid fa-seedling my-auto mr-3" style="width: 17px"></i>
+                                                <p class="mb-0 my-auto">1 dịch vụ</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="teacher-achievement mt-3">
+                                <div class="show-more--container">
+                                    <span id="show-more-check2" data-type="checkbox" data-checked=""
+                                          style="display: none;"></span>
+                                    <div class="cou-description ck-content show-more--with-gradient show-more--content  f-16">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="slider-menu show-content--1080">
+            <div class="container">
+                <div class="slider-menu--container justify-content-between">
+                    <div class="w-100 justify-content-end slider-menu--show-transactional">
+                        <div class="fw-700 f-18 my-auto mr-3 slider-menu--price">
+                            199,000đ
+                        </div>
+                        <div class="slider-menu--btn">
+                            <button class="btn btn-gitiho round-4 fw-700 fw-16 w-100 text-nowrap d-flex justify-content-center"
+                                    onclick="registerCourse(this,'black')">
+                                Đăng ký ngay
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="paid-course">
+                <div class="bg-white round-10 paid-course--container slideScroll">
+                    <div>
+                        <div class="try-content">
+                        </div>
+
+                        <div class="py-3 px-3">
+                            <div class="text-white-change f-26 fw-600">Giá dịch vụ</div>
+                            <div class="d-flex justify-content-between" style="margin-top:10px; margin-bottom:0px;">
+                                <div class="d-flex">
+                                    <p class="f-20 color_label mb-0 fw-700 sale-price-display-js">@Model.ServiceDetail.Price<span>đ</span></p>
+                                </div>
+                            </div>
+
+                            <div class="button-cou-register" data-role="guess">
+                                @if (isLoggedIn)
+                                {
+                                    <button class="btn btn-custom-second text-uppercase btn-block text-bold"
+                                            style="padding: 0.375rem 0.75rem;" id="Preview_Button_Dangkyhocngay2"
+                                            onclick="registerCourse(this,'white'); showModalForm();">
+                                        Đặt lịch
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-custom-second text-uppercase btn-block text-bold"
+                                            style="padding: 0.375rem 0.75rem;" id="Preview_Button_Dangkyhocngay2"
+                                            onclick="registerCourse(this,'white'); window.dialog.showModal();">
+                                        Đặt lịch
+                                    </button>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <dialog id="dialog">
+        <h2>Bạn chưa đăng nhập</h2>
+        <p>Cần tài khoản để tiến hành đăng nhập</p>
+        <a asp-page="/Access/Login" class="login-btn">Đăng nhập</a>
+        <button onclick="window.dialog.close();" aria-label="close" class="x">❌</button>
+    </dialog>
+    <div id="requestModal" class="modal" style="display: none;">
+        <form class="modal-content" method="post" asp-page-handler="RequestService">
+            <input type="hidden" asp-for="InputServiceId" value="@Model.ServiceDetail.ServiceId" />
+            <span class="close" onclick="closeModalForm()">&times;</span>
+            <h2>Nhập yêu cầu của bạn</h2>
+            <textarea id="userRequest" rows="4" placeholder="Nhập yêu cầu..." asp-for="InputRequestContent"></textarea>
+            <button id="submitRequest">Gửi yêu cầu</button>
+        </form>
+    </div>
+
+    <input type="hidden" name="coupon_id" value="">
+    <input type="hidden" name="voucher_id">
+    <div class="overlay hide"></div>
+</div>
+
+<script src="~/js/mainServiceDetail.js"></script>
+<script src="~/plugin/jquery.js"></script>
+<script defer src="~/plugin/bootstrap4/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="~/plugin/jquery.form.min.js"></script>
+<script src="~/plugin/bootstrap-notify/bootstrap-notify.js"></script>
+<script defer src="~/plugin/bootstrap-select/bootstrap-select.js"></script>
+<script defer src="~/plugin/mobile_detect.js"></script>
+<script src="~/js/student/cookie_save_videof769.js?id=26255582a28eacd5eb89d150d7e8e249"></script>
+<script src="~/plugin/plyr-3.7.2/plyr.polyfilled.js"></script>
+<script src="~/plugin/hls_v2.js"></script>
+<script src="~/js/gitiho/common0ff5.js?v=1.0.2"></script>
+<script src="~/js/gitiho/carta04e.js?id=c7bd361f2102f14a32941dba0503d4ef"></script>
+<script src="~/js/gitiho_v2/general2ffb.js?id=9d1e019138301ca90a447eed6b6f4c42"></script>
+<script src="~/plugin/jquery.lazyload.minf700.js?v=1.0.1"></script>
+<script src="~/js/gitiho_v2/form_register_lead2dd0.js?id=21e1f2a0fa52b6b64123e3271ddd24ba"></script>
+<script src="~/plugin/slick/slick.min.js"></script>
+<script src="~/js/gitiho_v2/voucherd5f8.js?id=05236dcfe549f239cf2e185e70982c06"></script>
+<script src="~/js/gitiho_v2/cart_paymentf830.js?id=c81b517123495acbbf8911a2598a6e9b"></script>
+<script type="text/javascript">
+    tracking_form();
+    function tracking_form() {
+        var cp_login_register_form = document.getElementsByClassName('gitiho-login');
+        var cp_login_form_install = document.getElementById('formLogin');
+        var cp_register_form_install = document.getElementById('formRegister');
+        var gitiho_register_form = document.getElementById('gitiho-register-form');
+        var gitiho_register_form2 = document.getElementById('webform');
+
+        if (cp_login_register_form) {
+            if (cp_login_register_form[0] != undefined) {
+                cp_login_register_form[0].addEventListener('submit', function () {
+                    var attribute = cp_login_register_form[0].getAttribute("to");
+                    var val_name = document.getElementsByName("name")[0].value;
+                    var val_email = document.getElementsByName("email")[0].value;
+                    if (typeof mt != "function") return;
+                    if (attribute == 'auth/register') {
+                        if (!val_name || !val_email) return;
+                        mt('send', 'pageview', { firstname: val_name, email: val_email });
+                        return true;
+                    }
+                    if (attribute !== 'auth/register') {
+                        if (!val_email || val_email == null) return;
+                        mt('send', 'pageview', { email: val_email });
+                        return true;
+                    }
+                });
+            }
+        }
+
+        if (cp_login_form_install) {
+            cp_login_form_install.addEventListener('submit', function () {
+                var email_login = document.getElementsByName("email_login")[0].value;
+                if (typeof mt != "function") return;
+                if (!email_login || email_login == null) return;
+                mt('send', 'pageview', { email: email_login });
+                return true;
+            });
+        }
+
+        if (cp_register_form_install) {
+            cp_register_form_install.addEventListener('submit', function () {
+                var name_register = document.getElementsByName("name")[0].value;
+                var email_register = document.getElementsByName("email")[0].value;
+                if (typeof mt != "function") return;
+                if (!name_register || !email_register) return;
+                mt('send', 'pageview', { firstname: name_register, email: email_register });
+                return true;
+            });
+        }
+
+        if (gitiho_register_form) {
+            gitiho_register_form.addEventListener('submit', function () {
+                var name_register = document.getElementsByName("name")[0].value;
+                var phone_register = document.getElementsByName("phone")[0].value;
+                var email_register = document.getElementsByName("email")[0].value;
+                var address_register = document.getElementsByName("address")[0].value;
+                var khoahoc = document.getElementsByName("course_id")[0].value;
+                if (typeof mt != "function") return;
+                if (!name_register || !phone_register || !email_register) return;
+                mt('send', 'pageview', { firstname: name_register, mobile: phone_register, email: email_register, address1: address_register, khoahoc: khoahoc });
+                return true;
+            });
+        }
+
+        if (gitiho_register_form2) {
+            gitiho_register_form2.addEventListener('submit', function () {
+                var name_register = document.getElementsByName("name")[0].value;
+                var phone_register = document.getElementsByName("phone")[0].value;
+                var email_register = document.getElementsByName("email")[0].value;
+                var address_register = document.getElementsByName("address")[0].value;
+                var khoahoc = document.getElementsByName("course_ids")[0].value;
+                if (typeof mt != "function") return;
+                if (!name_register || !phone_register || !email_register) return;
+                mt('send', 'pageview', { firstname: name_register, mobile: phone_register, email: email_register, address1: address_register, khoahoc: khoahoc });
+                return true;
+            });
+        }
+    }
+
+    $(document).on('input', 'input[name="coupon-input"]', function () {
+        $('input[name="coupon-input"]').val($(this).val());
+        if ($(this).val().trim() != '') {
+            $('.button-apply-coupon').css('color', '#219653');
+        }
+        else {
+            $('.button-apply-coupon').css('color', '#90A0B7');
+        }
+    });
+
+
+    var appling = false;
+    function applyCoupon(el) {
+
+        let coupon_input = $('input[name="coupon-input"]');
+        if (coupon_input.val().trim() == '') {
+            return;
+        }
+
+        if (appling) {
+            return;
+        }
+        appling = true;
+        $(el).html('Đang xử lý...');
+
+        $.ajax({
+            url: "https://gitiho.com/cart/validate-coupon",
+            data: {
+                coupon: coupon_input.val(),
+                model_id: 99,
+                model_class: "App\\Models\\Course",
+            },
+            method: 'POST'
+        }).done((res) => {
+            if (res.success) {
+                $(el).html('Áp dụng');
+                $('input[name="coupon_id"]').val(res.coupon_id);
+                $('.coupon-input-render').html(res.html);
+                $('.sale-price-display-js').text(res.price);
+                $('.percent-display').text(res.percent);
+                appling = false;
+            } else {
+                notifiMessage(res.message, 'danger');
+                $(el).html('Áp dụng');
+                appling = false;
+                $('input[name="coupon-input"]').focus();
+            }
+        })
+    }
+
+    function removeCoupon(el) {
+        $(el).html('Đang xử lý...');
+        setTimeout(function () {
+            $('.show-coupon-apply').remove();
+            $('input[name="coupon-input"]').attr('placeholder', 'Mã giảm giá');
+            $('input[name="coupon_id"]').val('');
+            $('.sale-price-display-js').text($('.sale-price-display-js').attr('data-price-old'));
+            $('.percent-display').text($('.percent-display').attr('data-percent-old'));
+        }, 100);
+
+    }
+
+    function showMoreCourseContent(el) {
+        $(el).parents('.list-lectures').find('.content-list').removeClass('d-none');
+        $(el).remove();
+    }
+
+    function showMoreCourseRelate(el) {
+        let elm = $(el).parents('.course-comparison--show-more').find('#show-more');
+
+        if (elm.attr('data-checked') == '') {
+            elm.attr('data-checked', 'checked');
+        }
+        else {
+            elm.attr('data-checked', '');
+        }
+    }
+
+    var my_role = "guess";
+    var dis_parent_id = 0;
+    var dis_model_id = null;
+    var dis_model_class = null;
+    var dis_type = null;
+    var dis_content = '';
+    var imageRating = [];
+    var imageRatingDis = [];
+    function clickUploadFile(el) {
+        if ($(el).attr('data-type') == 'reply') {
+            if (imageRating.length >= 3) {
+                alert('Đã upload quá số ảnh quy định');
+                return;
+            }
+        }
+        else {
+            if (imageRatingDis.length >= 3) {
+                alert('Đã upload quá số ảnh quy định');
+                return;
+            }
+        }
+
+        $(el).parents('.textarea--image').find('.fileRatingUpload').click();
+    }
+
+    $(document).on('click', '.delete--image-review', function () {
+        if ($(this).attr('data-type') == 'reply') {
+            imageRating.splice($(this).attr('data-ind'), 1);
+            viewUploadReview('reply');
+        }
+        else {
+            imageRatingDis.splice($(this).attr('data-ind'), 1);
+            viewUploadReview();
+        }
+
+    })
+
+    function viewuploadreview(type = null) {
+        let html = '';
+        if (type == 'reply') {
+            $.each(imagerating, (ind, v) => {
+                html += '<li><img src="' + v + '"><span class="fbdelimg delete--image-review" data-type="' + type + '" data-ind="' + ind + '">xóa</span></li>';
+            })
+
+            $('.discussion-reply-form-append .resrtimg').html(html);
+            if (imagerating.length > 0) {
+                $('.discussion-reply-form-append .resrtimg').removeclass('hide');
+            }
+            else {
+                $('.discussion-reply-form-append .resrtimg').addclass('hide');
+            }
+        } else {
+            $.each(imageratingdis, (ind, v) => {
+                html += '<li><img src="' + v + '"><span class="fbdelimg delete--image-review" data-ind="' + ind + '">xóa</span></li>';
+            })
+
+            $('.resrtimgdis').html(html);
+            if (imageratingdis.length > 0) {
+                $('.resrtimgdis').removeclass('hide');
+            }
+            else {
+                $('.resrtimgdis').addclass('hide');
+            }
+        }
+
+    }
+
+    $(document).on('change', '.fileRatingUpload', function () {
+        var data = new FormData();
+
+        $.each(this.files, function (i, file) {
+            data.append('file[' + i + ']', file);
+        });
+
+        $.ajax({
+            url: $(this).attr('data-href'),
+            type: "POST",
+            data: data,
+            processData: false,
+            contentType: false,
+        }).done((res) => {
+            if (res.success) {
+
+                if ($(this).attr('data-type') == 'reply') {
+                    $.each(res.imageRating, (ind, v) => {
+                        imageRating.push(v);
+                    });
+
+                    $(this).val('');
+                    viewUploadReview('reply');
+                }
+                else {
+                    $.each(res.imageRating, (ind, v) => {
+                        imageRatingDis.push(v);
+                    });
+
+                    $(this).val('');
+                    viewUploadReview();
+                }
+
+
+            }
+            else {
+                alert(res.message);
+                return;
+            }
+        }).fail((xhr) => {
+
+        });
+    })
+
+    function showModalForm() {
+        document.getElementById("requestModal").style.display = "block";
+    }
+
+    function closeModalForm() {
+        document.getElementById("requestModal").style.display = "none";
+    }
+
+    function sendDiscussion(el, type = null) {
+
+        dis_content = $(el).parents('.discussion-detail-item').find('textarea[name="content"]').val();
+
+        if (dis_content.trim() == '') {
+            alert('Vui lòng điền nội dung trước khi gửi thảo luận.');
+            return;
+        }
+
+        dis_model_id = $(el).attr('data-model-id');
+        dis_model_class = $(el).attr('data-model-class');
+        dis_type = type;
+        if (my_role == 'guess') {
+            $('#modalInfoSendDis').modal('show');
+        }
+        else {
+            sendDiscussionNow();
+        }
+    }
+
+    function showReplyDis(el) {
+
+        dis_parent_id = $(el).attr('data-parent-id');
+        $('.discussion-reply-form-append').html('');
+        $(el).parents('.list-discussion').find('.discussion-reply-form-append').html($('.discussion-reply-form').html());
+        $(el).parents('.list-discussion').find('.discussion-reply-form-append textarea').focus();
+
+    }
+
+    $('img[data-enlargable]').addClass('img-enlargable');
+
+
+    $(document).on('click', '.img-enlargable', function () {
+        var src = $(this).attr('src');
+
+        $('<div>').css({
+            background: 'RGBA(0,0,0,.5)',
+            width: '100%', height: '100%',
+            position: 'fixed',
+            zIndex: '10000',
+            cursor: 'zoom-out',
+            top: '0',
+            left: '0',
+        }).append(
+            $('<div>').css({
+                background: 'url("' + src + '") no-repeat center',
+                backgroundSize: 'contain',
+                width: '100%',
+                maxWidth: '70vw',
+                maxHeight: '70vh',
+                height: '100%',
+                position: 'fixed',
+                transform: 'translate(-50%,-50%)',
+                zIndex: '10000',
+                top: '50%', left: '50%',
+                cursor: 'zoom-out'
+            })
+        ).click(function () {
+            $(this).remove();
+        }).appendTo('body');
+    });
+
+    $(document).on('input', 'input[name="coupon-input"]', function () {
+        $('input[name="coupon-input"]').val($(this).val());
+        if ($(this).val().trim() != '') {
+            $('.button-apply-coupon').css('color', '#219653');
+        }
+        else {
+            $('.button-apply-coupon').css('color', '#90A0B7');
+        }
+    });
+
+    var appling = false;
+    function applyCoupon(el) {
+
+        let coupon_input = $('input[name="coupon-input"]');
+        if (coupon_input.val().trim() == '') {
+            return;
+        }
+
+        if (appling) {
+            return;
+        }
+        appling = true;
+        $(el).html('Đang xử lý...');
+
+        $.ajax({
+            url: "https://gitiho.com/cart/validate-coupon",
+            data: {
+                coupon: coupon_input.val(),
+                model_id: 99,
+                model_class: "App\\Models\\Course",
+            },
+            method: 'POST'
+        }).done((res) => {
+            if (res.success) {
+                $(el).html('Áp dụng');
+                $('input[name="coupon_id"]').val(res.coupon_id);
+                $('.coupon-input-render').html(res.html);
+                $('.sale-price-display-js').text(res.price);
+                $('.percent-display').text(res.percent);
+                appling = false;
+            } else {
+                notifiMessage(res.message, 'danger');
+                $(el).html('Áp dụng');
+                appling = false;
+                $('input[name="coupon-input"]').focus();
+            }
+        })
+    }
+
+    function removeCoupon(el) {
+        $(el).html('Đang xử lý...');
+        setTimeout(function () {
+            $('.show-coupon-apply').remove();
+            $('input[name="coupon-input"]').attr('placeholder', 'Mã giảm giá');
+            $('input[name="coupon_id"]').val('');
+            $('.sale-price-display-js').text($('.sale-price-display-js').attr('data-price-old'));
+            $('.percent-display').text($('.percent-display').attr('data-percent-old'));
+        }, 100);
+
+    }
+
+    function addComboToCart(el, id) {
+        let textHtml = $(el).html();
+
+        $(el).html($('.button-loading').html());
+        $(el).attr('disabled', 'disabled');
+
+        $.ajax({
+            url: '/cart/add-combo',
+            data: {
+                id: id
+            },
+            type: 'post'
+        }).done((res) => {
+            if (res.success) {
+                $(el).html(textHtml);
+                $(el).removeAttr('disabled');
+                window.location.href = res.href;
+            }
+            else {
+                $(el).html(textHtml);
+                $(el).removeAttr('disabled');
+
+                $.notify(res.message, {
+                    'type': 'danger'
+                })
+            }
+        }).fail((xhr) => {
+
+            $.notify('Có lỗi xảy ra khi thêm sản phẩm giỏ hàng.', {
+                'type': 'danger'
+            })
+            $(el).html(textHtml);
+            $(el).removeAttr('disabled');
+        })
+
+    }
+
+    jQuery.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+        }
+    });
+
+    var playerReachTime = 0;
+    var speedOption = { selected: 1, options: [0.5, 0.75, 1, 1.5, 2] };
+
+
+    function _getTargetTime(plyr, input) {
+        if (
+            typeof input === "object" &&
+            (input.type === "input" || input.type === "change")
+        ) {
+            return input.target.value / input.target.max * plyr.media.duration;
+        } else {
+            // We're assuming its a number
+            return Number(input);
+        }
+    }
+
+    if (getCookie('not_open_popup')) {
+        delete_cookie('not_open_popup');
+    }
+
+    $('.clickGOV').on('click', function () {
+        window.open("http://online.gov.vn/Home/WebDetails/65181", "_blank");
+    })
+
+    $(function () {
+        if ($("img.lazyload").length > 0) {
+            $("img.lazyload").lazyload({
+                effect: "fadeIn",
+                threshold: 0.1,
+            });
+        }
+
+        if ($('.count_up_pro').length > 0) {
+            setInterval(function () {
+                $('.count_up_pro').text(Math.floor(Math.random() * (60 - 40 + 1)) + 40);
+            }, 5000);
+        }
+
+        $('.icon-timesJs').click(function () {
+            let dataCookie = $(this).attr('data-cookie');
+            $.ajax({
+                url: '/cookie-off-banner',
+                data: {
+                    cookie: dataCookie
+                }
+            }).done((res) => {
+                if (res.success) {
+                    $('.banner-top').slideUp(300);
+                    $('#page-content-wrapper').css('padding-top', '120px');
+                }
+                else {
+                    console.log('error');
+                }
+            }).fail((xhr) => {
+                console.log('error');
+            })
+        });
+    });
+    function openCodeDiscount(dom) {
+        var checkMenuOpen = $(dom).parent().find('.form-code').hasClass('form-code-show');
+
+        if (checkMenuOpen === false) {
+            $(dom).parent().find('.form-code').addClass('form-code-show');
+        }
+    }
+
+    var GOOGLE_BUSINESS_VERTICAL = "education";
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+        'event': 'dynamic_remmarketing',
+        'dr_event': 'view_item',
+        'value': 199000, // nếu có, không có vui lòng xóa dòng này
+        'items': [
+            {
+                'id': 99,
+                'google_business_vertical': GOOGLE_BUSINESS_VERTICAL,
+            }
+        ]
+    });
+    function toggleDescription(id) {
+
+        if ($('#' + id).attr('data-checked') == '') {
+            $('#' + id).attr('data-checked', 'checked');
+        } else {
+            $('#' + id).attr('data-checked', '');
+        }
+    }
+
+    function showModalConfirm() {
+        const modal = $('#showBusinessModal');
+        modal.find(`#biz_${bizEmployers[0].biz_business_id}`).attr('checked', 'checked')
+        modal.find('.text-businessJs').text(bizEmployers[0].name)
+        modal.find('#show-text').text(bizEmployers[0].name)
+        modal.find('.text-courseJs').text(course.cou_title)
+        modal.find('.confirmRequest').attr('onclick', `confirmRequest(this, ${course.id}, ${bizEmployers[0].id} , ${bizEmployers[0].biz_business_id})`)
+        modal.modal('show');
+
+    }
+
+    function confirmRequest(obj, course, employer, business) {
+        let currentButton = $(obj).html();
+        const processingHtml = 'Đang xử lý <span>•</span>\n' +
+            '<span>•</span>\n' +
+            '<span>•</span>';
+        $.ajax({
+            url: '/biz/request/employer-add-course',
+            method: 'post',
+            data: {
+                course, employer, business
+            },
+            beforeSend: function () {
+                $(obj).html(processingHtml).addClass('btn-processing').prop('disabled', true);
+            }
+        }).done(function (res) {
+            if (res.success) {
+                $(obj).html(currentButton).removeClass('btn-processing').prop('disabled', false);
+                $('#showBusinessModal').modal('hide');
+                notifiMessage(res.message, 'success')
+            } else {
+                notifiMessage(res.message, 'danger')
+                $(obj).html(currentButton).removeClass('btn-processing').prop('disabled', false);
+            }
+        }).fail(function (xhr) {
+            console.log(xhr)
+        })
+    }
+
+
+    function viewMoreReview(star, el) {
+
+        if (ajaxRv) {
+            return;
+        }
+
+        let type_review_old = type_review;
+        let htmlText = $(el).html();
+        if (star != 'same') {
+            if (star == type_review) {
+                $('.btn--more-review').removeClass('hide');
+            } else {
+                type_review = star;
+                skip_rv = 0;
+                take_rv = 5;
+                $('.btn--more-review').removeClass('hide');
+            }
+        } else {
+            $(el).html('<div class="lds-ring my-auto mr-2 black"><div></div><div></div><div></div><div></div></div> Hiện thêm đánh giá');
+        }
+
+        $.ajax({
+            url: '/api/' + course.id + '/get-new-review',
+            data: {
+                skip: skip_rv,
+                take: take_rv,
+                type: 'preview',
+                star: type_review
+            },
+            method: 'post'
+        }).done((msg) => {
+            if (msg.success) {
+
+                skip_rv = msg.skip_rv;
+                if (star != 'same' && star != type_review_old) {
+                    $('.list_reviews').html(msg.html);
+                } else {
+                    $('.list_reviews').append(msg.html);
+                }
+
+
+                if ($(".list_reviews img.lazyload").length > 0) {
+                    $(".list_reviews img.lazyload").lazyload({
+                        effect: "fadeIn",
+                        threshold: 0.1,
+                    });
+                }
+
+                $(el).html(htmlText);
+                if (msg.review_last) {
+                    $('.btn--more-review').addClass('hide');
+                }
+                ajaxRv = false;
+            } else {
+                ajaxRv = false;
+                $(el).html(htmlText);
+            }
+
+        }).fail((xhr) => {
+            ajaxRv = false;
+            $(el).html(htmlText);
+        });
+    }
+
+
+    var ajaxDis = false;
+
+    function viewMoreDis(el) {
+
+        if (ajaxDis) {
+            return;
+        }
+
+        let htmlText = $(el).html();
+
+        $(el).html('<div class="lds-ring my-auto mr-2 black"><div></div><div></div><div></div><div></div></div> ' + htmlText);
+
+        $('img[data-enlargable]').addClass('img-enlargable');
+
+        $.ajax({
+            url: '/api/' + course.id + '/get-new-discussion',
+            data: {
+                skip: skip_discussion,
+                take: take_discussion
+            },
+            method: 'post'
+        }).done((msg) => {
+            if (msg.success) {
+
+                skip_discussion = msg.skip_discussion;
+
+                $('.discussion-course .list-discussions').append(msg.html);
+
+                if ($(".list-discussions img.lazyload").length > 0) {
+                    $(".list-discussions img.lazyload").lazyload({
+                        effect: "fadeIn",
+                        threshold: 0.1,
+                    });
+                    $('img[data-enlargable]').addClass('img-enlargable');
+                }
+
+                $(el).html(htmlText);
+
+                if (msg.discussion_last) {
+                    $('.btn--more-discussion').addClass('hide');
+                    $('img[data-enlargable]').addClass('img-enlargable');
+                }
+                ajaxDis = false;
+            } else {
+                ajaxDis = false;
+                $(el).html(htmlText);
+            }
+
+        }).fail((xhr) => {
+            ajaxDis = false;
+            $(el).html(htmlText);
+        });
+    }
+
+    function showReply(el) {
+        $(el).addClass('hide');
+        $(el).parents('.list-replies').find('.discussion-items').removeClass('hide');
+    }
+
+    $(document).on('click', '.link-user', function () {
+
+        if ($(this).attr('data-href') == '') {
+            return;
+        }
+        window.open(
+            $(this).attr('data-href'),
+            '_blank'
+        );
+    });
+
+    var ajaxRegister = false;
+
+    function registerCourse(el, type) {
+        if (ajaxRegister) {
+            return;
+        }
+
+        ajaxRegister = true;
+        let htmlText = $(el).html();
+        $(el).html('<div class="lds-ring my-auto mr-2 ' + type + '"><div></div><div></div><div></div><div></div></div>' + htmlText);
+
+
+        $.ajax({
+            url: "https://gitiho.com/cart/add",
+            method: 'POST',
+            data: {
+                'product_id': 99,
+                'product_model': 'course',
+
+                'sale_campaign_code': '',
+                'sale_campaign_rule': '',
+                'voucher_id': $('input[name="voucher_id"]').val(),
+                'coupon_id': $('input[name="coupon_id"]').val(),
+            }
+        }).done((res) => {
+            if (res.success) {
+                ajaxRegister = false;
+                $(el).html(htmlText);
+                location.href = res.href;
+
+                var GOOGLE_BUSINESS_VERTICAL = "education";
+                window.dataLayer = window.dataLayer || [];
+                dataLayer.push({
+                    'event': 'dynamic_remmarketing',
+                    'dr_event': 'add_to_cart',
+                    'value': 199000, // nếu có, không có vui lòng xóa dòng này
+                    'items': [
+                        {
+                            'id': 99,
+                            'google_business_vertical': GOOGLE_BUSINESS_VERTICAL,
+                        },
+                    ]
+                });
+            } else {
+                ajaxRegister = false;
+                $(el).html(htmlText);
+                notifiMessage(res.message, 'danger')
+            }
+        }).fail((xhr) => {
+            ajaxRegister = false;
+            $(el).html(htmlText);
+        })
+    }
+
+    var show_all_section = false;
+
+    function showToggleAllSection(el) {
+        if (show_all_section) {
+            show_all_section = false;
+            $(el).text('Mở rộng tất cả các phần');
+
+            $('#accordionLecture .item-section:not(.collapsed)').click();
+        } else {
+            show_all_section = true;
+            $(el).text('Thu gọn tất cả các phần');
+            $('#accordionLecture .item-section.collapsed').click();
+            $('#accordionLecture').find('.content-list').removeClass('d-none');
+            $('.list-lectures').find('.button--show-more').remove();
+        }
+    }
+
+    var queryString = window.location.search;
+    var searchParams = new URLSearchParams(queryString);
+    if (searchParams.get('popup_try') == '1' && $('#buttonVideoTry').length > 0) {
+        $('#buttonVideoTry').click();
+    }
+
+    // Giá trị AverageRating từ model
+    var averageRating = @Model.ServiceDetail.AverageRating ?? 0; // Nếu không có rating thì gán giá trị 0.
+
+    // Hàm để tạo sao
+    function renderStars(rating) {
+        const starContainer = document.getElementById('star-container');
+        starContainer.innerHTML = ''; // Clear any existing stars
+
+        const fullStar = '<i class="fas star-point fa-star"></i>'; // Icon cho ngôi sao đầy
+        const halfStar = '<i class="fas star-point fa-star-half-alt"></i>'; // Icon cho nửa sao
+        const emptyStar = '<i class="far star-point fa-star"></i>'; // Icon cho ngôi sao trống
+
+        // Tính số sao đầy
+        let fullStars = Math.floor(rating);
+        // Tính nửa sao
+        let halfStarValue = rating - fullStars >= 0.5 ? 1 : 0;
+        // Số sao trống còn lại
+        let emptyStars = 5 - fullStars - halfStarValue;
+
+        // Hiển thị sao đầy
+        for (let i = 0; i < fullStars; i++) {
+            starContainer.innerHTML += fullStar;
+        }
+
+        // Hiển thị nửa sao nếu có
+        if (halfStarValue) {
+            starContainer.innerHTML += halfStar;
+        }
+
+        // Hiển thị sao trống
+        for (let i = 0; i < emptyStars; i++) {
+            starContainer.innerHTML += emptyStar;
+        }
+    }
+
+    // Gọi hàm renderStars với giá trị AverageRating
+    renderStars(averageRating);
+
+    let skipP = 5; //Starting from the 6th review
+    let takeP = 5; //Number of reviews to load per request
+
+    var getLoadMore = document.getElementById("loadMoreReviews");
+
+    getLoadMore.addEventListener('click', loadMoreReviews);
+
+    function loadMoreReviews() {
+        $.ajax({
+            type: 'GET',
+            url: '/Services/ServiceDetails?handler=LoadMoreReview',
+            data: {
+                serviceId: @Model.ServiceDetail.ServiceId,
+                skip: skipP,
+                take: takeP
+            },
+            success: function (data) {
+                // Append the new reviews to the container
+                $('#reviewContainer').append(data);
+                // Increase skip for the next call
+                skipP += takeP;
+                // If fewer than 5 reviews are loaded, hide the button
+                if ($(data).filter('.border').length < takeP) {
+                    $('#loadMoreReviews').hide();
+                }
+            }
+        });
+    }
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
