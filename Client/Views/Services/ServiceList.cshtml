@@ -1,5 +1,9 @@
 ﻿@model Client.DTOs.ServiceListViewModel
 @using Microsoft.AspNetCore.Http;
+@{
+    // Dùng tạm
+    var isLoggedIn = true;
+}
 
 
 <link rel="stylesheet" href="~/css/modalFormBookingStyle.css" />
@@ -36,13 +40,12 @@
                                     }
 
                                     // Tính số lượng sao đầy dựa trên average_rating
-                                    int fullStars = (int)Math.Floor(service.AverageRating ?? 0); // Lấy phần nguyên
-                                    int emptyStars = 5 - fullStars; // Tính số sao còn lại
+                                    int fullStars = (int)Math.Round(service.AverageRating ?? 0, MidpointRounding.AwayFromZero); // Làm tròn 0.5 trở lên
+                                    int emptyStars = 5 - fullStars; // Số sao trống còn lại
                                     <tr>
                                         <td>
-                                            <h4 class="h6 fw--500 text-darkest"><a asp-page="/Service/ServiceDetail" asp-route-id="@service.ServiceId" class="btn-link">@service.Title</a></h4>
+                                            <h4 class="h6 fw--500 text-darkest"><a asp-controller="Services" asp-action="ServiceDetails" asp-route-id="@service.ServiceId" class="btn-link">@service.Title</a></h4>
 
-                                            <!-- <p>Started by <a href="member-activity-personal.html">Alice A. Baker</a> in <a href="#">sports</a> forum</p> -->
                                             <!-- hiển thị sao được đánh giá -->
                                             <div class="rate">
 
@@ -85,14 +88,14 @@
                                         </td>
                                         <td>
                                             <div>
-                                                @* @if (isLoggedIn)
+                                                @if (isLoggedIn)
                                                 {
                                                     <button class="booking-btn btn btn-primary" onclick="showModalForm(@service.ServiceId);">Đặt lịch</button>
                                                 }
                                                 else
-                                                { *@
+                                                {
                                                     <button class="booking-btn btn btn-primary" onclick="window.dialog.showModal();">Đặt lịch</button>
-                                                @* } *@
+                                                }
                                             </div>
                                         </td>
                                     </tr>
@@ -101,7 +104,7 @@
                         </table>
                     </div>
                     <div id="requestModal" class="modal" style="display: none;">
-                        <form class="modal-content" method="post" asp-page-handler="RequestService">
+                        <form class="modal-content" method="post" asp-action="RequestService" asp-controller="Services">
                             <input type="hidden" id="serviceIdInput" asp-for="InputServiceId" value="" />
                             <span class="close" onclick="closeModalForm()">&times;</span>
                             <h2>Nhập yêu cầu của bạn</h2>
@@ -117,14 +120,14 @@
 
                             @if (Model.CurrentPage > 1)
                             {
-                                <a asp-page="/Service/ListServices" asp-page-handler="Pagination" asp-route-p="@(Model.CurrentPage - 1)" asp-route-PriceFilter="@Model.PriceFilter" asp-route-RateFilter="@Model.RateFilter" class="btn-link previous-page">
+                                <a asp-controller="Services" asp-action="ServicesPagination" asp-route-p="@(Model.CurrentPage - 1)" asp-route-priceFilter="@Model.PriceFilter" asp-route-rateFilter="@Model.RateFilter" class="btn-link previous-page">
                                     <i class="fa fa-caret-left"></i>
                                 </a>
                             }
                             <input type="number" name="page-count" value="@Model.CurrentPage" class="form-control form-sm" readonly>
                             @if (Model.CurrentPage < Model.TotalPages)
                             {
-                                <a asp-page="/Service/ListServices" asp-page-handler="Pagination" asp-route-p="@(Model.CurrentPage + 1)" asp-route-PriceFilter="@Model.PriceFilter" asp-route-RateFilter="@Model.RateFilter" class="btn-link previous-page">
+                                <a asp-controller="Services" asp-action="ServicesPagination" asp-route-p="@(Model.CurrentPage + 1)" asp-route-priceFilter="@Model.PriceFilter" asp-route-rateFilter="@Model.RateFilter" class="btn-link previous-page">
                                     <i class="fa fa-caret-right"></i>
                                 </a>
                             }

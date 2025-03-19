@@ -29,5 +29,19 @@ namespace Client.DTOs
 
         [BindProperty(SupportsGet = true)]
         public int RateFilter { get; set; }
+
+        // Các thuộc tính của trang ServiceDetails
+        public Service? ServiceDetail { get; set; }
+        public Account? CreatorService { get; set; }
+        public IEnumerable<ServiceRating> ServiceRatingList { get; set; }
+        public IEnumerable<ServiceRating> MoreRatingList { get; set; }
+        public int CountBookingService { get; set; }
+        [BindProperty]
+        public decimal RatingPoint { get; set; }
+        [BindProperty]
+        [Required(ErrorMessage = "Cần bạn đóng góp ý kiến")]
+        public string CommentService { get; set; }
+        public Dictionary<int, Account> ReviewerAccounts { get; set; }
+
     }
 }

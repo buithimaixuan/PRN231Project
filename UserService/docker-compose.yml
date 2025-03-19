@@ -6,5 +6,6 @@
     ports:
       - "5157:5157"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=Microservice_UserDB;User Id=sa;Password=1234;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=Microservice_UserDB;User Id=sa;Password=khoa31102003;TrustServerCertificate=True
+
 

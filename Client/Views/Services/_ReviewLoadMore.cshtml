@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ServiceRating>
+@inject HttpClient _httpClient;
+
+@foreach (var rating in Model)
+{
+    var reviewer = ViewData["ReviewerAccounts"] is Dictionary<int, Account> reviewers && reviewers.ContainsKey(rating.UserId)
+        ? reviewers[rating.UserId]
+        : null;
+
+    <div class="border p-3 mb-2">
+        <div class="d-flex mb-2">
+            <img src="~/image/avatar2.png"
+                 alt="Avatar" class="my-auto rounded-circle mr-3" width="36px" height="36px" />
+            <div class="user-right-new">
+                <p class="mb-0 f-16 user-name color_label fw-700">
+                    <a target="_blank" href="#">
+                        @(reviewer?.Username ?? "Ẩn danh")
+                    </a>
+                </p>
+                <div class="d-flex">
+                    <div class="cou-rating mr-3">
+                        <div class="gen-star">
+                            <div class="stars">
+                                @{
+                                    int fullStars = (int)Math.Floor(rating.Rating);
+                                    int emptyStars = 5 - fullStars;
+                                }
+                                <div class="stars-content">
+                                    @for (int i = 1; i <= fullStars; i++)
+                                    {
+                                        <label class="star-cmt" title="Full star">★</label>
+                                    }
+                                    @for (int i = 1; i <= emptyStars; i++)
+                                    {
+                                        <label class="star-cmt" title="Empty star">☆</label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mb-0 color_text2">@rating.RatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+            </div>
+        </div>
+        <div class="f-16" style="word-break: break-word">
+            @rating.Comment
+        </div>
+    </div>
+}

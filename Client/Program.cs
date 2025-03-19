@@ -1,11 +1,19 @@
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 //new
 builder.Services.AddHttpClient();
 
-builder.Services.AddSession();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddDistributedMemoryCache(); // For storing session data in memory
 builder.Services.AddHttpContextAccessor();
 

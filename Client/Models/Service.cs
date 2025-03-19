@@ -11,7 +11,7 @@ public partial class Service
 
     public int CategoryServiceId { get; set; }
 
-    public DateTime CreateAt { get; set; }
+    public DateTime? CreateAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 
