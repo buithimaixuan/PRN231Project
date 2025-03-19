@@ -102,19 +102,40 @@ namespace PostService.Services.Implement
             return response;
         }
 
-        public async Task<bool> IsPostLikedByUser(int postId, int accountId)
+        public async Task<IEnumerable<LikePost>> GetAllLikePostByPostId(int postId)
         {
-            return  await _likePostRepository.IsPostLikedByUser(postId, accountId);
+            return await _likePostRepository.GetAllLikePostByPostId(postId);
         }
 
-        public async Task<bool> LikePost(int postId, int accountId) 
-        { 
-            return await _likePostRepository.LikePost(postId, accountId);
+        public async Task<LikePost> GetLikeById(int id)
+        {
+            var like = await _likePostRepository.FindById(id);
+            if (like == null)
+                throw new Exception("Like not found.");
+            return like;
         }
 
-        public async Task<bool> UnlikePost(int postId, int accountId) 
-        { 
-            return await _likePostRepository.UnlikePost(postId, accountId); 
+        public async Task<LikePost> AddLike(int accountId, int postId, bool isLike = true)
+        {
+            if (accountId <= 0 || postId <= 0)
+                throw new ArgumentException("AccountId and PostId must be positive.");
+
+            var like = await _likePostRepository.AddLike(accountId, postId, isLike);
+            return like;
+        }
+
+        public async Task RemoveLike(int accountId, int postId)
+        {
+            if (accountId <= 0 || postId <= 0)
+                throw new ArgumentException("AccountId and PostId must be positive.");
+            await _likePostRepository.RemoveLike(accountId, postId);
+        }
+
+        public async Task UpdateLike(int likePostId, bool isLike)
+        {
+            if (likePostId <= 0)
+                throw new ArgumentException("Invalid likePostId.");
+            await _likePostRepository.UpdateLike(likePostId, isLike);
         }
 
         public async Task<Post> AddPost(int categoryId, int accountId, string content)
@@ -155,14 +176,18 @@ namespace PostService.Services.Implement
             return response;
         }
 
-        public Task<int> GetLikeCountByPostId(int postId)
-        {
-            return _likePostRepository.GetLikeCountByPostId(postId);
-        }
+        //public Task<int> GetLikeCountByPostId(int postId)
+        //{
+        //    return _likePostRepository.GetLikeCountByPostId(postId);
+        //}
 
         public Task<int> DeletePost(int postId)
         {
             return _postRepository.DeletePost(postId);
+        }
+        public async Task<IEnumerable<Comment>> GetAllCommentPostByPostId(int id)
+        {
+            return await _commentRepository.GetAllCommentPostByPostId(id);
         }
 
         public async Task<Comment> FindCommentById(int id)
@@ -170,9 +195,17 @@ namespace PostService.Services.Implement
             return await _commentRepository.FindById(id);
         }
 
-        public async Task AddComment(Comment item)
+        public async Task<Comment> AddComment(int? accountId, int? postId, string content)
         {
-            await _commentRepository.Add(item);
+            // Kiểm tra đầu vào cơ bản
+            if (string.IsNullOrEmpty(content))
+                throw new ArgumentException("Content cannot be empty.");
+            if (accountId <= 0 || postId <= 0)
+                throw new ArgumentException("AccountId and PostId must be positive.");
+
+            // Thêm bình luận
+            var comment = await _commentRepository.Add(accountId, postId, content); // Trả về Comment
+            return comment;
         }
 
         public async Task UpdateComment(Comment item)

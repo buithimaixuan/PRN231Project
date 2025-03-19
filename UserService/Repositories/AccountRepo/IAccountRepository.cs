@@ -1,4 +1,5 @@
-﻿using UserService.Models;
+﻿using UserService.DTOs;
+using UserService.Models;
 
 namespace UserService.Repositories
 {
@@ -16,15 +17,12 @@ namespace UserService.Repositories
         Task Update(Account item);
         Task Delete(Account item);
         Task<int> GetTotalFarmerRepo();
-
         Task<int> GetTotalExpertRepo();
-
         Task<Account?> GetAccountByEmailForReset(string email);
         Task<string?> GetFullnameByUsername(string username);
         Task<Account?> GetAccountById(int? accountId);
         Task<List<Account>> GetAccountsByIds(List<int> ids);
         Task<List<Account>> GetAccountsByRoleId(int roleId);
-         Task<Dictionary<int, int>> GetPostCounts();
-
+        Task<Dictionary<int, int>> GetPostCounts();
     }
 }

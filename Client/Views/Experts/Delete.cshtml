@@ -1,0 +1,119 @@
+﻿@model Account
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="container">
+    <div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="FullName">Full name</label>
+                <input type="text" class="form-control" asp-for="FullName"
+                       readonly>
+
+            </div>
+            <div class="form-group  w-50">
+                <label asp-for="Username">Username</label>
+                <input asp-for="Username" type="text" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="Email">Email address</label>
+                <input asp-for="Email" class="form-control" placeholder="Enter email" readonly />
+
+            </div>
+            <div class="form-group  w-50">
+                <label asp-for="Phone">Phone number</label>
+                <input asp-for="Phone" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="DateOfBirth">Birthday</label>
+                <input asp-for="DateOfBirth" class="form-control" readonly />
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="Gender">Gender is:</label>
+                <div class="d-flex">
+                    <div class="form-check me-3">
+                        <input readonly asp-for="Gender" class="form-check-input" type="radio" value="Male" checked="@(Model.Gender == "Male")" />
+                        <label class="form-check-label">Male</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input readonly asp-for="Gender" class="form-check-input" type="radio" value="Female" checked="@(Model.Gender == "Female")" />
+                        <label class="form-check-label">Female</label>
+                    </div>
+                </div>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+
+
+
+
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="Address">Address</label>
+                <input asp-for="Address" class="form-control" readonly>
+
+            </div>
+            <div class="form-group  w-50">
+                <label>Can I have your avatar?</label>
+                <div style="width: 100px; heigh: 100px;">
+                    <img style="width: 100px; heigh: 100px;" src="@Model.Avatar" alt="img" />
+                </div>
+
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="form-group w-50">
+                <label asp-for="Major">Major</label>
+                <input asp-for="Major" class="form-control" placeholder="Enter your major at here" readonly>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="form-group w-50">
+                <label>Degree image</label>
+                <div style="width: 100px; heigh: 100px;">
+                    <img style="width: 100px; heigh: 100px;" src="@Model.DegreeUrl" alt="img" />
+                </div>
+            </div>
+            <div class="form-group  w-50">
+                <label>Education image</label>
+                <div style="width: 100px; heigh: 100px;">
+                    <img style="width: 100px; heigh: 100px;" src="@Model.EducationUrl" alt="img" />
+                </div>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="form-group w-50">
+                <label asp-for="YearOfExperience">The number of years experience is:</label>
+                <input asp-for="YearOfExperience" class="form-control" readonly>
+            </div>
+            <div class="form-group  w-50">
+                <label asp-for="ShortBio">Short bio:</label>
+                <input asp-for="ShortBio" class="form-control" readonly>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="AccountId" />
+                <input type="submit" value="Delete" class="btn btn-danger" /> |
+                <a asp-action="Index">Back to List</a>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+

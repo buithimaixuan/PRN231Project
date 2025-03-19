@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace PostService.Models;
 
@@ -20,6 +21,6 @@ public partial class Comment
     public DateOnly? UpdatedAt { get; set; }
 
     public bool? IsDeleted { get; set; }
-
+    [JsonIgnore]
     public virtual Post? Post { get; set; }
 }

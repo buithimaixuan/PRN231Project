@@ -33,6 +33,14 @@ namespace BookingService.Controllers
             return Ok(bookingServices);
         }
 
+        // Đếm số booking khả dụng theo serId
+        [HttpGet("count-confirm/{id}")] // api/Services/countAll
+        public async Task<ActionResult<int>> CountBookingConfirmBySerId(int id)
+        {
+            int countAllBooking = await _servicingService.CountBookingConfirmBySerId(id);
+            return Ok(countAllBooking);
+        }
+
         // Lấy dánh sách tất cả booking theo serId
         [HttpGet("all-by-serId/{id}")]
         public async Task<ActionResult<IEnumerable<BookingService.Models.BookingService>>> GetBookingServicesBySerId(int id)

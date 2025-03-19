@@ -12,6 +12,5 @@ public partial class CategoryPost
 
     public string? CategoryPostDescription { get; set; }
     [JsonIgnore]
-
     public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
 }

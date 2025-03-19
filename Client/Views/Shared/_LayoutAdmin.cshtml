@@ -15,8 +15,10 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
+   
 
     <link rel="icon" href="~/assets/img/kaiadmin/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Fonts and icons -->
     <script src="~/assets/js/plugin/webfont/webfont.min.js"></script>
@@ -54,7 +56,7 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
                     <a href="index.html" class="logo">
-                        <img src="assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand" height="20" />
+                        <img src="~/assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand" height="20" />
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -97,7 +99,7 @@
 
 
                         <li class="nav-item">
-                            <a data-bs-toggle="collapse" asp-area="" asp-controller="Experts" asp-action="Index">
+                            <a asp-area="" asp-controller="Experts" asp-action="Index">
                                 <i class="fas fa-pen-square"></i>
                                 <p>Manage Expert</p>
                             </a>
@@ -105,7 +107,7 @@
 
 
                         <li class="nav-item">
-                            <a data-bs-toggle="collapse" href="#tables">
+                            <a asp-area ="" asp-controller="NewsAdmin" asp-action="Index">
                                 <i class="fas fa-table"></i>
                                 <p>Manage News</p>
                             </a>
@@ -139,7 +141,7 @@
                     <!-- Logo Header -->
                     <div class="logo-header" data-background-color="dark">
                         <a href="index.html" class="logo">
-                            <img src="assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand" height="20" />
+                            <img src="~/assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand" height="20" />
                         </a>
                         <div class="nav-toggle">
                             <button class="btn btn-toggle toggle-sidebar">
@@ -162,7 +164,7 @@
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle" />
+                                        <img src="~/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle" />
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
@@ -174,7 +176,7 @@
                                     <li>
                                         <div class="user-box">
                                             <div class="avatar-lg">
-                                                <img src="assets/img/profile.jpg" alt="image profile" class="avatar-img rounded" />
+                                                <img src="~/assets/img/profile.jpg" alt="image profile" class="avatar-img rounded" />
                                             </div>
                                             <div class="u-text">
                                                 <h4>Hizrian</h4>
@@ -216,25 +218,25 @@
     <!-- End Custom template -->
     </div>
     <!--   Core JS Files   -->
-    <script src="assets/js/core/jquery-3.7.1.min.js"></script>
-    <script src="assets/js/core/popper.min.js"></script>
-    <script src="assets/js/core/bootstrap.min.js"></script>
+    <script src="~/assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="~/assets/js/core/popper.min.js"></script>
+    <script src="~/assets/js/core/bootstrap.min.js"></script>
 
     <!-- jQuery Scrollbar -->
-    <script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="~/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 
 
     <!-- jQuery Sparkline -->
-    <script src="assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+    <script src="~/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
 
     <!-- Datatables -->
-    <script src="assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="~/assets/js/plugin/datatables/datatables.min.js"></script>
 
     <!-- Bootstrap Notify -->
-    <script src="assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <script src="~/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
 
     <!-- Kaiadmin JS -->
-    <script src="assets/js/kaiadmin.min.js"></script>
+    <script src="~/assets/js/kaiadmin.min.js"></script>
 
 
     @await RenderSectionAsync("Scripts", required: false)

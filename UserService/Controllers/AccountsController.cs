@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
+using UserService.DAOs;
 using UserService.DTOs;
+using UserService.Models;
 using UserService.PasswordHashing;
 using UserService.Services.Interface;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UserService.Controllers
 {
@@ -36,9 +40,9 @@ namespace UserService.Controllers
             return Ok(accounts);
         }
 
+        
 
-
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<IActionResult> UpdateAccount(int id, [FromBody] AccountDTO accountDTO)
         {
             if (accountDTO == null)
@@ -70,6 +74,162 @@ namespace UserService.Controllers
 
             await _accountService.UpdateAccount(existingAccount);
             return Ok(existingAccount);
+        }
+
+        // GET: api/account
+        [HttpPut("ChangePassword/{id}")]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDTO changePasswordDTO)
+        {
+            var existingAccount = await _accountService.GetByIdAccount(id);
+            if (existingAccount == null)
+                return NotFound("No Account found!");
+
+            if (!_passwordHasher.VerifyPassword(changePasswordDTO.currentPassword, existingAccount.Password))
+                return BadRequest("Current password is incorrect!");
+
+            if (changePasswordDTO.newPassword != changePasswordDTO.confirmNewPassword)
+                return BadRequest("Confirm password does not match!");
+
+            existingAccount.Password = _passwordHasher.HashPassword(changePasswordDTO.newPassword);
+            return Ok("Password changed successfully!");
+        }
+
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            try
+            {
+                var account = await _accountService.GetAccountByEmail(email);
+                if (account == null)
+                    return NotFound($"No account found with email {email}");
+                
+                return Ok(account);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("personal-page/{accountId}")]
+        public async Task<IActionResult> GetUserPersonalPage(int accountId)
+        {
+            try
+            {
+                var profile = await _accountService.GetPersonalPageDTO(accountId);
+                if (profile == null)
+                    return NotFound($"No account found with account_id {accountId}");
+                
+                return Ok(profile);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("all-photos/{accountId}")]
+        public async Task<IActionResult> GetAccountAllPhotos(int accountId)
+        {
+            try
+            {
+                var photos = await _accountService.GetAccountPhotos(accountId);
+                if (photos == null)
+                    return NotFound($"No photos found with account_id {accountId}");
+                
+                return Ok(photos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("friend-requests/received/{accountId}")]
+        public async Task<IActionResult> GetFriendRequestReceivers(int accountId)
+        {
+            try
+            {
+                var friendRequests = await _accountService.GetFriendRequestReceivers(accountId);
+                if (friendRequests == null)
+                    return NotFound($"No friend ferquests found with account {accountId}");
+                
+                return Ok(friendRequests);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("friend-requests/sent/{accountId}")]
+        public async Task<IActionResult> GetFriendRequestSenders(int accountId)
+        {
+            try
+            {
+                var friendRequests = await _accountService.GetFriendRequestSenders(accountId);
+                if (friendRequests == null)
+                    return NotFound($"No friend ferquests found with account {accountId}");
+                
+                return Ok(friendRequests);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("all-friends/{accountId}")]
+        public async Task<IActionResult> GetListFriends(int accountId)
+        {
+            try
+            {
+                var friends = await _accountService.GetListFriends(accountId);
+                if (friends == null)
+                    return NotFound($"No friends found with account {accountId}");
+
+                return Ok(friends);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Gửi yêu cầu kết bạn
+        [HttpPost("friend-request/send")]
+        public async Task<IActionResult> SendFriendRequest([FromBody] FriendRequestDTO request)
+        {
+            try
+            {
+                var friendRequest = await _accountService.SendFriendRequest(request.SenderId, request.ReceiverId);
+                if (request == null)
+                    return NotFound($"No friends found with account");
+
+                if (request.SenderId == request.RequestId)
+                    return NotFound($"Cannot send a friend requset to yourself.");
+
+                return Ok(new { Message = "Friend request sent successfully.", RequestId = friendRequest.RequestId });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Chấp nhận hoặc từ chối yêu cầu kết bạn
+        [HttpPut("friend-request/update")]
+        public async Task<IActionResult> UpdateFriendRequest([FromBody] FriendRequestDTO request)
+        {
+            try
+            {
+                await _accountService.UpdateFriendRequestStatus(request.SenderId, request.ReceiverId, request.RequestStatus);
+                return Ok(new { Message = $"Friend request {request.RequestStatus} successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         //*****************MINH UYEN***********
@@ -173,6 +333,31 @@ namespace UserService.Controllers
             });
         }
 
+        // Mai Xuân crud expert
+        [HttpGet("ALlExpert/{roleId}")]
+        public async Task<ActionResult<IEnumerable<Account>>> GetAllExpert(int roleId)
+        {
+            IEnumerable<Account> List = await _accountService.GetListAccountByRoleId(roleId);
+            return Ok(List);
+        }
 
+        [HttpPost("Experts/Create")]
+        public async Task<IActionResult> CreateExpertAccount([FromBody] AccountDTO accountDTO)
+        {
+            if (accountDTO == null)
+                return BadRequest("Invalid account data.");
+
+            var existingAccount = await _accountService.GetAccountByIdentifier(accountDTO.Email);
+            if (existingAccount != null)
+                return Conflict("Account already exists.");
+
+            string hashedPassword = _passwordHasher.HashPassword(accountDTO.Password);
+
+            accountDTO.Password = hashedPassword;
+
+            await _accountService.CreateNewExpertAccount(accountDTO);
+
+            return Ok("Farmer account created successfully!");
+        }
     }
 }

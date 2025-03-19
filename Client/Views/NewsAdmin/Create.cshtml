@@ -1,0 +1,61 @@
+﻿@using Client.DTOs
+@model NewsAdminDTO
+@{
+    ViewData["Title"] = "Create";
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="Title">Enter title of news</label>
+                <input type="text" class="form-control" asp-for="Title"
+                      >
+                <span class="text-danger" asp-validation-for="Title"></span>
+
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="CategoryNewsId">Catogory Name</label>
+                <select asp-for="CategoryNewsId" class="form-control">
+                    @foreach(var cat in Model.Categories){
+                        <option 
+                            value="@cat.CategoryNewsId"   >@cat.CategoryNewsName</option>
+                    }
+                    
+                </select>
+            </div>
+
+        </div>
+  
+        <div class="d-flex">
+            <div class="form-group w-100">
+                <label>Select an image for this news?</label>
+                <input type="file" id="Image" name="Image"
+                       class="form-control" accept="image/*">
+            </div>
+        </div>
+        <div class="d-flex">
+            
+            <div class="form-group w-100">
+                <label asp-for="Content">Enter your content?</label>
+                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                <span class="text-danger" asp-validation-for="Content"></span>
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-center">
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-info mx-3">Reset</button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

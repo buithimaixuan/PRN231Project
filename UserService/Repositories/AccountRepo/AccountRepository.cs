@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Text.Json;
 using UserService.DAOs;
+using UserService.DTOs;
 using UserService.Models;
 
 namespace UserService.Repositories.AccountRepo
@@ -9,11 +10,13 @@ namespace UserService.Repositories.AccountRepo
     {
         private readonly AccountDAO _accountDAO;
         private readonly HttpClient _httpClient;
+        private readonly FriendRequestDAO _friendRequestDAO;
 
-        public AccountRepository(AccountDAO accountDAO, HttpClient httpClient)
+        public AccountRepository(AccountDAO accountDAO, HttpClient httpClient, FriendRequestDAO friendRequestDAO)
         {
             _accountDAO = accountDAO;
             _httpClient = httpClient;
+            _friendRequestDAO = friendRequestDAO;
         }
 
         public async Task<IEnumerable<Account>> GetAll()
