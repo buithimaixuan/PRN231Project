@@ -39,7 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.Urls.Add("http://0.0.0.0:5000");
+app.Urls.Add("http://0.0.0.0:5163");
 
 app.UseHttpsRedirection();
 
