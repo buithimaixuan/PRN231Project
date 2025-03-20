@@ -71,8 +71,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
-//app.Urls.Add("http://0.0.0.0:5157");
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

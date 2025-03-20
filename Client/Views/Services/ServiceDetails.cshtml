@@ -490,7 +490,7 @@
 
                             <p class="f-32 fw-500 mb-3">Đánh giá dịch vụ</p>
                             <div class="d-flex align-items-center justify-content-center border my-3">
-                                <form class="card" method="post" asp-page-handler="RateService">
+                                <form class="card" method="post" asp-controller="Services" asp-action="ReviewService">
                                     <div class="row">
                                         <div class="col-2">
                                             <img src="@accountLogin.Avatar" width="70" class="rounded-circle mt-2">
@@ -795,7 +795,7 @@
                         {
                             <div class="m-auto btn--more-review" style="max-width: 200px">
                                 <button id="loadMoreReviews" class="round-10 py-2 px-3 w-100 color_label btn btn-more btn-default font-weight-bold text-decoration-none justify-content-center">
-                                    Xem thêm <i class="fal fa-angle-down"></i>
+                                    Xem thêm
                                 </button>
                             </div>
                         }
@@ -941,7 +941,7 @@
         <button onclick="window.dialog.close();" aria-label="close" class="x">❌</button>
     </dialog>
     <div id="requestModal" class="modal" style="display: none;">
-        <form class="modal-content" method="post" asp-page-handler="RequestService">
+        <form class="modal-content" method="post" asp-action="RequestService" asp-controller="Services">
             <input type="hidden" asp-for="InputServiceId" value="@Model.ServiceDetail.ServiceId" />
             <span class="close" onclick="closeModalForm()">&times;</span>
             <h2>Nhập yêu cầu của bạn</h2>
@@ -974,6 +974,88 @@
 <script src="~/js/gitiho_v2/voucherd5f8.js?id=05236dcfe549f239cf2e185e70982c06"></script>
 <script src="~/js/gitiho_v2/cart_paymentf830.js?id=c81b517123495acbbf8911a2598a6e9b"></script>
 <script type="text/javascript">
+
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM đã tải xong");  // Kiểm tra xem script có chạy không
+
+        let skipP = 5;
+        let takeP = 5;
+        let loadMoreBtn = document.getElementById("loadMoreReviews");
+
+        if (!loadMoreBtn) {
+            console.error("Phần tử #loadMoreReviews không tồn tại!");
+            return;
+        }
+
+        loadMoreBtn.addEventListener('click', function () {
+            console.log("Nút 'Xem thêm' đã được nhấn!");
+
+            $.ajax({
+                type: 'GET',
+                url: '/Services/ServiceDetails/LoadMoreReview',
+                data: { serviceId: @Model.ServiceDetail.ServiceId, skip: skipP, take: takeP },
+                dataType: 'json',
+                success: function (data) {
+                    if (data && data.ratings.length > 0) {
+                        console.log("Dữ liệu đánh giá nhận được:", data);
+                        data.ratings.forEach(rating => {
+                            let reviewer = data.reviewers[rating.userId] || { username: "Ẩn danh", profileImage: "/default-user.png" };
+                            let stars = "★".repeat(Math.floor(rating.rating)) + "☆".repeat(5 - Math.floor(rating.rating));
+
+                            $('#reviewContainer').append(`
+                                <div class="border p-3 mb-2">
+                                    <div class="d-flex mb-2">
+                                        <img src="${reviewer.profileImage}"
+                                             alt="" class="my-auto rounded-circle lazyload mr-3"
+                                             width="36px" height="36px" />
+                                        <div class="user-right-new">
+                                            <p class="mb-0 f-16 user-name color_label fw-700">
+                                                <a target="_blank" href="/u/${reviewer.userId}-${reviewer.username}">
+                                                    ${reviewer.username}
+                                                </a>
+                                            </p>
+                                            <div class="d-flex">
+                                                <div class="cou-rating mr-3">
+                                                    <div class="gen-star">
+                                                        <div class="stars">
+                                                            <div class="stars-content">
+                                                                ${Array.from({ length: Math.floor(rating.rating) }).map(() => '<label class="star-cmt" title="Full star">★</label>').join('')}
+                                                                ${Array.from({ length: 5 - Math.floor(rating.rating) }).map(() => '<label class="star-cmt star-off" title="Empty star">☆</label>').join('')}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 color_text2">${rating.ratedAt}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="f-16" style="word-break: break-word">
+                                        ${rating.comment}
+                                    </div>
+                                    <div class="mt-2">
+                                    </div>
+                                </div>
+                            `);
+
+                        });
+
+                        skipP += takeP;
+                    } else {
+                        console.warn("Không có đánh giá nào mới!");
+                    }
+
+                    // Ẩn nút nếu không còn đánh giá nào nữa
+                    if (!data || data.ratings.length < takeP) {
+                        $('#loadMoreReviews').hide();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi khi tải đánh giá:", error);
+                }
+            });
+        });
+    });
+
     tracking_form();
     function tracking_form() {
         var cp_login_register_form = document.getElementsByClassName('gitiho-login');
@@ -1794,34 +1876,6 @@
     // Gọi hàm renderStars với giá trị AverageRating
     renderStars(averageRating);
 
-    let skipP = 5; //Starting from the 6th review
-    let takeP = 5; //Number of reviews to load per request
-
-    var getLoadMore = document.getElementById("loadMoreReviews");
-
-    getLoadMore.addEventListener('click', loadMoreReviews);
-
-    function loadMoreReviews() {
-        $.ajax({
-            type: 'GET',
-            url: '/Services/ServiceDetails?handler=LoadMoreReview',
-            data: {
-                serviceId: @Model.ServiceDetail.ServiceId,
-                skip: skipP,
-                take: takeP
-            },
-            success: function (data) {
-                // Append the new reviews to the container
-                $('#reviewContainer').append(data);
-                // Increase skip for the next call
-                skipP += takeP;
-                // If fewer than 5 reviews are loaded, hide the button
-                if ($(data).filter('.border').length < takeP) {
-                    $('#loadMoreReviews').hide();
-                }
-            }
-        });
-    }
 </script>
 
 @section Scripts {

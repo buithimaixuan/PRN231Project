@@ -5,7 +5,6 @@ namespace BookingService.DTOs
     public class BookingRequest
     {
         public int ServiceId { get; set; }
-
         public int BookingBy { get; set; }
         public string BookingStatus { get; set; } = null!;
         public string? Content { get; set; }
