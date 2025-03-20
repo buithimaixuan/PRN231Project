@@ -1,6 +1,7 @@
 ﻿using System.Composition;
 using System.Net.Http.Headers;
 using Client.DTOs;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -10,6 +11,7 @@ namespace Client.Controllers
     {
         private readonly HttpClient client;
         private string authenUrl = "";
+        private string accountUrl = "";
 
         public AuthenController()
         {
@@ -17,6 +19,7 @@ namespace Client.Controllers
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
             authenUrl = "https://localhost:7272/api/Auth";
+            accountUrl = "https://localhost:7272/api/Accounts";
         }
 
         public IActionResult Index()
@@ -42,6 +45,7 @@ namespace Client.Controllers
                 HttpContext.Session.SetString("UserToken", loginResponse.Token);
                 HttpContext.Session.SetInt32("UserRole", loginResponse.RoleId);
                 HttpContext.Session.SetInt32("AccountID", loginResponse.AccountId);
+                
 
                 if (loginResponse.RoleId == 2)
                 {
@@ -55,6 +59,16 @@ namespace Client.Controllers
             // Nếu đăng nhập thất bại, xử lý lỗi
             ViewBag.ErrorMessage = "Invalid login credentials";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            HttpContext.Session.Remove("UserToken");
+            HttpContext.Session.Remove("UserRole");
+            HttpContext.Session.Remove("AccountID");
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

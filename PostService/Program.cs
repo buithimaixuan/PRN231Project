@@ -64,15 +64,14 @@ builder.Services.AddSwaggerGen(c =>
 
 
 var app = builder.Build();
-app.Urls.Add("http://0.0.0.0:5007");
+//app.Urls.Add("http://0.0.0.0:5007");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.Urls.Add("http://0.0.0.0:5007");
 
 app.UseDeveloperExceptionPage();
 
