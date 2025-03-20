@@ -194,6 +194,7 @@ namespace UserService.Services.Implement
 
             var accountDTO = new AccountDTO
             {
+                AccountId = account.AccountId,
                 RoleId = account.RoleId,
                 Username = account.Username,
                 Password = "", // Lưu ý: Không nên trả password thực tế
@@ -275,6 +276,10 @@ namespace UserService.Services.Implement
             int countPhotos = photos.Count();
 
             return new AccountPhotosDTO(accountId, countPhotos, photos);
+        }
+        public async Task Unfriend(int accountId1, int accountId2)
+        {
+            await _friendRequestRepository.Unfriend(accountId1, accountId2);
         }
     }
 }

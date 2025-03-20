@@ -36,5 +36,11 @@ namespace UserService.Repositories.AccountRepo
         {
             await _friendRequestDAO.UpdateFriendRequestStatus(senderId, receiverId, status);
         }
+
+
+        public async Task Unfriend(int userId1, int userId2)
+        {
+            await _friendRequestDAO.Unfriend(userId1, userId2);
+        }
     }
 }

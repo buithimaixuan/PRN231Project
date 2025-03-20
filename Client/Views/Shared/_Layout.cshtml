@@ -1,6 +1,56 @@
 ﻿
 @model Client.ViewModel.HomeViewModel
 
+@using Microsoft.AspNetCore.Http
+@using System.Net.Http
+@using System.Net.Http.Headers
+@using System.Text.Json
+@using Client.Models
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    Client.DTOs.AccountDTO account = null;
+    var isLoggedIn = HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
+
+    if (isLoggedIn)
+    {
+        // Lấy AccountID từ Cookie
+        var accountIdClaim = HttpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "AccountID");
+        if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId) && accountId > 0)
+        {
+            using var client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            client.DefaultRequestHeaders.Accept.Add(contentType);
+            var authenUrl = "http://localhost:5157/api/Accounts";
+
+            try
+            {
+                // Thêm UserToken vào header nếu cần gọi API bảo mật
+                var userToken = HttpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserToken")?.Value;
+                if (!string.IsNullOrEmpty(userToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userToken);
+                }
+
+                var response = await client.GetAsync($"{authenUrl}/personal-page/{accountId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var profile = JsonSerializer.Deserialize<Client.DTOs.PersonalPageDTO>(content, new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+                    account = profile?.accountDTO;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching account: {ex.Message}");
+            }
+        }
+    }
+}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,12 +150,17 @@
                 <!-- Header Topbar Links Start -->
                 <ul class="header--topbar-links nav ff--primary float--right">
 
+                    @*
+                    @if (isLoggedIn)
+                    {
+                        <li>
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@account.AccountId" class="btn-link"> *@
                     @if (Model.Account != null)
                     {
                         <li>
                             <a asp-controller="Profiles" asp-action="Index" asp-route-id="@Model.Account.AccountId" class="btn-link">
                                 <i class="fa mr--8 fa-user-o"></i>
-                                <span>Tài khoản của tôi</span>
+                                <span>@account?.FullName</span>
                             </a>
                         </li>
 
@@ -125,7 +180,7 @@
                     else
                     {
                         <li>
-                            <a asp-controller="Authen" class="btn-link">
+                        <a asp-controller="Authen" asp-action="Index" class="btn-link">
                                 <i class="fa mr--8 fa-user-o"></i>
                                 <span>Đăng nhập</span>
                             </a>

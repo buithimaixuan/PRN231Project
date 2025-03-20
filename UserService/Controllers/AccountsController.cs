@@ -205,13 +205,10 @@ namespace UserService.Controllers
         {
             try
             {
+                if (request.SenderId == request.ReceiverId)
+                    return BadRequest("Cannot send a friend request to yourself.");
+
                 var friendRequest = await _accountService.SendFriendRequest(request.SenderId, request.ReceiverId);
-                if (request == null)
-                    return NotFound($"No friends found with account");
-
-                if (request.SenderId == request.RequestId)
-                    return NotFound($"Cannot send a friend requset to yourself.");
-
                 return Ok(new { Message = "Friend request sent successfully.", RequestId = friendRequest.RequestId });
             }
             catch (Exception ex)
@@ -228,6 +225,21 @@ namespace UserService.Controllers
             {
                 await _accountService.UpdateFriendRequestStatus(request.SenderId, request.ReceiverId, request.RequestStatus);
                 return Ok(new { Message = $"Friend request {request.RequestStatus} successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // Hủy kết bạn
+        [HttpDelete("friend/unfriend")]
+        public async Task<IActionResult> Unfriend([FromQuery] int userId1, [FromQuery] int userId2)
+        {
+            try
+            {
+                await _accountService.Unfriend(userId1, userId2);
+                return Ok(new { Message = "Successfully unfriended." });
             }
             catch (Exception ex)
             {

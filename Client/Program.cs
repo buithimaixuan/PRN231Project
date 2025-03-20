@@ -1,4 +1,4 @@
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
@@ -17,6 +17,17 @@ builder.Services.AddSession(options =>
 builder.Services.AddDistributedMemoryCache(); // For storing session data in memory
 builder.Services.AddHttpContextAccessor();
 
+// Thêm Authentication với Cookie
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/Authen/Index"; // Chuyển hướng đến trang đăng nhập
+        options.AccessDeniedPath = "/Authen/AccessDenied"; // Chuyển hướng khi bị từ chối quyền
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Thời gian hết hạn
+        options.SlidingExpiration = true; // Gia hạn session khi có hoạt động
+    });
+
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
