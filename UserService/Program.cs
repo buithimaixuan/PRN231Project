@@ -34,8 +34,8 @@ builder.Services.AddDbContext<MicroserviceUserDbContext>(options =>
 
 builder.Services.AddHttpClient("PostService", client =>
 {
-    //client.BaseAddress = new Uri("https://localhost:7231/api/post/"); // URL của PostService bằng swagger
-    client.BaseAddress = new Uri("http://host.docker.internal:5007/api/post/"); // URL của PostService bằng docker
+    client.BaseAddress = new Uri("https://localhost:7231/api/post/"); // URL của PostService bằng swagger
+    //client.BaseAddress = new Uri("http://host.docker.internal:5007/api/post/"); // URL của PostService bằng docker
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
@@ -71,7 +71,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
-app.Urls.Add("http://0.0.0.0:5157");
+//app.Urls.Add("http://0.0.0.0:5157");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
