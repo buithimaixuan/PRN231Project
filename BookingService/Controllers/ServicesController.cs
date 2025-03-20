@@ -117,8 +117,8 @@ namespace BookingService.Controllers
                 Price = request.Price,
                 IsEnable = request.IsEnable,
                 IsDeleted = false, // Mặc định chưa bị xóa
-                AverageRating = 0,
-                RatingCount = 0
+                AverageRating = request.AverageRating,
+                RatingCount = request.RatingCount
             };
 
             await _servicingService.UpdateService(updateService);

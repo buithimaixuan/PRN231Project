@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Client.DTOs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -13,13 +14,18 @@ namespace Client.Controllers
     {
         private readonly HttpClient client;
         private string authenUrl = "";
+        private string accountUrl = "";
 
         public AuthenController()
         {
             client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
-            authenUrl = "http://localhost:5157/api/Auth";
+            // docker
+            // authenUrl = "http://localhost:5157/api/Auth";
+
+            authenUrl = "https://localhost:7272/api/Auth";
+            accountUrl = "https://localhost:7272/api/Accounts";
         }
 
         public IActionResult Index()
@@ -60,6 +66,7 @@ namespace Client.Controllers
                 HttpContext.Session.SetString("UserToken", loginResponse.Token);
                 HttpContext.Session.SetInt32("UserRole", loginResponse.RoleId);
                 HttpContext.Session.SetInt32("AccountID", loginResponse.AccountId);
+                
 
                 if (loginResponse.RoleId == 2)
                 {
@@ -75,15 +82,14 @@ namespace Client.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            // Xóa Session
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("UserToken");
+            HttpContext.Session.Remove("UserRole");
+            HttpContext.Session.Remove("AccountID");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            return RedirectToAction("Index", "Authen");
+            return RedirectToAction("Index", "Home");
         }
-    } 
+    }
 }
