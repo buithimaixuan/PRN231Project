@@ -22,10 +22,12 @@ namespace Client.Controllers
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
             // docker
-            // authenUrl = "http://localhost:5157/api/Auth";
+            authenUrl = "http://localhost:5157/api/Auth";
 
-            authenUrl = "https://localhost:7272/api/Auth";
-            accountUrl = "https://localhost:7272/api/Accounts";
+            //authenUrl = "https://localhost:7272/api/Auth";
+
+            accountUrl = "https://localhost:5157/api/Accounts";
+            ///accountUrl = "https://localhost:7272/api/Accounts";
         }
 
         public IActionResult Index()
