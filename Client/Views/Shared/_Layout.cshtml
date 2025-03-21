@@ -1,7 +1,4 @@
-﻿
-@model Client.ViewModel.HomeViewModel
-
-@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http
 @using System.Net.Http
 @using System.Net.Http.Headers
 @using System.Text.Json
@@ -155,10 +152,10 @@
                     {
                         <li>
                             <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@account.AccountId" class="btn-link"> *@
-                    @if (Model.Account != null)
+                    @if (isLoggedIn)
                     {
                         <li>
-                            <a asp-controller="Profiles" asp-action="Index" asp-route-id="@Model.Account.AccountId" class="btn-link">
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@account.AccountId" class="btn-link">
                                 <i class="fa mr--8 fa-user-o"></i>
                                 <span>@account?.FullName</span>
                             </a>

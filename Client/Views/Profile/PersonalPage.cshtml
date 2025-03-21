@@ -198,27 +198,20 @@ else
                     <!-- Accordion -->
                     <div class="w3-card w3-round">
                         <div class="w3-white">
-                            @* @if (Model.AccountLogin == Model.accountDTO.AccountId) *@
                             @if (Model.accountDTO.AccountId == accountIDLogin)
                             {
-                                <a asp-controller="Profile" asp-action="Information" asp-route-id="@Model.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                                <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" asp-route-view="information" class="w3-button w3-block w3-theme-l1 w3-left-align">
                                     <i class="fa fa-info-circle fa-fw w3-margin-right"></i> Information
                                 </a>
                             }
 
-                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" asp-route-view="posts" class="w3-button w3-block w3-theme-l1 w3-left-align">
                                 <i class="fa fa-pencil-alt fa-fw w3-margin-right"></i> Posts
                             </a>
-                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" asp-route-view="friends" class="w3-button w3-block w3-theme-l1 w3-left-align">
                                 <i class="fa fa-user-friends fa-fw w3-margin-right"></i> Friends
                             </a>
-                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
-                                <i class="fa fa-user-plus fa-fw w3-margin-right"></i> Followers
-                            </a>
-                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
-                                <i class="fa fa-user-check fa-fw w3-margin-right"></i> Following
-                            </a>
-                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" asp-route-view="photos" class="w3-button w3-block w3-theme-l1 w3-left-align">
                                 <i class="fa fa-picture-o fa-fw w3-margin-right"></i> Photos
                             </a>
                         </div>
@@ -228,313 +221,174 @@ else
 
                 <!-- Middle Column -->
                 <div class="w3-col m7">
-
-                    <!-- CHỈ ĐƯỢC ĐĂNG ẢNH TRONG TRANG CÁ NHÂN CỦA MÌNH -->
-                    @* @if (Model.accountDTO.AccountId == Model.UserSession.AccountId)
-                {
-                    // ADD POST PERSONAL PAGE
-                    <div class="container" style="margin-left: 10px;">
-                        <div class="row">
-                            <div class="col-md-8 p-2">
-
-                                <div class="wrapper-add-post add-post-personal">
-                                    <div class="post-header">
-                                        <a href="/accountDTO/PersonalPage/@Model.accountDTO.AccountId">
-                                            <img src="@Model.accountDTO.Avatar" alt="accountDTO Picture" onerror="this.onerror=null; this.src='https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f';">
-                                        </a>
-
-                                        <input id="postInput" type="text" placeholder="@Model.accountDTO.FullName ơi, bạn đang nghĩ gì thế?">
-                                    </div>
-                                </div>
-
-                                <div class="popup" id="popup" style="z-index: 100;">
-                                    <div class="popup-content">
-                                        <button class="close-btn" id="closePopupBtn">×</button>
-                                        <h2>Tạo bài viết</h2>
-
-                                        <form id="postForm" method="post" asp-page-handler="AddPost" enctype="multipart/form-data">
-                                            <input type="hidden" value="@Model.accountDTO.AccountId" name="AccountID">
-                                            <textarea name="ContentPost" placeholder="@Model.accountDTO.FullName ơi, bạn đang nghĩ gì thế?" class="content-post"
-                                                      required></textarea>
-
-                                            <input type="file" id="imageInput" accept="image/*" style="display: none;" multiple asp-for="PostViewModel.ImagesPost">
-
-                                            <div class="select">
-                                                <label for="select-input">Chọn danh mục: </label>
-                                                <select id="select-input" name="CategoryPostId">
-                                                    <option value="" disabled selected>Chọn danh mục</option>
-                                                    @foreach (var categoryPost in Model.ListCategoryPost)
-                                                    {
-                                                        <option value="@categoryPost.CategoryPostId">@categoryPost.CategoryPostName</option>
-                                                    }
-                                                </select>
-                                            </div>
-
-                                            <button type="button" id="clearImagesButton" style="display: none;">Xóa ảnh</button>
-                                            <div id="imagePreview" style="margin-top: 10px; display: flex; flex-wrap: wrap;"></div>
-
-
-                                            <div class="actions" style="margin-top: 10px;">
-                                                <button type="button" id="selectImageButton">
-                                                    <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Ảnh/video
-                                                </button>
-                                                <div>
-                                                    <img src="https://via.placeholder.com/20/FFD700" alt="Feeling/Activity">Cảm
-                                                    xúc/hoạt động
-                                                </div>
-                                                <button><img src="https://via.placeholder.com/20/FF4500" alt="GIF">GIF</button>
-                                            </div>
-
-                                            <button type="submit"
-                                                    style="width: 100%; margin-top: 10px; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 5px;">
-                                                Đăng
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    if (Model.listPostDTOs.Count() == 0)
+                    @if (ViewBag.ViewMode == "posts")
                     {
-                        <div class="w3-container w3-card w3-white w3-round w3-margin">
-                            <h6 class="text-center">@Model.accountDTO.Username <span class="font-italic">Chưa có bài viết nào</span></h6>
-                        </div>
-                    }
-                }
- *@
+                        <!-- Hiển thị danh sách bài viết -->
+                        @foreach (var post in Model.listPostDTOs)
+                        {
+                            var imageCount = post.postImages.Count();
 
-                    <!-- HIỂN THỊ LIST POST KHI TỰ XEM TRANG CỦA MÌNH -->
-                    @foreach (var post in Model.listPostDTOs)
-                    {
-                        var imageCount = post.postImages.Count();
-
-                        <div class="w3-container w3-card w3-white w3-round w3-margin">
-                            <br>
-                            <a asp-page="/accountDTO/PersonalPages" asp-route-postid="@post.post.PostId">
-                                <img src="@Model.accountDTO.Avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
-                            </a>
-                            <div class="w3-right w3-opacity">
-
-                                <a asp-page="/Posts/UpdatePost" asp-route-postid="@post.post.PostId" class="updatePost controlPostBtn">
-                                    Chỉnh sửa
+                            <div class="w3-container w3-card w3-white w3-round w3-margin">
+                                <br>
+                                <a asp-page="/accountDTO/PersonalPages" asp-route-postid="@post.post.PostId">
+                                    <img src="@Model.accountDTO.Avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
                                 </a>
+                                <div class="w3-right w3-opacity">
+                                    <a asp-page="/Posts/UpdatePost" asp-route-postid="@post.post.PostId" class="updatePost controlPostBtn">
+                                        Chỉnh sửa
+                                    </a>
+                                    <a class="deletePost controlPostBtn" asp-page="/Posts/DeletePost" asp-route-postid="@post.post.PostId" asp-page-handler="DeletePost" data-postid="@post.post.PostId" data-toggle="modal">Xóa</a>
+                                </div>
 
-                                <a class="deletePost controlPostBtn" asp-page="/Posts/DeletePost" asp-route-postid="@post.post.PostId" asp-page-handler="DeletePost" data-postid="@post.post.PostId" data-toggle="modal">Xóa</a>
-                            </div>
+                                <div class="activity--header">
+                                    <p><a asp-page="/accountDTO/PersonalPage" asp-route-id="@Model.accountDTO.AccountId">@Model.accountDTO.FullName</a></p>
+                                </div>
+                                <div class="activity--meta fs--12">
+                                    <p><i class="fa mr--8 fa-clock-o"></i>@post.post.CreatedAt</p>
+                                </div>
+                                <br />
+                                <h5 class="m-0">
+                                    @post.post.PostContent
+                                </h5>
+                                <hr class="mt-2 mb-2">
+                                <div class="w3-row-padding" style="margin:0 -16px">
+                                    <div class="@("image-grid-" + imageCount)">
+                                        @foreach (var image in post.postImages)
+                                        {
+                                            <img src="@image.ImageUrl" alt="@image.ImageUrl" class="">
+                                        }
+                                    </div>
+                                </div>
 
-                            <div class="activity--header">
-                                <p><a asp-page="/accountDTO/PersonalPage" asp-route-id="@Model.accountDTO.AccountId">@Model.accountDTO.FullName</a></p>
-                            </div>
-                            <div class="activity--meta fs--12">
-                                <p><i class="fa mr--8 fa-clock-o"></i>@post.post.CreatedAt</p>
-                            </div>
-                            <br />
-                            <h5 class="m-0">
-                                @post.post.PostContent
-                            </h5>
-                            <hr class="mt-2 mb-2">
-                            <div class="w3-row-padding" style="margin:0 -16px">
-                                <div class="@("image-grid-" + imageCount)">
-                                    @foreach (var image in post.postImages)
-                                    {
-                                        <img src="@image.ImageUrl" alt="@image.ImageUrl" class="">
-                                    }
+                                <div class="w3-margin-top">
+                                    <div class="activity--action fw--700 w3-margin-bottom">
+                                        <a asp-page="/Posts/PostDetail" asp-route-postId="@post.post.PostId">See More...</a>
+                                    </div>
                                 </div>
                             </div>
+                        }
 
-                            <div class="w3-margin-top">
-                                <div class="activity--action fw--700 w3-margin-bottom">
-                                    <a asp-page="/Posts/PostDetail" asp-route-postId="@post.post.PostId">See More...</a>
+                        <!-- Modal khi nhấn delete -->
+                        <div id="deletePost" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form>
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Xóa bài đăng</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Bạn có muốn xóa bài đăng này không?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
+                                            <a id="confirmDeletePost" class="btn btn-danger">Xóa</a>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     }
-                    @* //Modal khi nhấn delete *@
-                    <div id="deletePost" class="modal fade">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <form>
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">Xóa bài đăng</h4>
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Bạn có muốn xóa bài đăng này không?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
-                                        <a id="confirmDeletePost" class="btn btn-danger">Xóa</a>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    @*  else
-                {
-                    <div class="activity--list">
-                        <ul class="activity--items nav" style="display: flex; justify-content: center;">
-
-                            @if (Model.Posts != null)
-                            {
-                                @foreach (var post in Model.Posts)
-                                {
-                                    <!-- Activity Item Start -->
-                                    <li style="width: 90%; box-shadow:  0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);">
-                                        <div class="activity--item">
-                                            <div class="activity--avatar">
-                                                @if (post.account == null)
-                                                {
-                                                    <a href="/Access/Login">
-                                                        <img src="" alt="" onerror="this.onerror=null; this.src='https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f';">
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <a asp-page="/accountDTO/PersonalPage" asp-route-id="@post.account.AccountId">
-                                                        <img src="@post.account.Avatar" alt="" onerror="this.onerror=null; this.src='https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f';">
-                                                    </a>
-                                                }
-
-                                            </div>
-
-                                            <div class="activity--info fs--14">
-                                                <div class="activity--header">
-                                                    @if (post.account == null)
-                                                    {
-                                                        <p><a href="/Access/Login">Người dùng ẩn danh</a> vừa đăng 1 bài viết</p>
-                                                    }
-                                                    else
-                                                    {
-                                                        <p><a asp-page="/accountDTO/PersonalPage" asp-route-id="@post.account.AccountId">@post.account.FullName</a> vừa đăng 1 bài viết</p>
-                                                    }
-
-                                                </div>
-
-                                                <div class="activity--meta fs--12">
-                                                    <p><i class="fa mr--8 fa-clock-o"></i>@post.post.CreatedAt</p>
-                                                </div>
-
-                                                <div class="activity--content">
-                                                    <p class="content-text-ellipsis">@post.post.PostContent</p>
-
-                                                    @if (post.postImages != null && post.postImages.Count() > 0)
-                                                    {
-                                                        <div>
-                                                            <ul class="nav AdjustRow">
-                                                                <li>
-                                                                    <a href="/Posts/PostDetail/@post.post.PostId">
-                                                                        <img src="@post.postImages.FirstOrDefault().ImageUrl" alt="">
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    }
-
-                                                </div>
-
-
-                                                <!-- KHI KHONG LOGIN THI KHÔNG XEM ĐƯỢC CHI TIẾT -->
-                                                @if (!isLoggedIn)
-                                                {
-                                                    <div class="activity--action fw--700">
-                                                        <a href="/Access/Login">See More...</a>
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    // KHI LOGIN ROI THI XEM DUOC
-                                                    <div class="activity--action fw--700">
-                                                        <a href="/Posts/PostDetail/@post.post.PostId">See More...</a>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <!-- Activity Item End -->
-                                }
-                            }
-                            else
-                            {
-                                <h1>không có bài đăng</h1>
-                            }
-
-                        </ul>
-                    </div>
-                } *@
-
-                    <!-- End Middle Column -->
-                </div>
-
-                <!-- Right Column -->
-                <div class="w3-col m2">
-                    @if (Model.friendRequestReceivers.Count() > 0 && accountIDLogin == Model.accountDTO.AccountId)
+                    else if (ViewBag.ViewMode == "friends")
                     {
-                        <div class="w3-card w3-round w3-white w3-center">
-                            <div class="w3-container">
-                                <p>Friend Request</p>
-                                @foreach (var f in Model.friendRequestReceivers)
+                        <!-- Hiển thị danh sách bạn bè -->
+                        <h2>Friends of @Model.accountDTO.FullName</h2>
+                        @if (Model.listFriends.Any())
+                        {
+                            <div class="row">
+                                @foreach (var friend in Model.listFriends)
                                 {
-                                    <div class="friend-request-item" data-request-id="@f.RequestId">
-                                        <p>SenderId: @f.SenderId, ReceiverId: @f.ReceiverId</p>
-                                        <div class="w3-row w3-opacity">
-                                            <div class="w3-half">
-                                                <button type="button" class="w3-button w3-green w3-section px-3 py-1 request-btn"
-                                                        data-sender-id="@f.SenderId"
-                                                        data-receiver-id="@f.ReceiverId"
-                                                        data-status="accepted" title="Accept">
-                                                    <i class="fa fa-check"></i>
-                                                </button>
-                                            </div>
-                                            <div class="w3-half">
-                                                <button type="button" class="w3-button w3-red w3-section px-3 py-1 request-btn"
-                                                        data-sender-id="@f.SenderId"
-                                                        data-receiver-id="@f.ReceiverId"
-                                                        data-status="rejected" title="Decline">
-                                                    <i class="fa fa-remove"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="message mt-2"></div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="w3-card w3-round w3-white w3-center">
-                            <div class="w3-container">
-                                <p>Friend Request</p>
-                                @foreach (var f in Model.listFriends.Take(10).Reverse())
-                                {
-                                    // Gọi API để lấy thông tin của bạn bè
-
-                                    var friendId = f.SenderId == accountIDLogin ? f.ReceiverId : f.SenderId;
+                                    var friendId = friend.SenderId == Model.accountDTO.AccountId ? friend.ReceiverId : friend.SenderId;
                                     var friendInfo = await GetSenderInfo(friendId);
 
-                                    <div>
-                                        <a class="d-flex justify-content-around align-items-center">
-                                            <img src="@(friendInfo?.Avatar ?? "~/image/avatar6.png")" alt="Avatar" class="w-25">
-                                            <span>@(friendInfo?.FullName ?? "Unknown User")</span>
-                                        </a>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="w3-card w3-round w3-white w3-center">
+                                            <div class="w3-container">
+                                                <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@friendId" class="d-flex justify-content-around align-items-center">
+                                                    <img src="@(friendInfo?.Avatar ?? "~/image/avatar6.png")" alt="Avatar" class="w-25">
+                                                    <span>@(friendInfo?.FullName ?? "Unknown User")</span>
+                                                </a>
+                                                @if (accountIDLogin == Model.accountDTO.AccountId)
+                                                {
+                                                    <form method="post" asp-action="Unfriend">
+                                                        <input type="hidden" name="userId1" value="@accountIDLogin" />
+                                                        <input type="hidden" name="userId2" value="@friendId" />
+                                                        <button type="submit" class="btn btn-danger mt-2">Unfriend</button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </div>
                                     </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p>No friends found.</p>
+                        }
+                    }
+                    else if (ViewBag.ViewMode == "photos")
+                    {
+                        <!-- Hiển thị danh sách ảnh -->
+                        <h2>Photos of @Model.accountDTO.FullName</h2>
+                        // Gọi API để lấy danh sách ảnh
+                        var photosDTO = await GetPhotos(Model.accountDTO.AccountId);
+                        @if (photosDTO != null && photosDTO.Photos.Any())
+                        {
+                            <p>Total Photos: @photosDTO.CountPhotos</p>
+                            <div class="row">
+                                @foreach (var photo in photosDTO.Photos)
+                                {
+                                    <div class="col-md-4 mb-3">
+                                        <div class="w3-card w3-round w3-white w3-center">
+                                            <div class="w3-container">
+                                                <img src="@photo.ImageUrl" alt="@photo.ImageUrl" class="img-fluid" style="max-width: 100%; height: auto;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p>No photos found.</p>
+                        }
+                    }
+                    else if (ViewBag.ViewMode == "information")
+                    {
+                        <!-- Hiển thị thông tin cá nhân -->
+                        <h2>Information of @Model.accountDTO.FullName</h2>
+                        <div class="w3-container w3-card w3-white w3-round w3-margin">
+                            <div class="w3-container">
+                                @if (Model.accountDTO.Major != null && Model.accountDTO.Major != "N/A")
+                                {
+                                    <p><strong>Major:</strong> @Model.accountDTO.Major</p>
+                                }
+                                @if (Model.accountDTO.Address != null && Model.accountDTO.Address != "N/A")
+                                {
+                                    <p><strong>Address:</strong> @Model.accountDTO.Address</p>
+                                }
+                                @if (Model.accountDTO.Gender != null && Model.accountDTO.Gender != "N/A")
+                                {
+                                    <p><strong>Gender:</strong> @Model.accountDTO.Gender</p>
+                                }
+                                @if (Model.accountDTO.DateOfBirth != null)
+                                {
+                                    <p><strong>Date of Birth:</strong> @Model.accountDTO.DateOfBirth.Value.ToString("MMMM dd, yyyy")</p>
+                                }
+                                @if (Model.accountDTO.YearOfExperience != null)
+                                {
+                                    <p><strong>Years of Experience:</strong> @Model.accountDTO.YearOfExperience</p>
+                                }
+                                @if (Model.accountDTO.ShortBio != null && Model.accountDTO.ShortBio != "N/A")
+                                {
+                                    <p><strong>Bio:</strong> @Model.accountDTO.ShortBio</p>
                                 }
                             </div>
                         </div>
                     }
-                    <br>
-
-                    <div class="w3-card w3-round w3-white w3-padding-32 w3-center">
-                        <p><i class="fa fa-bug w3-xxlarge"></i></p>
-                    </div>
                 </div>
+                <!-- End Middle Column -->
                 @functions {
                 private async Task<AccountDTO> GetSenderInfo(int senderId)
                 {
@@ -549,7 +403,7 @@ else
                         if (response.IsSuccessStatusCode)
                         {
                             var content = await response.Content.ReadAsStringAsync();
-                            var profile = System.Text.Json.JsonSerializer.Deserialize<PersonalPageDTO>(content, new JsonSerializerOptions
+                            var profile = System.Text.Json.JsonSerializer.Deserialize<PersonalPageDTO>(content, new System.Text.Json.JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
@@ -562,13 +416,143 @@ else
                     }
                     return null;
                 }
-            }
-            <!-- End Grid -->
-        </div>
 
-        <!-- End Page Container -->
+                private async Task<AccountPhotosDTO> GetPhotos(int accountId)
+                {
+                    try
+                    {
+                        using var client = new HttpClient();
+                        var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+                        client.DefaultRequestHeaders.Accept.Add(contentType);
+                        var authenUrl = "http://localhost:5157/api/Accounts";
+
+                        var response = await client.GetAsync($"{authenUrl}/all-photos/{accountId}");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            var photosDTO = System.Text.Json.JsonSerializer.Deserialize<AccountPhotosDTO>(content, new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                            return photosDTO;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error fetching photos: {ex.Message}");
+                    }
+                    return null;
+                }
+            }
+            <!-- End Middle Column -->
+
+            <!-- Right Column -->
+            <div class="w3-col m2">
+                @if (accountIDLogin == Model.accountDTO.AccountId)
+                    {
+                        // Nếu vào trang cá nhân của chính mình -> Hiển thị danh sách yêu cầu kết bạn
+                        if (Model.friendRequestReceivers.Count() > 0)
+                        {
+                            <div class="w3-card w3-round w3-white w3-center">
+                                <div class="w3-container">
+                                    <p>Friend Requests</p>
+                                    @foreach (var f in Model.friendRequestReceivers)
+                                    {
+                                        <div class="friend-request-item" data-request-id="@f.RequestId">
+                                            <p>SenderId: @f.SenderId, ReceiverId: @f.ReceiverId</p>
+                                            <div class="w3-row w3-opacity">
+                                                <div class="w3-half">
+                                                    <button type="button" class="w3-button w3-green w3-section px-3 py-1 request-btn"
+                                                            data-sender-id="@f.SenderId"
+                                                            data-receiver-id="@f.ReceiverId"
+                                                            data-status="accepted" title="Accept">
+                                                        <i class="fa fa-check"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="w3-half">
+                                                    <button type="button" class="w3-button w3-red w3-section px-3 py-1 request-btn"
+                                                            data-sender-id="@f.SenderId"
+                                                            data-receiver-id="@f.ReceiverId"
+                                                            data-status="rejected" title="Decline">
+                                                        <i class="fa fa-remove"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="message mt-2"></div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="w3-card w3-round w3-white w3-center">
+                                <div class="w3-container">
+                                    <p>Friend List</p>
+                                    @if (Model.listFriends.Count() > 0)
+                                    {
+                                        @foreach (var f in Model.listFriends.Take(10).Reverse())
+                                        {
+                                            var friendId = f.SenderId == accountIDLogin ? f.ReceiverId : f.SenderId;
+                                            var friendInfo = await GetSenderInfo(friendId);
+
+                                            <div>
+                                                <a class="d-flex justify-content-around align-items-center" href="@Url.Action("PersonalPage", "Profile", new { id = friendId })">
+                                                    <img src="@(friendInfo?.Avatar ?? "~/image/avatar6.png")" alt="Avatar" class="w-25">
+                                                    <span>@(friendInfo?.FullName ?? "Unknown User")</span>
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>No friends yet.</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        // Nếu vào trang cá nhân của người khác -> Chỉ hiển thị danh sách bạn bè
+                        <div class="w3-card w3-round w3-white w3-center">
+                            <div class="w3-container">
+                                <p>Friend List</p>
+                                @if (Model.listFriends.Count() > 0)
+                                {
+                                    @foreach (var f in Model.listFriends.Take(10).Reverse())
+                                    {
+                                        var friendId = f.SenderId == Model.accountDTO.AccountId ? f.ReceiverId : f.SenderId;
+                                        var friendInfo = await GetSenderInfo(friendId);
+
+                                        <div>
+                                            <a class="d-flex justify-content-around align-items-center" href="@Url.Action("PersonalPage", "Profile", new { id = friendId })">
+                                                <img src="@(friendInfo?.Avatar ?? "~/image/avatar6.png")" alt="Avatar" class="w-25">
+                                                <span>@(friendInfo?.FullName ?? "Unknown User")</span>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>No friends yet.</p>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <br>
+
+                    <div class="w3-card w3-round w3-white w3-padding-32 w3-center">
+                        <p><i class="fa fa-bug w3-xxlarge"></i></p>
+                    </div>
+                </div>
+                <!-- End Grid -->
+            </div>
+
+            <!-- End Page Container -->
+        </div>
     </div>
-</div>
 }
 <div id="success-message" style="display:none;">@TempData["SuccessMessage"]</div>
 @section Scripts {

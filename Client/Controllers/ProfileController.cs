@@ -21,7 +21,7 @@ namespace Client.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> PersonalPage(int id)
+        public async Task<IActionResult> PersonalPage(int id, string view = "posts")
         {
             try
             {
@@ -78,6 +78,7 @@ namespace Client.Controllers
                 // Truyền dữ liệu vào ViewBag
                 ViewBag.IsLoggedIn = isLoggedIn;
                 ViewBag.AccountIDLogin = accountIDLogin;
+                ViewBag.ViewMode = view; // Truyền view mode vào ViewBag
 
                 // Truyền dữ liệu vào View
                 return View(profile);
@@ -123,7 +124,6 @@ namespace Client.Controllers
             }
         }
 
-        [Authorize]
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdateFriendRequest(int senderId, int receiverId, string status)
@@ -208,6 +208,168 @@ namespace Client.Controllers
             {
                 TempData["ErrorMessage"] = $"Error: {ex.Message}";
                 return RedirectToAction("PersonalPage", new { id = userId2 });
+            }
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ListFriends(int id)
+        {
+            try
+            {
+                // Kiểm tra trạng thái đăng nhập và AccountIDLogin
+                var isLoggedIn = User.Identity.IsAuthenticated;
+                int? accountIDLogin = null;
+                if (isLoggedIn)
+                {
+                    var accountIdClaim = User.Claims.FirstOrDefault(c => c.Type == "AccountID");
+                    if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountIdFromCookie))
+                    {
+                        accountIDLogin = accountIdFromCookie;
+                    }
+                }
+
+                if (!accountIDLogin.HasValue)
+                {
+                    TempData["ErrorMessage"] = "You must be logged in to view this page.";
+                    return RedirectToAction("Index", "Authen");
+                }
+
+                // Gọi API để lấy danh sách bạn bè
+                string requestUrl = $"{_authenUrl}/all-friends/{id}";
+                Console.WriteLine($"Calling API: {requestUrl}");
+                var response = await _clientProfile.GetAsync(requestUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        TempData["ErrorMessage"] = $"No friends found for account_id {id}";
+                        return RedirectToAction("PersonalPage", new { id });
+                    }
+
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Failed to fetch friends: {response.ReasonPhrase}. Details: {errorContent}");
+                }
+
+                // Đọc và deserialize dữ liệu từ API
+                var content = await response.Content.ReadAsStringAsync();
+                var friends = JsonSerializer.Deserialize<IEnumerable<FriendRequestDTO>>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (friends == null)
+                {
+                    TempData["ErrorMessage"] = "No friends found.";
+                    return RedirectToAction("PersonalPage", new { id });
+                }
+
+                // Gọi API để lấy thông tin của user (cho thanh điều hướng hoặc header)
+                var profileResponse = await _clientProfile.GetAsync($"{_authenUrl}/personal-page/{id}");
+                if (!profileResponse.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = $"Failed to fetch profile for account_id {id}";
+                    return RedirectToAction("PersonalPage", new { id });
+                }
+
+                var profileContent = await profileResponse.Content.ReadAsStringAsync();
+                var profile = JsonSerializer.Deserialize<PersonalPageDTO>(profileContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                // Truyền dữ liệu vào ViewBag
+                ViewBag.IsLoggedIn = isLoggedIn;
+                ViewBag.AccountIDLogin = accountIDLogin;
+                ViewBag.Profile = profile;
+
+                return View(friends);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                return RedirectToAction("PersonalPage", new { id });
+            }
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ListPhotos(int id)
+        {
+            try
+            {
+                // Kiểm tra trạng thái đăng nhập và AccountIDLogin
+                var isLoggedIn = User.Identity.IsAuthenticated;
+                int? accountIDLogin = null;
+                if (isLoggedIn)
+                {
+                    var accountIdClaim = User.Claims.FirstOrDefault(c => c.Type == "AccountID");
+                    if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountIdFromCookie))
+                    {
+                        accountIDLogin = accountIdFromCookie;
+                    }
+                }
+
+                if (!accountIDLogin.HasValue)
+                {
+                    TempData["ErrorMessage"] = "You must be logged in to view this page.";
+                    return RedirectToAction("Index", "Authen");
+                }
+
+                // Gọi API để lấy danh sách ảnh
+                string requestUrl = $"{_authenUrl}/all-photos/{id}";
+                Console.WriteLine($"Calling API: {requestUrl}");
+                var response = await _clientProfile.GetAsync(requestUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        TempData["ErrorMessage"] = $"No photos found for account_id {id}";
+                        return RedirectToAction("PersonalPage", new { id });
+                    }
+
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Failed to fetch photos: {response.ReasonPhrase}. Details: {errorContent}");
+                }
+
+                // Đọc và deserialize dữ liệu từ API
+                var content = await response.Content.ReadAsStringAsync();
+                var photosDTO = JsonSerializer.Deserialize<AccountPhotosDTO>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (photosDTO == null || photosDTO.Photos == null)
+                {
+                    TempData["ErrorMessage"] = "No photos found.";
+                    return RedirectToAction("PersonalPage", new { id });
+                }
+
+                // Gọi API để lấy thông tin của user (cho thanh điều hướng hoặc header)
+                var profileResponse = await _clientProfile.GetAsync($"{_authenUrl}/personal-page/{id}");
+                if (!profileResponse.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = $"Failed to fetch profile for account_id {id}";
+                    return RedirectToAction("PersonalPage", new { id });
+                }
+
+                var profileContent = await profileResponse.Content.ReadAsStringAsync();
+                var profile = JsonSerializer.Deserialize<PersonalPageDTO>(profileContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                // Truyền dữ liệu vào ViewBag
+                ViewBag.IsLoggedIn = isLoggedIn;
+                ViewBag.AccountIDLogin = accountIDLogin;
+                ViewBag.Profile = profile;
+
+                return View(photosDTO);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                return RedirectToAction("PersonalPage", new { id });
             }
         }
     }
