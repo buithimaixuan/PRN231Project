@@ -10,14 +10,14 @@ namespace Client.Controllers
     public class ProfileController : Controller
     {
         private readonly HttpClient _clientProfile;
-        private readonly string _authenUrl;
+        private readonly string _accountUrl;
 
         public ProfileController()
         {
             _clientProfile = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             _clientProfile.DefaultRequestHeaders.Accept.Add(contentType); // Chỉ thêm header Accept
-            _authenUrl = "http://localhost:5157/api/Accounts";
+            _accountUrl = "http://localhost:5157/api/Accounts";
         }
 
         [Authorize]
@@ -46,7 +46,7 @@ namespace Client.Controllers
                 }
 
                 // Gọi API GetUserPersonalPage
-                string requestUrl = $"{_authenUrl}/personal-page/{id}";
+                string requestUrl = $"{_accountUrl}/personal-page/{id}";
                 Console.WriteLine($"Calling API: {requestUrl}");
                 var response = await _clientProfile.GetAsync(requestUrl);
 
@@ -103,24 +103,19 @@ namespace Client.Controllers
                 };
 
                 var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
-                var response = await _clientProfile.PostAsync($"{_authenUrl}/friend-request/send", content);
+                var response = await _clientProfile.PostAsync($"{_accountUrl}/friend-request/send", content);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    TempData["ErrorMessage"] = $"Failed to send friend request: {errorContent}";
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "Friend request sent successfully.";
+                    return Json(new { success = false, message = $"Failed to send friend request: {errorContent}" });
                 }
 
-                return RedirectToAction("PersonalPage", new { id = receiverId });
+                return Json(new { success = true, message = "Friend request sent successfully." });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error: {ex.Message}";
-                return RedirectToAction("PersonalPage", new { id = receiverId });
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
             }
         }
 
@@ -155,7 +150,7 @@ namespace Client.Controllers
                 };
 
                 var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
-                var response = await _clientProfile.PutAsync($"{_authenUrl}/friend-request/update", content);
+                var response = await _clientProfile.PutAsync($"{_accountUrl}/friend-request/update", content);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -188,26 +183,26 @@ namespace Client.Controllers
                     }
                 }
 
+                if (!accountIDLogin.HasValue || (accountIDLogin != userId1 && accountIDLogin != userId2))
+                {
+                    return Json(new { success = false, message = "You are not authorized to perform this action." });
+                }
+
                 // Gọi API Unfriend
-                var requestUrl = $"{_authenUrl}/friend/unfriend?userId1={userId1}&userId2={userId2}";
+                var requestUrl = $"{_accountUrl}/friend/unfriend?userId1={userId1}&userId2={userId2}";
                 var response = await _clientProfile.DeleteAsync(requestUrl);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    TempData["ErrorMessage"] = $"Failed to unfriend: {errorContent}";
-                }
-                else
-                {
-                    TempData["SuccessMessage"] = "Successfully unfriended.";
+                    return Json(new { success = false, message = $"Failed to unfriend: {errorContent}" });
                 }
 
-                return RedirectToAction("PersonalPage", new { id = userId2 });
+                return Json(new { success = true, message = "Successfully unfriended." });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error: {ex.Message}";
-                return RedirectToAction("PersonalPage", new { id = userId2 });
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
             }
         }
 
@@ -235,7 +230,7 @@ namespace Client.Controllers
                 }
 
                 // Gọi API để lấy danh sách bạn bè
-                string requestUrl = $"{_authenUrl}/all-friends/{id}";
+                string requestUrl = $"{_accountUrl}/all-friends/{id}";
                 Console.WriteLine($"Calling API: {requestUrl}");
                 var response = await _clientProfile.GetAsync(requestUrl);
 
@@ -265,7 +260,7 @@ namespace Client.Controllers
                 }
 
                 // Gọi API để lấy thông tin của user (cho thanh điều hướng hoặc header)
-                var profileResponse = await _clientProfile.GetAsync($"{_authenUrl}/personal-page/{id}");
+                var profileResponse = await _clientProfile.GetAsync($"{_accountUrl}/personal-page/{id}");
                 if (!profileResponse.IsSuccessStatusCode)
                 {
                     TempData["ErrorMessage"] = $"Failed to fetch profile for account_id {id}";
@@ -316,7 +311,7 @@ namespace Client.Controllers
                 }
 
                 // Gọi API để lấy danh sách ảnh
-                string requestUrl = $"{_authenUrl}/all-photos/{id}";
+                string requestUrl = $"{_accountUrl}/all-photos/{id}";
                 Console.WriteLine($"Calling API: {requestUrl}");
                 var response = await _clientProfile.GetAsync(requestUrl);
 
@@ -346,7 +341,7 @@ namespace Client.Controllers
                 }
 
                 // Gọi API để lấy thông tin của user (cho thanh điều hướng hoặc header)
-                var profileResponse = await _clientProfile.GetAsync($"{_authenUrl}/personal-page/{id}");
+                var profileResponse = await _clientProfile.GetAsync($"{_accountUrl}/personal-page/{id}");
                 if (!profileResponse.IsSuccessStatusCode)
                 {
                     TempData["ErrorMessage"] = $"Failed to fetch profile for account_id {id}";
