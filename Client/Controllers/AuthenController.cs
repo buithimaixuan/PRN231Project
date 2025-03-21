@@ -23,11 +23,11 @@ namespace Client.Controllers
             client.DefaultRequestHeaders.Accept.Add(contentType);
             // docker
             authenUrl = "http://localhost:5157/api/Auth";
-
-            //authenUrl = "https://localhost:7272/api/Auth";
-
             accountUrl = "https://localhost:5157/api/Accounts";
-            ///accountUrl = "https://localhost:7272/api/Accounts";
+
+            //SWAGGER
+            authenUrl = "https://localhost:7272/api/Auth";
+            accountUrl = "https://localhost:7272/api/Accounts";
         }
 
         public IActionResult Index()
@@ -70,13 +70,13 @@ namespace Client.Controllers
                 HttpContext.Session.SetInt32("AccountID", loginResponse.AccountId);
                 
 
-                if (loginResponse.RoleId == 2)
+                if (loginResponse.RoleId == 2 || loginResponse.RoleId == 3)
                 {
                     return RedirectToAction("Index", "Home");
                 }
-                else if (loginResponse.RoleId == 3)
+                else if (loginResponse.RoleId == 1)
                 {
-                    return RedirectToAction("Index", "Experts");
+                    return RedirectToAction("Index", "Statistic");
                 }
             }
 
