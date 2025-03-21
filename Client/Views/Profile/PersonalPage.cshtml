@@ -7,7 +7,13 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var isLoggedIn = ViewBag.IsLoggedIn as bool? ?? false;
-    var accountIDLogin = ViewBag.AccountIDLogin as int?;
+    var accountIdClaim = HttpContextAccessor.HttpContext?.User?.Claims.FirstOrDefault(c => c.Type == "AccountID");
+
+    int accountIDLogin = 0; // Giá trị mặc định nếu không tìm thấy claim
+    if (accountIdClaim != null && !string.IsNullOrEmpty(accountIdClaim.Value))
+    {
+        int.TryParse(accountIdClaim.Value, out accountIDLogin);
+    }
 
     if (Model != null && Model.accountDTO != null)
     {
@@ -19,84 +25,21 @@
     }
 
     // Kiểm tra trạng thái quan hệ
-    bool isOwnProfile = accountIDLogin.HasValue && Model != null && Model.accountDTO != null && accountIDLogin.Value == Model.accountDTO.AccountId;
-    bool isFriend = Model != null && Model.listFriends != null && Model.listFriends.Any(f => (f.SenderId == accountIDLogin && f.ReceiverId == Model.accountDTO.AccountId) || (f.SenderId == Model.accountDTO.AccountId && f.ReceiverId == accountIDLogin));
-    bool hasSentRequest = Model != null && Model.friendRequestReceivers != null && Model.friendRequestReceivers.Any(fr => fr.SenderId == accountIDLogin && fr.ReceiverId == Model.accountDTO.AccountId && fr.RequestStatus == "pending");
-    bool hasReceivedRequest = Model != null && Model.friendRequestSenders != null && Model.friendRequestSenders.Any(fr => fr.SenderId == Model.accountDTO.AccountId && fr.ReceiverId == accountIDLogin && fr.RequestStatus == "pending");
+    bool isOwnProfile = Model?.accountDTO != null && accountIDLogin > 0 && accountIDLogin == Model.accountDTO.AccountId;
+    bool isFriend = Model?.listFriends != null && Model.listFriends.Any(f =>
+        (f.SenderId == accountIDLogin && f.ReceiverId == Model.accountDTO.AccountId) ||
+        (f.SenderId == Model.accountDTO.AccountId && f.ReceiverId == accountIDLogin));
+
+    bool hasSentRequest = Model?.friendRequestReceivers != null && Model.friendRequestReceivers.Any(fr =>
+        fr.SenderId == accountIDLogin && fr.ReceiverId == Model.accountDTO.AccountId && fr.RequestStatus == "pending");
+
+    bool hasReceivedRequest = Model?.friendRequestSenders != null && Model.friendRequestSenders.Any(fr =>
+        fr.SenderId == Model.accountDTO.AccountId && fr.ReceiverId == accountIDLogin && fr.RequestStatus == "pending");
+
+    Console.WriteLine("Model.accountDTO.AccountId: " + (Model?.accountDTO?.AccountId ?? 0));
+    Console.WriteLine("accountIDLogin: " + accountIDLogin);
 }
 
-<style>
-    html,
-    body,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5 {
-    font-family: "Open Sans", sans-serif
-    }
-    /* Trường hợp 1 ảnh */
-    .image-grid-1 img {
-    width: 100%; /* Hiển thị ảnh rộng 100% */
-    }
-
-    /* Trường hợp 2 ảnh */
-    .image-grid-2 {
-    display: flex;
-    justify-content: space-between;
-    }
-
-    .image-grid-2 img {
-    width: 48%; /* Hiển thị 2 ảnh ngang hàng, mỗi ảnh chiếm 48% */
-    }
-
-    /* Trường hợp 3 ảnh */
-    .image-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    }
-
-    .image-grid-3 img {
-    width: 100%; /* 3 ảnh chia đều theo hàng */
-    }
-
-    /* Trường hợp 4 ảnh */
-    .image-grid-4 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    }
-
-    .image-grid-4 img {
-        width: 100%; /* 4 ảnh chia thành 2x2 */
-    }
-
-    .photo-card {
-        width: 100%;
-        padding-top: 100%;
-        position: relative;
-        overflow: hidden;
-        border-radius: 5px; 
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .photo-card:hover {
-        transform: scale(1.05);
-    }
-
-    .photo-img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 10px;
-    }
-
-</style>
 
 
 @if (ViewBag.ErrorMessage != null)
@@ -220,7 +163,7 @@ else
                         <div class="w3-white">
                             @if (Model.accountDTO.AccountId == accountIDLogin)
                             {
-                                <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" asp-route-view="information" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                                <a asp-controller="Profile" asp-action="UpdateProfile" asp-route-id="@Model.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
                                     <i class="fa fa-info-circle fa-fw w3-margin-right"></i> Information
                                 </a>
                             }
@@ -406,39 +349,6 @@ else
                                 <h5 class="font-italic text-danger">No photos found.</h5>
                             </div>
                         }
-                    }
-                    else if (ViewBag.ViewMode == "information")
-                    {
-                        <!-- Hiển thị thông tin cá nhân -->
-                        <h2>Information of @Model.accountDTO.FullName</h2>
-                        <div class="w3-container w3-card w3-white w3-round w3-margin">
-                            <div class="w3-container">
-                                @if (Model.accountDTO.Major != null && Model.accountDTO.Major != "N/A")
-                                {
-                                    <p><strong>Major:</strong> @Model.accountDTO.Major</p>
-                                }
-                                @if (Model.accountDTO.Address != null && Model.accountDTO.Address != "N/A")
-                                {
-                                    <p><strong>Address:</strong> @Model.accountDTO.Address</p>
-                                }
-                                @if (Model.accountDTO.Gender != null && Model.accountDTO.Gender != "N/A")
-                                {
-                                    <p><strong>Gender:</strong> @Model.accountDTO.Gender</p>
-                                }
-                                @if (Model.accountDTO.DateOfBirth != null)
-                                {
-                                    <p><strong>Date of Birth:</strong> @Model.accountDTO.DateOfBirth.Value.ToString("MMMM dd, yyyy")</p>
-                                }
-                                @if (Model.accountDTO.YearOfExperience != null)
-                                {
-                                    <p><strong>Years of Experience:</strong> @Model.accountDTO.YearOfExperience</p>
-                                }
-                                @if (Model.accountDTO.ShortBio != null && Model.accountDTO.ShortBio != "N/A")
-                                {
-                                    <p><strong>Bio:</strong> @Model.accountDTO.ShortBio</p>
-                                }
-                            </div>
-                        </div>
                     }
                 </div>
                 <!-- End Middle Column -->

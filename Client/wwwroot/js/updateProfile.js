@@ -15,14 +15,22 @@ function loadImage(event) {
             }
             cropper = new Cropper(image, {
                 aspectRatio: 1, // Tỉ lệ hình vuông
-                viewMode: 1,
-                autoCropArea: 1,
+                viewMode: 1,    // Giới hạn ảnh trong khung nhìn
+                autoCropArea: 1, // Diện tích cắt ban đầu chiếm 80% ảnh
                 responsive: true,
-                modal: true,
-                guides: true,
-                center: true,
-                highlight: true,
-                background: true,
+                modal: true,    // Hiển thị lớp phủ mờ
+                guides: true,   // Hiển thị đường lưới
+                center: true,   // Hiển thị tâm cắt
+                highlight: true,// Làm nổi bật vùng cắt
+                background: true,// Hiển thị nền lưới
+                dragMode: 'move', // Cho phép di chuyển ảnh bằng cách kéo
+                scalable: true,   // Cho phép phóng to/thu nhỏ
+                zoomable: true,   // Cho phép zoom bằng bánh xe chuột hoặc chạm
+                zoomOnTouch: true,// Zoom bằng hai ngón tay trên mobile
+                zoomOnWheel: true,// Zoom bằng bánh xe chuột trên PC
+                movable: true,    // Cho phép di chuyển ảnh
+                cropBoxMovable: false, // Không cho di chuyển khung cắt
+                cropBoxResizable: false, // Không cho thay đổi kích thước khung cắt
                 crop: function (event) {
                     // Xử lý khi cắt ảnh nếu cần
                 },
@@ -35,8 +43,8 @@ function loadImage(event) {
 document.getElementById('cropButton').addEventListener('click', function () {
     if (cropper) {
         const canvas = cropper.getCroppedCanvas({
-            width: 110,
-            height: 110,
+            width: 300,
+            height: 300,
         });
 
         canvas.toBlob(function (blob) {

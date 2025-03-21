@@ -17,7 +17,7 @@
             using var client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
-            var authenUrl = "http://localhost:5157/api/Accounts";
+            var authenUrl = "https://localhost:7272/api/Accounts";
 
             try
             {
@@ -632,6 +632,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/mainServiceDetail.js"></script>
+    <script src="~/js/updateProfile.js"></script>
     @* <script type="text/javascript">
         if (window.location.hash === '#_=_') {
             if (history.replaceState) {

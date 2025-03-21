@@ -123,3 +123,74 @@ select::-ms-expand {
     color: white;
     margin-right: 5px;
 }
+
+
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: "Open Sans", sans-serif
+}
+/* Trường hợp 1 ảnh */
+.image-grid-1 img {
+    width: 100%; /* Hiển thị ảnh rộng 100% */
+}
+
+/* Trường hợp 2 ảnh */
+.image-grid-2 {
+    display: flex;
+    justify-content: space-between;
+}
+
+    .image-grid-2 img {
+        width: 48%; /* Hiển thị 2 ảnh ngang hàng, mỗi ảnh chiếm 48% */
+    }
+
+/* Trường hợp 3 ảnh */
+.image-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+    .image-grid-3 img {
+        width: 100%; /* 3 ảnh chia đều theo hàng */
+    }
+
+/* Trường hợp 4 ảnh */
+.image-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+    .image-grid-4 img {
+        width: 100%; /* 4 ảnh chia thành 2x2 */
+    }
+
+.photo-card {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+    .photo-card:hover {
+        transform: scale(1.05);
+    }
+
+.photo-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
