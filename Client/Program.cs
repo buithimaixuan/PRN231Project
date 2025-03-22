@@ -1,11 +1,11 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-//new
 builder.Services.AddHttpClient();
-
 
 builder.Services.AddSession(options =>
 {
@@ -18,14 +18,26 @@ builder.Services.AddDistributedMemoryCache(); // For storing session data in mem
 builder.Services.AddHttpContextAccessor();
 
 // Thêm Authentication với Cookie
-builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", options =>
-    {
-        options.LoginPath = "/Authen/Index"; // Chuyển hướng đến trang đăng nhập
-        options.AccessDeniedPath = "/Authen/AccessDenied"; // Chuyển hướng khi bị từ chối quyền
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Thời gian hết hạn
-        options.SlidingExpiration = true; // Gia hạn session khi có hoạt động
-    });
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme; // Sử dụng Google cho challenge
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Thêm DefaultSignInScheme
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Authen/Index";
+    options.LogoutPath = "/Authen/Logout";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
+})
+.AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["GoogleKeys:ClientID"];
+    options.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
+    options.CallbackPath = "/signin-google";
+    options.SaveTokens = true;
+});
 
 builder.Services.AddAuthorization();
 var app = builder.Build();
@@ -34,7 +46,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -46,7 +57,6 @@ app.UseRouting();
 app.UseSession();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

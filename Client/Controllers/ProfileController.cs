@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Security.Claims;
 using System.Net.Http;
+using Client.ViewModel;
 
 namespace Client.Controllers
 {
@@ -57,7 +58,8 @@ namespace Client.Controllers
                 }
 
                 // Truyền dữ liệu vào ViewBag
-                ViewBag.ViewMode = view; // Truyền view mode vào ViewBag
+                ViewBag.ViewMode = view;
+                ViewBag.Otp = profile.accountDTO.Otp;
 
                 // Truyền dữ liệu vào View
                 return View(profile);
@@ -93,7 +95,6 @@ namespace Client.Controllers
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    TempData["ErrorMessage"] = $"Failed to fetch profile: {errorContent}";
                     return RedirectToAction("PersonalPage", new { id = accountIDLogin });
                 }
 
@@ -110,12 +111,23 @@ namespace Client.Controllers
                     return RedirectToAction("PersonalPage", new { id = accountIDLogin });
                 }
 
+                // Tạo đối tượng ProfileViewModel
+                var viewModel = new ProfileViewModel
+                {
+                    Account = profile.accountDTO,
+                    ChangePassword = new ChangePasswordDTO(),
+                    SetPassword = new SetPasswordDTO()
+                };
+
                 // Truyền dữ liệu vào ViewBag
+                ViewBag.Otp = profile.accountDTO.Otp;
+                Console.WriteLine(profile.accountDTO.Otp);
                 ViewBag.IsLoggedIn = isLoggedIn;
                 ViewBag.AccountIDLogin = accountIDLogin;
                 ViewBag.ViewMode = view;
-                // Truyền AccountDTO vào View để hiển thị form
-                return View(profile.accountDTO);
+
+                // Truyền ProfileViewModel vào View
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -182,7 +194,7 @@ namespace Client.Controllers
         // POST: /Profile/UpdateProfile
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UpdateProfile(AccountDTO accountDTO)
+        public async Task<IActionResult> UpdateProfile(ProfileViewModel profile)
         {
             try
             {
@@ -199,26 +211,26 @@ namespace Client.Controllers
                 }
 
                 // Kiểm tra xem accountDTO có hợp lệ không
-                if (accountDTO == null)
+                if (profile == null || profile.Account == null)
                 {
                     TempData["ErrorMessage"] = "Invalid profile data.";
-                    return View(accountDTO);
+                    return RedirectToAction("UpdateProfile", new { view = "UpdateProfile" });
                 }
 
                 // Map AccountDTO to UpdateAccountDTO
                 var updateAccountDTO = new UpdateAccountDTO
                 {
-                    FullName = accountDTO.FullName,
-                    ShortBio = accountDTO.ShortBio,
-                    Gender = accountDTO.Gender,
-                    Email = accountDTO.Email,
-                    Phone = accountDTO.Phone,
-                    DateOfBirth = accountDTO.DateOfBirth,
-                    Address = accountDTO.Address,
-                    EducationUrl = accountDTO.EducationUrl,
-                    YearOfExperience = accountDTO.YearOfExperience,
-                    DegreeUrl = accountDTO.DegreeUrl,
-                    Major = accountDTO.Major
+                    FullName = profile.Account.FullName,
+                    ShortBio = profile.Account.ShortBio,
+                    Gender = profile.Account.Gender,
+                    Email = profile.Account.Email,
+                    Phone = profile.Account.Phone,
+                    DateOfBirth = profile.Account.DateOfBirth,
+                    Address = profile.Account.Address,
+                    EducationUrl = profile.Account.EducationUrl,
+                    YearOfExperience = profile.Account.YearOfExperience,
+                    DegreeUrl = profile.Account.DegreeUrl,
+                    Major = profile.Account.Major
                 };
 
                 // Gọi API để cập nhật thông tin tài khoản
@@ -229,16 +241,72 @@ namespace Client.Controllers
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     TempData["ErrorMessage"] = $"Failed to update profile: {errorContent}";
-                    return View(accountDTO);
+                    return RedirectToAction("UpdateProfile", new { view = "UpdateProfile" });
                 }
 
                 TempData["SuccessMessage"] = "Profile updated successfully.";
-                return RedirectToAction("UpdateProfile", new { id = accountIDLogin });
+                return RedirectToAction("UpdateProfile", new { view = "UpdateProfile" });
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Error: {ex.Message}";
-                return View(accountDTO);
+                return RedirectToAction("UpdateProfile", new { view = "UpdateProfile" });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SetPassword(SetPasswordDTO model) // Thay ChangePasswordDTO thành SetPasswordDTO
+        {
+            var isLoggedIn = User.Identity.IsAuthenticated;
+            int? accountIDLogin = null;
+            try
+            {
+                if (isLoggedIn)
+                {
+                    var accountIdClaim = User.Claims.FirstOrDefault(c => c.Type == "AccountID");
+                    if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountIdFromCookie))
+                    {
+                        accountIDLogin = accountIdFromCookie;
+                    }
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    TempData["ErrorMessage"] = "Please fill in all required fields.";
+                    return RedirectToAction("UpdateProfile", new { view = "ChangePassword" });
+                }
+
+                if (model.NewPassword != model.ConfirmNewPassword) // Thay newPassword thành NewPassword
+                {
+                    TempData["ErrorMessage"] = "New password and confirm password do not match.";
+                    return RedirectToAction("UpdateProfile", new { view = "ChangePassword" });
+                }
+
+                var setPasswordDTO = new
+                {
+                    NewPassword = model.NewPassword,
+                    ConfirmNewPassword = model.ConfirmNewPassword
+                };
+
+                string requestUrl = $"{_accountUrl}/SetPassword/{accountIDLogin}";
+                var content = new StringContent(JsonSerializer.Serialize(setPasswordDTO), System.Text.Encoding.UTF8, "application/json");
+                var response = await _clientProfile.PutAsync(requestUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    TempData["ErrorMessage"] = $"Failed to set password: {errorContent}";
+                    return RedirectToAction("UpdateProfile", new { view = "ChangePassword" });
+                }
+
+                TempData["SuccessMessage"] = "Password set successfully!";
+                return RedirectToAction("UpdateProfile", new { view = "UpdateProfile" });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                return RedirectToAction("UpdateProfile", new { view = "ChangePassword" });
             }
         }
 
@@ -265,16 +333,21 @@ namespace Client.Controllers
                     return RedirectToAction("UpdateProfile", new { view = "ChangePassword" });
                 }
 
-                // Kiểm tra confirm password
                 if (model.newPassword != model.confirmNewPassword)
                 {
                     TempData["ErrorMessage"] = "New password and confirm password do not match.";
                     return RedirectToAction("UpdateProfile", new { view = "ChangePassword" });
                 }
 
-                // Gọi API để đổi mật khẩu
+                var changePasswordDTO = new
+                {
+                    CurrentPassword = model.currentPassword,
+                    NewPassword = model.newPassword,
+                    ConfirmNewPassword = model.confirmNewPassword
+                };
+
                 string requestUrl = $"{_accountUrl}/ChangePassword/{accountIDLogin}";
-                var content = new StringContent(JsonSerializer.Serialize(model), System.Text.Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonSerializer.Serialize(changePasswordDTO), System.Text.Encoding.UTF8, "application/json");
                 var response = await _clientProfile.PutAsync(requestUrl, content);
 
                 if (!response.IsSuccessStatusCode)
