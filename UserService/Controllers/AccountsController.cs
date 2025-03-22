@@ -148,6 +148,52 @@ namespace UserService.Controllers
             return Ok("Password changed successfully!");
         }
 
+        [HttpPut("SetPassword/{id}")]
+        public async Task<IActionResult> SetPassword(int id, [FromBody] SetPasswordDTO request)
+        {
+            try
+            {
+                // Kiểm tra tài khoản tồn tại
+                var account = await _accountService.GetByIdAccount(id);
+                if (account == null)
+                {
+                    return NotFound("Account not found.");
+                }
+
+                // Kiểm tra xem tài khoản có được tạo bằng Google không (Otp = -1)
+                if (!account.Otp.HasValue || account.Otp != -1)
+                {
+                    return BadRequest("This account was not created using Google or already has a password set.");
+                }
+
+                // Kiểm tra dữ liệu đầu vào
+                if (string.IsNullOrEmpty(request.NewPassword) || string.IsNullOrEmpty(request.ConfirmNewPassword))
+                {
+                    return BadRequest("New password and confirm password are required.");
+                }
+
+                // Kiểm tra mật khẩu mới và xác nhận mật khẩu có khớp không
+                if (request.NewPassword != request.ConfirmNewPassword)
+                {
+                    return BadRequest("New password and confirm password do not match.");
+                }
+
+                // Hash mật khẩu mới
+                account.Password = _passwordHasher.HashPassword(request.NewPassword);
+                account.Otp = null; // Xóa dấu hiệu tài khoản Google
+
+                // Cập nhật tài khoản
+                await _accountService.UpdateAccount(account);
+
+                return Ok("Password set successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}\nInner Exception: {ex.InnerException?.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
+            }
+        }
+
         [HttpGet("{email}")]
         public async Task<IActionResult> GetUserByEmail(string email)
         {

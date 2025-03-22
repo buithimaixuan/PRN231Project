@@ -1,41 +1,40 @@
-﻿@model Client.DTOs.AccountDTO
-
+﻿@model Client.ViewModel.ProfileViewModel
 @{
     ViewData["Title"] = "Update Profile";
 }
 
 <style>
     .update-avatar-btn {
-    font-size: 19px;
-    position: absolute;
-    color: white;
-    background-color: #876a6a;
-    border-radius: 50%;
-    padding: 6px;
-    margin: -45px 0 0 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+        font-size: 19px;
+        position: absolute;
+        color: white;
+        background-color: #876a6a;
+        border-radius: 50%;
+        padding: 6px;
+        margin: -45px 0 0 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
-    .update-avatar-btn:hover {
-    background-color: #483c3c;
-    transform: scale(1.1);
-    }
+        .update-avatar-btn:hover {
+            background-color: #483c3c;
+            transform: scale(1.1);
+        }
 </style>
 
 <div class="row">
     <div class="col-lg-4 p-4">
         <div class="card p-3">
             <div class="d-flex flex-column align-items-center text-center">
-                <img src="@Model.Avatar" alt="@Model.Avatar" class="rounded-circle p-1 bg-primary" width="110">
+                <img src="@Model.Account.Avatar" alt="@Model.Account.Avatar" class="rounded-circle p-1 bg-primary" width="110">
                 <a class="mt-3" data-toggle="modal" data-target="#avatarModal">
                     <i class="update-avatar-btn fas fa-camera"></i>
                 </a>
                 <div class="mt-3">
-                    <a asp-page="/Profile/PersonalPage" asp-route-id="@Model.AccountId"><h4>@Model.FullName</h4></a>
-                    @if (Model.ShortBio != null && Model.ShortBio != "N/A")
+                    <a asp-page="/Profile/PersonalPage" asp-route-id="@Model.Account.AccountId"><h4>@Model.Account.FullName</h4></a>
+                    @if (Model.Account.ShortBio != null)
                     {
-                        <p class="text-secondary mb-1">@Model.ShortBio</p>
+                        <p class="text-secondary mb-1">@Model.Account.ShortBio</p>
                     }
                 </div>
             </div>
@@ -53,7 +52,7 @@
                         <div class="modal-body">
                             <form id="avatarForm" method="post" asp-action="UpdateAvatar" asp-controller="Profile" enctype="multipart/form-data">
                                 <!-- Hidden input to store AccountId -->
-                                <input type="hidden" name="accountId" value="@Model.AccountId" />
+                                <input type="hidden" name="accountId" value="@Model.Account.AccountId" />
                                 <!-- Nút chọn ảnh -->
                                 <button type="button" class="btn btn-secondary mb-3" onclick="document.getElementById('fileInput').click()">Choose Image</button>
                                 <input type="file" id="fileInput" name="AvatarFile" accept="image/*" style="display:none" onchange="loadImage(event)">
@@ -80,25 +79,25 @@
             </div>
 
             <ul class="list-group list-group-flush">
-                @if (Model.Major != null && Model.Major != "N/A")
+                @if (Model.Account.Major != null)
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                         <h6 class="mb-0"><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>Major</h6>
-                        <span class="text-secondary">@Model.Major</span>
+                        <span class="text-secondary">@Model.Account.Major</span>
                     </li>
                 }
-                @if (Model.Address != null && Model.Address != "N/A")
+                @if (Model.Account.Address != null)
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                         <h6 class="mb-0"><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i>Address</h6>
-                        <span class="text-secondary">@Model.Address</span>
+                        <span class="text-secondary">@Model.Account.Address</span>
                     </li>
                 }
-                @if (Model.DateOfBirth != null)
+                @if (Model.Account.DateOfBirth != null)
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                         <h6 class="mb-0"><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i>Date Of Birth</h6>
-                        <span class="text-secondary">@Model.DateOfBirth.Value.ToString("MMMM dd, yyyy")</span>
+                        <span class="text-secondary">@Model.Account.DateOfBirth.Value.ToString("MMMM dd, yyyy")</span>
                     </li>
                 }
             </ul>
@@ -110,166 +109,121 @@
         {
             <form method="post" asp-action="UpdateProfile" class="card p-5">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">FullName</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input type="text" class="form-control" asp-for="FullName">
-                    <span asp-validation-for="FullName" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Short Bio</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="ShortBio" class="form-control" />
-                    <span asp-validation-for="ShortBio" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Username</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="Username" class="form-control" readonly />
-                    <span asp-validation-for="Username" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Email</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="Email" class="form-control" readonly />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Phone</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="Phone" class="form-control" readonly />
-                    <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Gender</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <select asp-for="Gender" class="form-control">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Address</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="Address" class="form-control" />
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Major</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="Major" class="form-control" />
-                    <span asp-validation-for="Major" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">DateOfBirth</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="DateOfBirth" class="form-control" type="date" value="@Model.DateOfBirth?.ToString("yyyy-MM-dd")" />
-                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Year Of Experience</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="YearOfExperience" class="form-control" />
-                    <span asp-validation-for="YearOfExperience" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Education</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="EducationUrl" class="form-control" />
-                    <span asp-validation-for="EducationUrl" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-3">
-                    <h6 class="mb-0">Degree</h6>
-                </div>
-                <div class="col-9 text-secondary">
-                    <input asp-for="DegreeUrl" class="form-control" />
-                    <span asp-validation-for="DegreeUrl" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-3">
-                </div>
-                <div class="col-9 text-secondary">
-                    <input type="submit" value="Save" class="btn btn-success" />
-                    <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.AccountId" class="btn btn-primary">Personal Page</a>
-                        <a asp-controller="Profile" asp-action="UpdateProfile" asp-route-id="@Model.AccountId" asp-route-view="ChangePassword" class="btn btn-primary">Change Password</a>
-                </div>
-            </div>
-        </form>
-        }
-        else if (ViewBag.ViewMode == "ChangePassword")
-        {
-            <form method="post" asp-action="ChangePassword" class="card p-5">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="row mb-3">
                     <div class="col-3">
-                        <h6 class="mb-0">Old Password</h6>
+                        <h6 class="mb-0">FullName</h6>
                     </div>
                     <div class="col-9 text-secondary">
-                        <input type="password" name="currentPassword" class="form-control" required />
-                        <span class="text-danger" asp-validation-for="ChangePassword.currentPassword"></span>
+                        <input type="text" class="form-control" asp-for="Account.FullName">
+                        <span asp-validation-for="Account.FullName" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-3">
-                        <h6 class="mb-0">New Password</h6>
+                        <h6 class="mb-0">Short Bio</h6>
                     </div>
                     <div class="col-9 text-secondary">
-                        <input type="password" name="newPassword" class="form-control" required />
-                        <span class="text-danger" asp-validation-for="ChangePassword.newPassword"></span>
+                        <input asp-for="Account.ShortBio" class="form-control" />
+                        <span asp-validation-for="Account.ShortBio" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-3">
-                        <h6 class="mb-0">Confirm Password</h6>
+                        <h6 class="mb-0">Username</h6>
                     </div>
                     <div class="col-9 text-secondary">
-                        <input type="password" name="confirmNewPassword" class="form-control" required />
-                        <span class="text-danger" asp-validation-for="ChangePassword.confirmNewPassword"></span>
+                        <input asp-for="Account.Username" class="form-control" readonly />
+                        <span asp-validation-for="Account.Username" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">Email</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <input asp-for="Account.Email" class="form-control" readonly />
+                        <span asp-validation-for="Account.Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">Phone</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <input asp-for="Account.Phone" class="form-control" />
+                        <span asp-validation-for="Account.Phone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">Gender</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <select asp-for="Account.Gender" class="form-control">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">Address</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <input asp-for="Account.Address" class="form-control" />
+                        <span asp-validation-for="Account.Address" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">Major</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <input asp-for="Account.Major" class="form-control" />
+                        <span asp-validation-for="Account.Major" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">DateOfBirth</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <input asp-for="Account.DateOfBirth" class="form-control" type="date" value="@Model.Account.DateOfBirth?.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="Account.DateOfBirth" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">Year Of Experience</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <input asp-for="Account.YearOfExperience" class="form-control" />
+                        <span asp-validation-for="Account.YearOfExperience" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">Education</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <input asp-for="Account.EducationUrl" class="form-control" />
+                        <span asp-validation-for="Account.EducationUrl" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <h6 class="mb-0">Degree</h6>
+                    </div>
+                    <div class="col-9 text-secondary">
+                        <input asp-for="Account.DegreeUrl" class="form-control" />
+                        <span asp-validation-for="Account.DegreeUrl" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -278,11 +232,94 @@
                     </div>
                     <div class="col-9 text-secondary">
                         <input type="submit" value="Save" class="btn btn-success" />
-                        <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.AccountId" class="btn btn-primary">Personal Page</a>
-                        <a asp-controller="Profile" asp-action="UpdateProfile" asp-route-view="UpdateProfile" asp-route-view="UpdateProfile" class="btn btn-primary">Update Profile</a>
+                        <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.Account.AccountId" class="btn btn-primary">Personal Page</a>
+                        <a asp-controller="Profile" asp-action="UpdateProfile" asp-route-id="@Model.Account.AccountId" asp-route-view="ChangePassword" class="btn btn-primary">Change Password</a>
                     </div>
                 </div>
             </form>
+        }
+        else if (ViewBag.ViewMode == "ChangePassword")
+        {
+            @if (ViewBag.Otp == -1)
+            {
+                <form method="post" asp-action="SetPassword" class="card p-5">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <h6 class="mb-0">New Password</h6>
+                        </div>
+                        <div class="col-9 text-secondary">
+                            <input type="password" name="NewPassword" class="form-control" required />
+                            <span class="text-danger" asp-validation-for="SetPassword.NewPassword"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <h6 class="mb-0">Confirm Password</h6>
+                        </div>
+                        <div class="col-9 text-secondary">
+                            <input type="password" name="ConfirmNewPassword" class="form-control" required />
+                            <span class="text-danger" asp-validation-for="SetPassword.ConfirmNewPassword"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                        </div>
+                        <div class="col-9 text-secondary">
+                            <input type="submit" value="Save" class="btn btn-success" />
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.Account.AccountId" class="btn btn-primary">Personal Page</a>
+                            <a asp-controller="Profile" asp-action="UpdateProfile" asp-route-view="UpdateProfile" class="btn btn-primary">Update Profile</a>
+                        </div>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <form method="post" asp-action="ChangePassword" class="card p-5">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <h6 class="mb-0">Current Password</h6>
+                        </div>
+                        <div class="col-9 text-secondary">
+                            <input type="password" name="currentPassword" class="form-control" required />
+                            <span class="text-danger" asp-validation-for="ChangePassword.currentPassword"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <h6 class="mb-0">New Password</h6>
+                        </div>
+                        <div class="col-9 text-secondary">
+                            <input type="password" name="newPassword" class="form-control" required />
+                            <span class="text-danger" asp-validation-for="ChangePassword.newPassword"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                            <h6 class="mb-0">Confirm Password</h6>
+                        </div>
+                        <div class="col-9 text-secondary">
+                            <input type="password" name="confirmNewPassword" class="form-control" required />
+                            <span class="text-danger" asp-validation-for="ChangePassword.confirmNewPassword"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-3">
+                        </div>
+                        <div class="col-9 text-secondary">
+                            <input type="submit" value="Save" class="btn btn-success" />
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.Account.AccountId" class="btn btn-primary">Personal Page</a>
+                            <a asp-controller="Profile" asp-action="UpdateProfile" asp-route-view="UpdateProfile" class="btn btn-primary">Update Profile</a>
+                        </div>
+                    </div>
+                </form>
+            }
         }
     </div>
 </div>

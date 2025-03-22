@@ -32,5 +32,7 @@
         public string? Major { get; set; }
 
         public string? Address { get; set; }
+
+        public int? Otp { get; set; }
     }
 }
