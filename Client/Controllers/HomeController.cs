@@ -32,7 +32,7 @@ namespace Client.Controllers
 
         public async Task<IActionResult> Index()
         {
-            int accId = GetSessionAccId();
+            int accId = GetCookiesAccId();
             var viewModel = new HomeViewModel();
 
             // Tạo danh sách các task để gọi API song song
@@ -91,6 +91,8 @@ namespace Client.Controllers
                 viewModel.categoryPosts = JsonConvert.DeserializeObject<List<CategoryPost>>(responseListCategoryPost);
             }
 
+            bool isHaveCookies = Request.Cookies.ContainsKey("CookiesPRN231");
+            ViewData["isLoggedIn"] = isHaveCookies;
             return View(viewModel);
         }
 
@@ -105,9 +107,14 @@ namespace Client.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private int GetSessionAccId()
+        private int GetCookiesAccId()
         {
-            return HttpContext.Session.GetInt32("AccountID") ?? -1;
+            // Lấy giá trị AccountID từ Claim
+            var accountIdClaim = User.FindFirst("AccountID");
+
+            if (accountIdClaim == null) return -1;
+
+            return int.Parse(accountIdClaim.Value);
         }
     }
 }

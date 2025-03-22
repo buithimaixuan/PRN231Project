@@ -231,7 +231,7 @@ You can write your custom css styles in this file...
     background: #c8c9caa0;
 }
 
-.popup {
+#popupPost {
     display: none;
     position: fixed;
     top: 0;
@@ -243,10 +243,10 @@ You can write your custom css styles in this file...
     justify-content: center;
     align-items: center;
 }
-.popup.ShowPopup {
+#popupPost.ShowPopup {
     display: flex;
 }
-.popup-content {
+#popupPost .popup-content {
     background: white;
     width: 700px;
     max-height: 80%; /* Giới hạn chiều cao tối đa thành 80% của viewport */
@@ -256,14 +256,14 @@ You can write your custom css styles in this file...
     text-align: center;
     overflow: hidden; /* Không cho phép cuộn */
 }
-.popup-content .close-btn {
+#popupPost .popup-content .close-btn {
     background: none;
     border: none;
     font-size: 20px;
     float: right;
     cursor: pointer;
 }
-.popup-content textarea {
+#popupPost .popup-content textarea {
     width: 100%;
     margin-bottom: 10px;
     border: 1px solid #ddd;
@@ -272,12 +272,12 @@ You can write your custom css styles in this file...
     outline: none;
     height: 180px;
 }
-.popup-content .actions {
+#popupPost .popup-content .actions {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
 }
-.popup-content .actions button {
+#popupPost .popup-content .actions button {
     background: none;
     border: none;
     font-size: 14px;
@@ -285,7 +285,7 @@ You can write your custom css styles in this file...
     display: flex;
     align-items: center;
 }
-.popup-content .actions button img {
+#popupPost .popup-content .actions button img {
     width: 20px;
     margin-right: 5px;
 }

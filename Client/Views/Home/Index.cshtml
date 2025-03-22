@@ -1,17 +1,20 @@
 ﻿@model Client.ViewModel.HomeViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_layout.cshtml";
+    var isLoggedIn = HttpContextAccessor.HttpContext.Request.Cookies["CookiesPRN231"] != null;
+
 }
 
 <!-- Page Wrapper Start -->
 <section class="page--wrapper pt--20 pb--20">
 
-    @if (Model.Account != null)
+    @if (isLoggedIn)
     {
         @* ADD POST *@
-        @*<div class="container" style="margin-left: 30px;">
+        <div class="container" style="margin-left: 30px;">
             <div class="row">
                 <div class="col-md-8 p-2">
 
@@ -25,7 +28,7 @@
                         </div>
                     </div>
 
-                    <div class="popup" id="popup" style="z-index: 100;">
+                    <div class="popup" id="popupPost" style="z-index: 100;">
                         <div class="popup-content">
                             <button class="close-btn" id="closePopupBtn">×</button>
                             <h2>Tạo bài viết</h2>
@@ -56,11 +59,7 @@
                                     <button type="button" id="selectImageButton">
                                         <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Ảnh/video
                                     </button>
-                                    <div>
-                                        <img src="https://via.placeholder.com/20/FFD700" alt="Feeling/Activity">Cảm
-                                        xúc/hoạt động
-                                    </div>
-                                    <button><img src="https://via.placeholder.com/20/FF4500" alt="GIF">GIF</button>
+                                    
                                 </div>
 
                                 <button type="submit"
@@ -73,7 +72,7 @@
 
                 </div>
             </div>
-        </div>*@
+        </div>
     }
 
 

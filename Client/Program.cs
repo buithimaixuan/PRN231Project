@@ -18,14 +18,18 @@ builder.Services.AddDistributedMemoryCache(); // For storing session data in mem
 builder.Services.AddHttpContextAccessor();
 
 // Thêm Authentication với Cookie
-builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", options =>
-    {
-        options.LoginPath = "/Authen/Index"; // Chuyển hướng đến trang đăng nhập
-        options.AccessDeniedPath = "/Authen/AccessDenied"; // Chuyển hướng khi bị từ chối quyền
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Thời gian hết hạn
-        options.SlidingExpiration = true; // Gia hạn session khi có hoạt động
-    });
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "CookiesPRN231";
+})
+.AddCookie("CookiesPRN231", options =>
+{
+    options.Cookie.Name = "CookiesPRN231";
+    options.LoginPath = "/Authen/Index"; // Chuyển hướng đến trang đăng nhập
+    options.AccessDeniedPath = "/Authen/AccessDenied"; // Chuyển hướng khi bị từ chối quyền
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Thời gian hết hạn
+    options.SlidingExpiration = true; // Gia hạn session khi có hoạt động
+});
 
 builder.Services.AddAuthorization();
 var app = builder.Build();

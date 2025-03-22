@@ -24,65 +24,16 @@ function exitSearch() {
 }
 
 //POP UP ADD POST 
-const imageInput = document.getElementById('imageInput');
-const imagePreview = document.getElementById('imagePreview');
-const clearImagesButton = document.getElementById('clearImagesButton');
-
-// Mảng để lưu các file đã chọn
-let selectedFiles = [];
-
-// Sự kiện cho nút chọn ảnh
-document.getElementById('selectImageButton').addEventListener('click', () => {
-    imageInput.click();
-});
-
-// Sự kiện cho input file
-imageInput.addEventListener('change', (event) => {
-    imagePreview.innerHTML = '';
-    const files = Array.from(event.target.files);
-
-    files.forEach(file => {
-        //selectedFiles.push(file);
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.width = '100px'; // Kích thước hình ảnh
-            img.style.marginRight = '10px';
-            imagePreview.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    });
-    //clearImagesButton.style.display = selectedFiles.length > 0 ? 'block' : 'none';
-});
-
-// Sự kiện cho nút xóa ảnh
-clearImagesButton.addEventListener('click', () => {
-    imagePreview.innerHTML = ''; // Xóa ảnh
-    selectedFiles = []; // Xóa danh sách file đã chọn
-    //clearImagesButton.style.display = 'none'; // Ẩn nút xóa ảnh
-});
-
-// Sự kiện cho nút submit
-//document.getElementById('postForm').addEventListener('submit', function (event) {
-//    // Tạo một DataTransfer để thêm file vào input file
-//    const dataTransfer = new DataTransfer();
-//    selectedFiles.forEach(file => {
-//        dataTransfer.items.add(file);
-//    });
-//    imageInput.files = dataTransfer.files; // Cập nhật giá trị của input file
-//});
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const postInput = document.getElementById('postInput');
-    const popup = document.getElementById('popup');
+    const popup = document.getElementById('popupPost');
     const closePopupBtn = document.getElementById('closePopupBtn');
 
     // Đảm bảo popup bị ẩn khi khởi động
     popup.style.display = 'none';
 
     postInput.addEventListener('click', () => {
+        console.log('Post input clicked')
 
         popup.style.display = 'flex';
         popup.style.zIndex = '1050';
@@ -113,5 +64,43 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('modal-open'); // Mở khóa cuộn trang
     });
 });
+
+const imageInput = document.getElementById('imageInput');
+const imagePreview = document.getElementById('imagePreview');
+const clearImagesButton = document.getElementById('clearImagesButton');
+
+// Mảng để lưu các file đã chọn
+let selectedFiles = [];
+
+// Sự kiện cho nút chọn ảnh
+document.getElementById('selectImageButton').addEventListener('click', () => {
+    imageInput.click();
+});
+
+// Sự kiện cho input file
+imageInput.addEventListener('change', (event) => {
+    imagePreview.innerHTML = '';
+    const files = Array.from(event.target.files);
+
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = '100px'; // Kích thước hình ảnh
+            img.style.marginRight = '10px';
+            imagePreview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+});
+
+// Sự kiện cho nút xóa ảnh
+clearImagesButton.addEventListener('click', () => {
+    imagePreview.innerHTML = ''; // Xóa ảnh
+    selectedFiles = []; // Xóa danh sách file đã chọn
+});
+
+
 
 

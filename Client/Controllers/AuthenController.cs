@@ -55,20 +55,23 @@ namespace Client.Controllers
                     new Claim("UserToken", loginResponse.Token) // Lưu UserToken vào Cookie
                 };
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsIdentity = new ClaimsIdentity(claims, "CookiesPRN231");
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true, // Cookie sẽ tồn tại sau khi đóng trình duyệt
+                    IsPersistent = true, 
                     ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Thời gian hết hạn của Cookie
                 };
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                await HttpContext.SignInAsync("CookiesPRN231", claimsPrincipal, authProperties);
 
                 // Lưu thông tin vào Session (đồng bộ với Cookie)
                 HttpContext.Session.SetString("UserToken", loginResponse.Token);
                 HttpContext.Session.SetInt32("UserRole", loginResponse.RoleId);
                 HttpContext.Session.SetInt32("AccountID", loginResponse.AccountId);
-                
+
+
 
                 if (loginResponse.RoleId == 2 || loginResponse.RoleId == 3)
                 {
@@ -90,7 +93,7 @@ namespace Client.Controllers
             HttpContext.Session.Remove("UserToken");
             HttpContext.Session.Remove("UserRole");
             HttpContext.Session.Remove("AccountID");
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync("CookiesPRN231");
             return RedirectToAction("Index", "Home");
         }
     }

@@ -26,10 +26,6 @@ namespace PostService.Controllers
             {
                 return BadRequest("List post is null");
             }
-            else if (res.Count <= 0)
-            {
-                return BadRequest("List post is empty");
-            }
             return Ok(res);
         }
 
@@ -40,10 +36,6 @@ namespace PostService.Controllers
             if (res == null)
             {
                 return BadRequest("List post is null");
-            }
-            else if (res.Count <= 0)
-            {
-                return BadRequest("List post is empty");
             }
             return Ok(res);
         }
@@ -66,8 +58,6 @@ namespace PostService.Controllers
 
             if (postDto == null)
                 return BadRequest("Error message: Fail to get post!");
-            else if (postDto.Count <= 0)
-                return BadRequest("Error message: List is empty!");
 
             return Ok(postDto);
         }
