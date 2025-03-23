@@ -282,8 +282,6 @@ You can write your custom css styles in this file...
     border: none;
     font-size: 14px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
 }
 #popupPost .popup-content .actions button img {
     width: 20px;
@@ -293,7 +291,7 @@ You can write your custom css styles in this file...
     display: flex;
     flex-wrap: wrap;
     gap: 10px; /* Khoảng cách giữa các ảnh */
-    max-height: 150px; /* Giới hạn chiều cao */
+    max-height: 120px; /* Giới hạn chiều cao */
     overflow-y: auto; /* Cho phép cuộn nếu có nhiều ảnh */
     overflow-x: hidden; /* Ẩn cuộn ngang */
 }
