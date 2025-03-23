@@ -30,6 +30,11 @@ namespace PostService.Repositories.Implement
             return await _newsDAO.GetAllNews();
         }
 
+        public async Task<List<News>> GetLatestNews(int count)
+        {
+            return await _newsDAO.GetLatestNews(count);
+        }
+
         public async Task<News> GetById(int id) => await _newsDAO.FindById(id);
         
         public async Task Add(News news) => await _newsDAO.Add(news);

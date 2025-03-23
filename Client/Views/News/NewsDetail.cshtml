@@ -1,0 +1,189 @@
+﻿@model Client.ViewModel.NewsDetailViewModel
+
+@{
+    ViewData["Title"] = Model.NewsDetail?.Title ?? "Chi tiết tin tức";
+}
+
+<section class="page--wrapper pb--20">
+    <div class="container">
+        <div class="d-flex">
+            <a href="@Url.Action("Index", "News")"><h2 class="pb--20">Tin tức</h2></a>
+            <i class="ml--10 text- fa fa-caret-right" style="padding: 35px 20px 0 10px"></i>
+            <a href="@Url.Action("Index", "News", new { cat = Model.NewsDetail.CategoryNewsId })"><h2 class="pb--20">@Model.CategoryNews?.CategoryNewsName</h2></a>
+            <i class="ml--10 text- fa fa-caret-right" style="padding: 35px 20px 0 10px"></i>
+            <h2 class="pb--20">@Model.NewsDetail?.Title</h2>
+        </div>
+        <div class="row">
+            <!-- Main Content Start -->
+            <div class="main--content col-md-8 pb--30" data-trigger="stickyScroll">
+                <div class="main--content-inner" style="background-color: white">
+                    <!-- Post Item Start -->
+                    <div class="post--item post--single pb--30">
+                        <!-- Post Image Start -->
+                        <div class="post--img">
+                            <img class="w-100" src="@Model.NewsDetail?.ImageUrl" alt="">
+                        </div>
+                        <!-- Post Image End -->
+                        <!-- Post Info Start -->
+                        <div class="post--info">
+                            <!-- Post Meta Start -->
+                            <div class="post--meta">
+                                <ul class="nav">
+                                    <li>
+                                        <i class="mr--8 fa fa-folder-open-o"></i>
+                                        <a href="@Url.Action("Index", "News", new { cat = Model.NewsDetail.CategoryNewsId })"><span>@Model.CategoryNews?.CategoryNewsName</span></a>
+                                        <a href="#" style="cursor: text">
+                                            <img src="~/image/logo.jpg" alt="">
+                                            <span>Farm Family</span>
+                                        </a>
+                                        <a href="#" style="cursor: text">
+                                            <i class="mr--8 fa fa-calendar-o"></i>
+                                            <span>@Model.NewsDetail?.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Post Meta End -->
+                            <!-- Post Title Start -->
+                            <div class="post--title mt--10">
+                                <h3 class="h4">@Model.NewsDetail?.Title</h3>
+                            </div>
+                            <!-- Post Title End -->
+                            <!-- Post Content Start -->
+                            <div class="post--content text-darker mt--10">
+                                @Html.Raw(Model.NewsDetail?.Content)
+                            </div>
+                            <!-- Post Content End -->
+                            <!-- Post Footer Start -->
+                            <div class="post--footer">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <!-- Post Meta Start -->
+                                        <div class="post--meta">
+                                        </div>
+                                        <!-- Post Meta End -->
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <!-- Post Social Start -->
+                                        <div class="post--social-share clearfix">
+                                        </div>
+                                        <!-- Post Social End -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Post Footer End -->
+                        </div>
+                        <!-- Post Info End -->
+                    </div>
+                    <!-- Post Item End -->
+                    <!-- Related Posts Start -->
+                    <div class="related--posts pt--40">
+                        <h4 class="h4 pb--20">Bài viết mới nhất</h4>
+                        <div class="row AdjustRow">
+                            @foreach (var news in Model.List2News)
+                            {
+                                <div class="col-md-6 pb--30">
+                                    <!-- Post Item Start -->
+                                    <div class="post--item">
+                                        <!-- Post Image Start -->
+                                        <div class="post--img">
+                                            <a href="@Url.Action("NewsDetail", "News", new { id = news.NewsId })">
+                                                <img src="@news.ImageUrl" alt="" style="width: 100%; height: 200px; object-fit: cover;">
+                                            </a>
+                                        </div>
+                                        <!-- Post Image End -->
+                                        <!-- Post Info Start -->
+                                        <div class="post--info">
+                                            <!-- Post Meta Start -->
+                                            <div class="post--meta">
+                                                <ul class="nav">
+                                                    <li>
+                                                        <a href="#" style="cursor: text">
+                                                            <img src="~/image/logo.jpg" alt="">
+                                                            <span>Farm Family</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" style="cursor: text">
+                                                            <i class="mr--8 fa fa-calendar-o"></i>
+                                                            <span>@news.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <!-- Post Meta End -->
+                                            <!-- Post Title Start -->
+                                            <div class="post--title mt--10">
+                                                <h3 class="h6">
+                                                    <a href="@Url.Action("NewsDetail", "News", new { id = news.NewsId })" class="btn-link">@news.Title</a>
+                                                </h3>
+                                            </div>
+                                            <!-- Post Title End -->
+                                            <!-- Post Meta Start -->
+                                            <div class="post--meta">
+                                                <ul class="nav">
+                                                    <li>
+                                                        <i class="mr--8 fa fa-folder-open-o"></i>
+                                                        <a href="@Url.Action("Index", "News", new { cat = news.CategoryNewsId })"><span>@Model.CategoryNames[news.CategoryNewsId]</span></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <!-- Post Meta End -->
+                                            <!-- Post Action Start -->
+                                            <div class="post--action text-darkest mt--8">
+                                                <a href="@Url.Action("NewsDetail", "News", new { id = news.NewsId })" class="btn-link">Chi tiết tin tức<i class="ml--10 text-primary fa fa-caret-right"></i></a>
+                                            </div>
+                                            <!-- Post Action End -->
+                                        </div>
+                                        <!-- Post Info End -->
+                                    </div>
+                                    <!-- Post Item End -->
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <!-- Related Posts End -->
+                </div>
+            </div>
+            <!-- Main Content End -->
+            <!-- Main Sidebar Start -->
+            <div class="main--sidebar col-md-4 pb--60" data-trigger="stickyScroll">
+                <div class="widget">
+                    <h2 class="h4 fw--700 widget--title">Tìm kiếm tin tức</h2>
+                    <div class="buddy-finder--widget">
+                        <form method="get" action="@Url.Action("Index", "News")">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="form-group">
+                                        <label>
+                                            <span class="text-darker ff--primary fw--500">Tìm kiếm tin tức</span>
+                                            <input class="form-control form-sm" name="searchKey" placeholder="Nhập từ khóa tin tức bạn muốn tìm" value="@Model.SearchKey" />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="form-group">
+                                        <label>
+                                            <span class="text-darker ff--primary fw--500">Danh mục tin tức</span>
+                                            <select class="form-control form-sm" name="cat">
+                                                <option value="">Chọn danh mục</option>
+                                                @foreach (var category in Model.CategoryNewsList)
+                                                {
+                                                    <option value="@category.CategoryNewsId">@category.CategoryNewsName</option>
+                                                }
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Main Sidebar End -->
+        </div>
+    </div>
+</section>

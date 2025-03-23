@@ -14,11 +14,20 @@ namespace PostService.DAOs
 
         public async Task<IEnumerable<News>> GetAllNewsAvailable()
         {
-            return await _context.News.Where(n => n.IsDeleted == false).ToListAsync();
+            return await _context.News.Where(n => n.IsDeleted != true).ToListAsync();
         }
         public async Task<IEnumerable<News>> GetAllNews()
         {
             return await _context.News.ToListAsync();
+        }
+
+        public async Task<List<News>> GetLatestNews(int count)
+        {
+            return await _context.News
+                .Where(n => n.IsDeleted != true)
+                .OrderByDescending(n => n.CreatedAt)
+                .Take(count)
+                .ToListAsync();
         }
 
         public async Task<News> FindById(int id)
