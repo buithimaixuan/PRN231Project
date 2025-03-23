@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Client.Models;
 
@@ -16,11 +17,8 @@ public partial class Service
     public DateTime? UpdatedAt { get; set; }
 
     public DateTime? DeletedAt { get; set; }
-
     public string Title { get; set; } = null!;
-
     public string Content { get; set; } = null!;
-
     public double Price { get; set; }
 
     public bool? IsEnable { get; set; }

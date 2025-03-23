@@ -83,7 +83,7 @@ namespace BookingService.Controllers
                 Title = request.Title,
                 Content = request.Content,
                 Price = request.Price,
-                IsEnable = request.IsEnable,
+                IsEnable = true,
                 IsDeleted = false, // Mặc định chưa bị xóa
                 AverageRating = 0,
                 RatingCount = 0
