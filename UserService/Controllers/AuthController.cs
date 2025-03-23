@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -99,55 +100,64 @@ namespace UserService.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            try
+            //try
+            //{
+            //    // Kiểm tra dữ liệu đầu vào
+            //    if (string.IsNullOrEmpty(loginDTO?.Identifier) || string.IsNullOrEmpty(loginDTO?.Password))
+            //    {
+            //        return BadRequest("Identifier (Email, Username, or PhoneNumber) and password are required.");
+            //    }
+
+            //    // Tìm tài khoản bằng identifier (Email, Username, hoặc PhoneNumber)
+            //    var account = await _accountService.GetAccountByIdentifier(loginDTO.Identifier);
+            //    if (account == null)
+            //    {
+            //        return Unauthorized("Invalid identifier or password.");
+            //    }
+
+            //    // Kiểm tra trạng thái tài khoản
+            //    if (account.IsDeleted.HasValue && account.IsDeleted.Value)
+            //    {
+            //        return Unauthorized("Account has been deleted.");
+            //    }
+
+            //    // Xác minh password
+            //    bool isPasswordValid = _passwordHasher.VerifyPassword(loginDTO.Password, account.Password);
+            //    if (!isPasswordValid)
+            //    {
+            //        return Unauthorized("Invalid identifier or password.");
+            //    }
+
+            //    string token = _config.GenerateToken(loginDTO);
+
+            //    // Đăng nhập thành công, trả về thông tin cơ bản (có thể mở rộng để trả về token JWT)
+            //    return Ok(new LoginResponseDTO
+            //    {
+            //        Message = "Login successful.",
+            //        AccountId = account.AccountId,
+            //        Username = account.Username,
+            //        Email = account.Email,
+            //        Phone = account.Phone,
+            //        RoleId = account.RoleId,
+            //        Token = token
+            //    });
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Error: {ex.Message}\nInner Exception: {ex.InnerException?.Message}");
+            //    return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
+            //}
+
+            var result = await _config.Authenticate(loginDTO);
+            if (result == null)
             {
-                // Kiểm tra dữ liệu đầu vào
-                if (string.IsNullOrEmpty(loginDTO?.Identifier) || string.IsNullOrEmpty(loginDTO?.Password))
-                {
-                    return BadRequest("Identifier (Email, Username, or PhoneNumber) and password are required.");
-                }
-
-                // Tìm tài khoản bằng identifier (Email, Username, hoặc PhoneNumber)
-                var account = await _accountService.GetAccountByIdentifier(loginDTO.Identifier);
-                if (account == null)
-                {
-                    return Unauthorized("Invalid identifier or password.");
-                }
-
-                // Kiểm tra trạng thái tài khoản
-                if (account.IsDeleted.HasValue && account.IsDeleted.Value)
-                {
-                    return Unauthorized("Account has been deleted.");
-                }
-
-                // Xác minh password
-                bool isPasswordValid = _passwordHasher.VerifyPassword(loginDTO.Password, account.Password);
-                if (!isPasswordValid)
-                {
-                    return Unauthorized("Invalid identifier or password.");
-                }
-
-                string token = _config.GenerateToken(loginDTO);
-
-                // Đăng nhập thành công, trả về thông tin cơ bản (có thể mở rộng để trả về token JWT)
-                return Ok(new LoginResponseDTO
-                {
-                    Message = "Login successful.",
-                    AccountId = account.AccountId,
-                    Username = account.Username,
-                    Email = account.Email,
-                    Phone = account.Phone,
-                    RoleId = account.RoleId,
-                    Token = token
-                });
+                return Unauthorized();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}\nInner Exception: {ex.InnerException?.Message}");
-                return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
-            }
+
+            return Ok(result);
         }
 
         [HttpPost("google-login")]

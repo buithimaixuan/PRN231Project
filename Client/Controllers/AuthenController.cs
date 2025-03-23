@@ -53,23 +53,23 @@ namespace Client.Controllers
                 {
                     new Claim(ClaimTypes.Role, loginResponse.RoleId.ToString()),
                     new Claim("AccountID", loginResponse.AccountId.ToString()),
-                    new Claim("UserToken", loginResponse.Token) // Lưu UserToken vào Cookie
+                    new Claim("UserToken", loginResponse.Token.ToString())
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true, // Cookie sẽ tồn tại sau khi đóng trình duyệt
+                    IsPersistent = true, 
                     ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Thời gian hết hạn của Cookie
                 };
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
                 // Lưu thông tin vào Session (đồng bộ với Cookie)
-                HttpContext.Session.SetString("UserToken", loginResponse.Token);
                 HttpContext.Session.SetInt32("UserRole", loginResponse.RoleId);
                 HttpContext.Session.SetInt32("AccountID", loginResponse.AccountId);
-                
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, authProperties);
 
                 if (loginResponse.RoleId == 2 || loginResponse.RoleId == 3)
                 {
@@ -139,13 +139,15 @@ namespace Client.Controllers
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
                 var authProperties = new AuthenticationProperties
                 {
                     IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Thời gian hết hạn của Cookie
                 };
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, authProperties);
 
                 HttpContext.Session.SetString("UserToken", loginResponse.Token);
                 HttpContext.Session.SetInt32("UserRole", loginResponse.RoleId);
@@ -168,7 +170,6 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Remove("UserToken");
             HttpContext.Session.Remove("UserRole");
             HttpContext.Session.Remove("AccountID");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
