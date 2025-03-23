@@ -1,8 +1,14 @@
 ﻿@model Client.DTOs.ServiceListViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @using Microsoft.AspNetCore.Http;
 @{
     // Dùng tạm
-    var isLoggedIn = true;
+    int? accId = Convert.ToInt32(HttpContextAccessor.HttpContext.Session.GetInt32("AccountID"));
+    var isLoggedIn = false;
+    if (accId != null)
+    {
+        isLoggedIn = true;
+    }
 }
 
 

@@ -19,6 +19,7 @@ namespace Client.Controllers
         private string AccountApiUrl = "";
         private string BookingApiUrl = "";
         private string RatingApiUrl = "";
+        private string CateServiceUrl = "";
         private const int PageSize = 8;
 
         public ServicesController()
@@ -30,6 +31,7 @@ namespace Client.Controllers
             AccountApiUrl = "https://localhost:7272/api/Accounts";
             BookingApiUrl = "https://localhost:7243/api/Booking";
             RatingApiUrl = "https://localhost:7243/api/Rating";
+            CateServiceUrl = "https://localhost:7243/api/CateServices";
         }
 
         // Khai báo list chứa các dịch vụ
@@ -235,11 +237,11 @@ namespace Client.Controllers
         {
             // Lấy AccountID từ Session
             // Để tạm mốt có code r làm
-            /*int? accountId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
+            int? accountId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
 
-            int getAccId = accountId.Value;*/
+            int getAccId = accountId.Value;
 
-            int getAccId = 2;
+            //int getAccId = 2;
 
             // Lấy thông tin tài khoản từ API
             var accountResponse = await client.GetAsync($"{AccountApiUrl}/DetailFarmer{getAccId}");
@@ -307,16 +309,16 @@ namespace Client.Controllers
         {
             if (id == null)
             {
-                RedirectToPage("/Index");
+                return RedirectToPage("Services", "Services");
             }
 
             // Tạm không có 
-            // int? accountId = HttpContext.Session.GetInt32("AccountID");
-            int accountId = 2;
+            int? accountId = HttpContext.Session.GetInt32("AccountID");
+            //int accountId = 2;
 
             if (accountId == null)
             {
-                return RedirectToPage("/Login"); // Chuyển hướng nếu chưa đăng nhập
+                return RedirectToAction("Index", "Authen"); // Chuyển hướng chính xác // Chuyển hướng nếu chưa đăng nhập
             }
 
             // Lấy thông tin dịch vụ
@@ -335,10 +337,11 @@ namespace Client.Controllers
                 var accountJson = await accLoginResponse.Content.ReadAsStringAsync();
                 accLogin = JsonSerializer.Deserialize<Account>(accountJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
+            Console.WriteLine("check pint");
 
             if (ServiceDetail == null)
             {
-                return RedirectToPage("/Index");
+                return RedirectToPage("Services", "Services");
             }
 
             // 🔹 Lấy thông tin người tạo dịch vụ
@@ -455,7 +458,6 @@ namespace Client.Controllers
         }
 
 
-
         [BindProperty]
         public decimal RatingPoint { get; set; }
         [BindProperty]
@@ -471,8 +473,8 @@ namespace Client.Controllers
             }
 
             // Để sau
-            /*int userId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));*/
-            int userId = 2;
+            int userId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
+            //int userId = 2;
 
             // 🔹 Tạo đánh giá mới
             var newRating = new
@@ -542,8 +544,8 @@ namespace Client.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ListServiceByAccount()
+        [HttpGet("ListServiceOfExpert")]
+        public async Task<IActionResult> ServicesOfExperts()
         {
             int getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
 
@@ -554,32 +556,117 @@ namespace Client.Controllers
                 var jsonContent = await response.Content.ReadAsStringAsync();
                 var serviceList = JsonSerializer.Deserialize<IEnumerable<Service>>(jsonContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                return View(serviceList);
+				var viewModel = new ServiceListViewModel
+				{
+					ServiceList = serviceList // Danh sách dịch vụ
+				};
+
+				return View(viewModel);
             }
             else
             {
                 Console.WriteLine($"⚠️ API trả về lỗi {response.StatusCode} khi lấy danh sách dịch vụ của tài khoản {getAccId}");
-                return View(new List<Service>()); // Trả về danh sách rỗng nếu lỗi
+                return View(); // Trả về danh sách rỗng nếu lỗi
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ServiceOwnDetails(int id)
+        [HttpGet("UpdateServices/{id}")]
+        public async Task<IActionResult> UpdateServices(int id)
         {
             var response = await client.GetAsync($"{ServiceApiUrl}/get-by-id/{id}");
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var ownServiceDetail = JsonSerializer.Deserialize<Service>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true});
-
-                return View(ownServiceDetail);
+                return NotFound(); // Nếu không tìm thấy dịch vụ, trả về 404
             }
-            return NotFound();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var ownServiceDetail = JsonSerializer.Deserialize<Service>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            // 🔹 Lấy danh sách thể loại dịch vụ
+            var cateServiceResponse = await client.GetAsync($"{CateServiceUrl}");
+            var serCateList = new List<CategoryService>();
+
+            if (cateServiceResponse.IsSuccessStatusCode)
+            {
+                var cateContent = await cateServiceResponse.Content.ReadAsStringAsync();
+                serCateList = JsonSerializer.Deserialize<List<CategoryService>>(cateContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            var getCateSerResponse = await client.GetAsync($"{CateServiceUrl}/{ownServiceDetail.CategoryServiceId}");
+            if (!getCateSerResponse.IsSuccessStatusCode)
+            {
+                return NotFound(); // Nếu không tìm thấy dịch vụ, trả về 404
+            }
+
+            var cateSerContent = await getCateSerResponse.Content.ReadAsStringAsync();
+            var getCateSerId = JsonSerializer.Deserialize<CategoryService>(cateSerContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            // 🔹 Chuyển dữ liệu sang ViewModel
+            var viewModel = new ServiceListViewModel
+            {
+                ServiceDetail = ownServiceDetail,
+                TitleInput = ownServiceDetail.Title,
+                PriceInput = ownServiceDetail.Price,
+                Description = ownServiceDetail.Content,
+                SelectedCategoryServiceId = ownServiceDetail.CategoryServiceId,
+                SearchCateSerId = getCateSerId,
+                ServiceLCateList = serCateList
+            };
+
+            return View(viewModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateService(Service serviceItem)
+        [BindProperty]
+        [Required(ErrorMessage = "Không được để trống")]
+        [StringLength(200, ErrorMessage = "Quá 200 ký tự")]
+        public string TitleInput { get; set; }
+        [BindProperty]
+        [Required(ErrorMessage = "Không được để trống")]
+        public double PriceInput { get; set; }
+        [BindProperty]
+        [Required(ErrorMessage = "Không được để trống")]
+        public string Description { get; set; }
+        [BindProperty]
+        [Required(ErrorMessage = "Vui lòng chọn thể loại dịch vụ.")]
+        public int? SelectedCategoryServiceId { get; set; }
+        [HttpPost("UpdateServices/{id}")]
+        public async Task<IActionResult> UpdateServices(ServiceListViewModel vm)
         {
+            // Xóa các lỗi không mong muốn
+            ModelState.Remove("Account");
+            ModelState.Remove("ServiceForm");
+            ModelState.Remove("CommentService");
+            ModelState.Remove("MoreRatingList");
+            ModelState.Remove("ReviewerAccounts");
+            ModelState.Remove("ServiceRatingList");
+            ModelState.Remove("InputRequestContent");
+            // 🔹 Loại bỏ các trường không cần validation
+            ModelState.Remove("ServiceDetail");
+            ModelState.Remove("ServiceDetail.Title");
+            ModelState.Remove("ServiceDetail.Content");
+            ModelState.Remove("ServiceDetail.CategoryService");
+            ModelState.Remove("SearchCateSerId");
+
+            int checkCreateId = vm.ServiceDetail.CreatorId;
+
+            int getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
+
+            var checkService = vm.ServiceDetail;
+
+            var serviceItem = new Service
+            {
+                ServiceId = vm.ServiceDetail.ServiceId,
+                CreatorId = getAccId,
+                Title = TitleInput,
+                Price = PriceInput,
+                Content = Description,
+                CategoryServiceId = SelectedCategoryServiceId ?? 0,
+                UpdatedAt = DateTime.Now,
+                IsEnable = true,
+                AverageRating = vm.ServiceDetail.AverageRating,
+                RatingCount = vm.ServiceDetail.RatingCount
+            };
+
             if (serviceItem.Price <= 0)
             {
                 ModelState.AddModelError("PriceNotZero", "Giá phải lớn hơn 0");
@@ -590,41 +677,83 @@ namespace Client.Controllers
                 ModelState.AddModelError("PriceInteger", "Giá phải là số nguyên.");
             }
 
+            if (ModelState.IsValid)
+            {
+                var jsonContent = new StringContent(JsonSerializer.Serialize(serviceItem), Encoding.UTF8, "application/json");
+                var response = await client.PutAsync($"{ServiceApiUrl}/update/{serviceItem.ServiceId}", jsonContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"✅ Cập nhật thành công: {serviceItem.Title}");
+                    return RedirectToAction("ServicesOfExperts", "Services");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-                return View(serviceItem);
+                Console.WriteLine("❌ ModelState không hợp lệ:");
+                foreach (var key in ModelState.Keys)
+                {
+                    var state = ModelState[key];
+                    foreach (var error in state.Errors)
+                    {
+                        Console.WriteLine($"🔹 {key}: {error.ErrorMessage}");
+                    }
+                }
             }
 
-            int getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
+            var cateServiceResponse = await client.GetAsync($"{CateServiceUrl}");
+            var getCateSerList = new List<CategoryService>();
 
-            serviceItem.CreatorId = getAccId;
-            serviceItem.UpdatedAt = DateTime.Now;
-            serviceItem.IsDeleted = false;
-
-            var jsonContent = new StringContent(JsonSerializer.Serialize(serviceItem), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"{ServiceApiUrl}/update/{serviceItem.ServiceId}", jsonContent);
-
-            if (response.IsSuccessStatusCode)
+            if (cateServiceResponse.IsSuccessStatusCode)
             {
-                Console.WriteLine($"✅ Cập nhật thành công: {serviceItem.Title}");
-                return RedirectToAction("ListServiceByAccount"); // Chuyển hướng về danh sách dịch vụ
+                var cateContent = await cateServiceResponse.Content.ReadAsStringAsync();
+                getCateSerList = JsonSerializer.Deserialize<List<CategoryService>>(cateContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
-            else
+
+            // Thêm từ đây
+            var getSerResponse = await client.GetAsync($"{ServiceApiUrl}/get-by-id/{vm.ServiceDetail.ServiceId}");
+            if (!getSerResponse.IsSuccessStatusCode)
             {
-                Console.WriteLine($"❌ Cập nhật thất bại! Mã lỗi: {response.StatusCode}");
-                return View(serviceItem); // Giữ lại trang nếu thất bại
+                return NotFound(); // Nếu không tìm thấy dịch vụ, trả về 404
             }
+
+            var content = await getSerResponse.Content.ReadAsStringAsync();
+            var ownServiceDetail = JsonSerializer.Deserialize<Service>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            var getCateSerResponse = await client.GetAsync($"{CateServiceUrl}/{SelectedCategoryServiceId}");
+            if (!getCateSerResponse.IsSuccessStatusCode)
+            {
+                return NotFound(); // Nếu không tìm thấy dịch vụ, trả về 404
+            }
+
+            var cateSerContent = await getCateSerResponse.Content.ReadAsStringAsync();
+            var getCateSerId = JsonSerializer.Deserialize<CategoryService>(cateSerContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            var viewModel = new ServiceListViewModel
+            {
+                ServiceDetail = ownServiceDetail,
+                TitleInput = TitleInput,
+                PriceInput = PriceInput,
+                Description = Description,
+                SelectedCategoryServiceId = SelectedCategoryServiceId,
+                SearchCateSerId = getCateSerId,
+                ServiceLCateList = getCateSerList
+            };
+
+            return View(viewModel); // 🔹 Trả lại ViewModel thay vì `service`
         }
 
-        public async Task<IActionResult> OnGetDisableService(int id)
+        [HttpGet("DisableService/{id}")]
+        public async Task<IActionResult> DisableService(int id)
         {
-            var response = await client.GetAsync($"{ServiceApiUrl}/{id}");
+            var response = await client.GetAsync($"{ServiceApiUrl}/get-by-id/{id}");
 
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine("Đổi trạng thái thất bại: Không tìm thấy dịch vụ");
-                return RedirectToPage("/Services/ListServiceExpert");
-            }
+				return RedirectToAction("ServicesOfExperts", "Services");
+			}
 
             var content = await response.Content.ReadAsStringAsync();
             var service = JsonSerializer.Deserialize<Service>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -636,14 +765,16 @@ namespace Client.Controllers
             if (!updateResponse.IsSuccessStatusCode)
             {
                 Console.WriteLine("Cập nhật trạng thái dịch vụ thất bại");
+                return View(service);
             }
 
-            return RedirectToPage("/Service/ListServiceExpert");
+            return RedirectToAction("ServicesOfExperts", "Services");
         }
 
-        public async Task<IActionResult> OnGetEnableService(int id)
+		[HttpGet("EnableService/{id}")]
+		public async Task<IActionResult> EnableService(int id)
         {
-            var response = await client.GetAsync($"{ServiceApiUrl}/{id}");
+            var response = await client.GetAsync($"{ServiceApiUrl}/get-by-id/{id}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -657,8 +788,8 @@ namespace Client.Controllers
             if (service == null)
             {
                 Console.WriteLine("Đổi trạng thái thất bại: Dịch vụ null");
-                return RedirectToPage("/Service/ListServiceExpert");
-            }
+				return RedirectToAction("ServicesOfExperts", "Services");
+			}
 
             service.IsEnable = true;
 
@@ -669,13 +800,12 @@ namespace Client.Controllers
                 Console.WriteLine("Cập nhật trạng thái dịch vụ thất bại");
             }
 
-            return RedirectToPage("/Service/ListServiceExpert");
-        }
+			return RedirectToAction("ServicesOfExperts", "Services");
+		}
 
         // Xóa dịch vụ phía
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteService(int id)
+        [HttpGet("DeleteServices/{id}")]
+        public async Task<IActionResult> DeleteServices(int id)
         {
             var deleteResponse = await client.PutAsync($"{ServiceApiUrl}/soft-delete/{id}", null);
 
@@ -683,28 +813,68 @@ namespace Client.Controllers
             {
                 Console.WriteLine("Xóa dịch vụ thất bại!");
                 TempData["ErrorMessage"] = "Không thể xóa dịch vụ. Vui lòng thử lại!";
-                return RedirectToPage("/Service/ListServiceExpert");
-            }
+				return RedirectToAction("ServicesOfExperts", "Services");
+			}
 
             Console.WriteLine($"Dịch vụ {id} đã được xóa mềm thành công!");
             TempData["SuccessMessage"] = "Dịch vụ đã được xóa thành công!";
 
-            return RedirectToPage("/Service/ListServiceExpert");
-        }
+			return RedirectToAction("ServicesOfExperts", "Services");
+		}
 
-        [HttpGet]
-        public IActionResult AddService()
+		public IEnumerable<Client.Models.CategoryService> SerCateList { get; set; }
+		[HttpGet("CreateServices")]
+        public async Task<IActionResult> CreateServices()
         {
-            return View();
+            var cateServiceResponse = await client.GetAsync($"{CateServiceUrl}");
+
+            if (true)
+            {
+				var content = await cateServiceResponse.Content.ReadAsStringAsync();
+				SerCateList = JsonSerializer.Deserialize<IEnumerable<CategoryService>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+			}
+
+            var viewModel = new ServiceListViewModel
+            {
+                ServiceLCateList = SerCateList
+            };
+			return View(viewModel);
         }
 
-        [HttpPost]
+		
+        [HttpPost("CreateServices")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddService(Service service)
+        public async Task<IActionResult> CreateServices(ServiceListViewModel vm)
         {
+            // Xóa các lỗi không mong muốn
+            ModelState.Remove("Account");
+            ModelState.Remove("ServiceForm");
+            ModelState.Remove("CommentService");
+            ModelState.Remove("MoreRatingList");
+            ModelState.Remove("ReviewerAccounts");
+            ModelState.Remove("ServiceRatingList");
+            ModelState.Remove("InputRequestContent");
+            // 🔹 Loại bỏ các trường không cần validation
+            ModelState.Remove("ServiceDetail");
+            ModelState.Remove("ServiceDetail.Title");
+            ModelState.Remove("ServiceDetail.Content");
+            ModelState.Remove("ServiceDetail.CategoryService");
+            ModelState.Remove("SearchCateSerId");
+
             int getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
 
-            service.CreatorId = getAccId;
+            var service = new Service
+            {
+                CreatorId = getAccId,
+                Title = vm.TitleInput,
+                Price = vm.PriceInput,
+                IsEnable = true,
+                Content = vm.Description,
+                CategoryServiceId = vm.SelectedCategoryServiceId ?? 0 // 🔹 Nhận giá trị từ ViewModel
+            };
+
+            // Kiểm tra giá trị của CategoryServiceId
+            Console.WriteLine($"CategoryServiceId nhận được: {service.CategoryServiceId}");
 
             if (service.Price <= 0)
             {
@@ -712,21 +882,37 @@ namespace Client.Controllers
             }
             else if (service.Price % 1 != 0)
             {
-                Console.WriteLine("In loi");
                 ModelState.AddModelError("PriceInteger", "Giá phải là số nguyên.");
             }
 
+
             if (ModelState.IsValid)
             {
-                var jsonContent = new StringContent(JsonSerializer.Serialize(service), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(ServiceApiUrl, jsonContent);
+                var createJson = new StringContent(JsonSerializer.Serialize(service), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(ServiceApiUrl, createJson);
+
+                string errorResponse = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"⚠️ Lỗi từ server: {response.StatusCode} - Nội dung lỗi: {errorResponse}");
+
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToPage("/Service/ListServiceExpert");
+                    return RedirectToAction("ServicesOfExperts", "Services");
                 }
+
+                Console.WriteLine($"Response lỗi: {response.StatusCode}");
                 ModelState.AddModelError("", "Không thể tạo. Vui lòng thử lại.");
             }
-            return View(service);
+
+            var cateServiceResponse = await client.GetAsync($"{CateServiceUrl}");
+
+            if (true)
+            {
+                var content = await cateServiceResponse.Content.ReadAsStringAsync();
+                vm.ServiceLCateList = JsonSerializer.Deserialize<IEnumerable<CategoryService>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            return View(vm); // 🔹 Trả lại ViewModel thay vì `service`
         }
 
         /*[HttpGet]

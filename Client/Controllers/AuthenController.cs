@@ -47,12 +47,12 @@ namespace Client.Controllers
                 HttpContext.Session.SetInt32("AccountID", loginResponse.AccountId);
                 
 
-                if (loginResponse.RoleId == 2)
+                if (loginResponse.RoleId == 2 || loginResponse.RoleId == 3)
                 {
                     return RedirectToAction("Index", "Home");
-                } else if (loginResponse.RoleId == 3)
+                } else if (loginResponse.RoleId == 1)
                 {
-                    return RedirectToAction("Index", "Experts");
+                    return RedirectToAction("Index", "Statistic");
                 }
             }
 

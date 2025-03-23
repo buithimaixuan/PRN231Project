@@ -1,5 +1,16 @@
 ﻿
-@model Client.ViewModel.HomeViewModel
+@* @model Client.ViewModel.HomeViewModel *@
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    int? getIdAccount = null;
+    if (HttpContextAccessor.HttpContext.Session.GetString("AccountID") != null)
+    {
+        getIdAccount = Convert.ToInt32(HttpContextAccessor.HttpContext.Session.GetInt32("AccountID"));
+    }
+    int? roleId = null;
+    roleId = Convert.ToInt32(HttpContextAccessor.HttpContext.Session.GetInt32("UserRole"));
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -125,7 +136,7 @@
                     else
                     {
                         <li>
-                            <a asp-controller="Authen" class="btn-link">
+                            <a asp-controller="Authen" asp-action="Index" class="btn-link">
                                 <i class="fa mr--8 fa-user-o"></i>
                                 <span>Đăng nhập</span>
                             </a>
@@ -141,7 +152,7 @@
         <div id="popup2" style="display: none;">
         </div>
 
-        <script>
+        @* <script>
             function hideListChat() {
                 document.getElementById('popupListChat').style.display = 'none';
             }
@@ -167,7 +178,7 @@
                 event.stopPropagation();
             });
 
-        </script>
+        </script> *@
 
         <style>
             #popup2 {
@@ -284,21 +295,21 @@
                         </li>
 
                         <li class="dropdown">
-                            @* @if (getAcc != null && getAcc.RoleId == 2)
+                            @if (roleId != null && roleId == 3)
                             {
-                                <a href="/Service/ListServices" class="dropdown-toggle">
+                                <a asp-controller="Services" asp-action="Services" class="dropdown-toggle">
                                     <span>Dịch vụ</span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/Service/ListServiceExpert">Tùy chỉnh dịch vụ</a></li>
+                                <li><a asp-controller="Services" asp-action="ServicesOfExperts">Tùy chỉnh dịch vụ</a></li>
                                 </ul>
                             }
                             else
-                            { *@
-                                <a href="/Service/ListServices">
+                            {
+                                <a asp-controller="Services" asp-action="Services">
                                     <span>Dịch vụ</span>
                                 </a>
-                            @* } *@
+                            }
                         </li>
                         <li><a href=""><span>Liên hệ hỗ trợ</span></a></li>
                     </ul>
