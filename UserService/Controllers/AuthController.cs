@@ -1,6 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -98,47 +100,137 @@ namespace UserService.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
+        {
+            //try
+            //{
+            //    // Kiểm tra dữ liệu đầu vào
+            //    if (string.IsNullOrEmpty(loginDTO?.Identifier) || string.IsNullOrEmpty(loginDTO?.Password))
+            //    {
+            //        return BadRequest("Identifier (Email, Username, or PhoneNumber) and password are required.");
+            //    }
+
+            //    // Tìm tài khoản bằng identifier (Email, Username, hoặc PhoneNumber)
+            //    var account = await _accountService.GetAccountByIdentifier(loginDTO.Identifier);
+            //    if (account == null)
+            //    {
+            //        return Unauthorized("Invalid identifier or password.");
+            //    }
+
+            //    // Kiểm tra trạng thái tài khoản
+            //    if (account.IsDeleted.HasValue && account.IsDeleted.Value)
+            //    {
+            //        return Unauthorized("Account has been deleted.");
+            //    }
+
+            //    // Xác minh password
+            //    bool isPasswordValid = _passwordHasher.VerifyPassword(loginDTO.Password, account.Password);
+            //    if (!isPasswordValid)
+            //    {
+            //        return Unauthorized("Invalid identifier or password.");
+            //    }
+
+            //    string token = _config.GenerateToken(loginDTO);
+
+            //    // Đăng nhập thành công, trả về thông tin cơ bản (có thể mở rộng để trả về token JWT)
+            //    return Ok(new LoginResponseDTO
+            //    {
+            //        Message = "Login successful.",
+            //        AccountId = account.AccountId,
+            //        Username = account.Username,
+            //        Email = account.Email,
+            //        Phone = account.Phone,
+            //        RoleId = account.RoleId,
+            //        Token = token
+            //    });
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Error: {ex.Message}\nInner Exception: {ex.InnerException?.Message}");
+            //    return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
+            //}
+
+            var result = await _config.Authenticate(loginDTO);
+            if (result == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDTO request)
         {
             try
             {
-                // Kiểm tra dữ liệu đầu vào
-                if (string.IsNullOrEmpty(loginDTO?.Identifier) || string.IsNullOrEmpty(loginDTO?.Password))
+                if (string.IsNullOrEmpty(request.Email))
                 {
-                    return BadRequest("Identifier (Email, Username, or PhoneNumber) and password are required.");
+                    return BadRequest("Email is required.");
                 }
 
-                // Tìm tài khoản bằng identifier (Email, Username, hoặc PhoneNumber)
-                var account = await _accountService.GetAccountByIdentifier(loginDTO.Identifier);
-                if (account == null)
+                // Kiểm tra xem email đã tồn tại chưa
+                var existingAccount = await _accountService.GetAccountByEmail(request.Email);
+                int accountId;
+                int roleId;
+                string username;
+                string email;
+                string phone;
+
+                if (existingAccount == null)
                 {
-                    return Unauthorized("Invalid identifier or password.");
+                    // Nếu chưa tồn tại, tạo tài khoản mới
+                    var newAccount = new Account
+                    {
+                        RoleId = 2, // Mặc định là Farmer
+                        Username = request.Email.Split('@')[0],
+                        Password = _passwordHasher.HashPassword(Guid.NewGuid().ToString()), // Tạo mật khẩu ngẫu nhiên
+                        Email = request.Email,
+                        EmailConfirmed = 1, // Đánh dấu email đã xác nhận
+                        FullName = request.FullName ?? request.Email.Split('@')[0],
+                        Avatar = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2F638665051034994468_av.jpg?alt=media&token=be337fe1-d4bb-4e4b-9495-dbb921b4779a",
+                        IsDeleted = false,
+                        Otp = -1
+                    };
+
+                    await _accountService.AddAccount(newAccount);
+                    accountId = newAccount.AccountId;
+                    roleId = newAccount.RoleId;
+                    username = newAccount.Username;
+                    email = newAccount.Email;
+                    phone = newAccount.Phone;
+                }
+                else
+                {
+                    // Nếu đã tồn tại, sử dụng thông tin tài khoản hiện có
+                    if (existingAccount.IsDeleted.HasValue && existingAccount.IsDeleted.Value)
+                    {
+                        return Unauthorized("Account has been deleted.");
+                    }
+
+                    accountId = existingAccount.AccountId;
+                    roleId = existingAccount.RoleId;
+                    username = existingAccount.Username;
+                    email = existingAccount.Email;
+                    phone = existingAccount.Phone;
                 }
 
-                // Kiểm tra trạng thái tài khoản
-                if (account.IsDeleted.HasValue && account.IsDeleted.Value)
+                // Tạo token
+                var loginDTO = new LoginDTO
                 {
-                    return Unauthorized("Account has been deleted.");
-                }
-
-                // Xác minh password
-                bool isPasswordValid = _passwordHasher.VerifyPassword(loginDTO.Password, account.Password);
-                if (!isPasswordValid)
-                {
-                    return Unauthorized("Invalid identifier or password.");
-                }
-
+                    Identifier = email
+                };
                 string token = _config.GenerateToken(loginDTO);
 
-                // Đăng nhập thành công, trả về thông tin cơ bản (có thể mở rộng để trả về token JWT)
                 return Ok(new LoginResponseDTO
                 {
-                    Message = "Login successful.",
-                    AccountId = account.AccountId,
-                    Username = account.Username,
-                    Email = account.Email,
-                    Phone = account.Phone,
-                    RoleId = account.RoleId,
+                    Message = "Google login successful.",
+                    AccountId = accountId,
+                    Username = username,
+                    Email = email,
+                    Phone = phone,
+                    RoleId = roleId,
                     Token = token
                 });
             }
@@ -148,8 +240,5 @@ namespace UserService.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
             }
         }
-
-        
-
     }
 }

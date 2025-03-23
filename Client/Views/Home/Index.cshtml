@@ -1,8 +1,254 @@
-﻿@{
+﻿@model Client.ViewModel.HomeViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
     ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_layout.cshtml";
+    var isLoggedIn = HttpContextAccessor.HttpContext.Request.Cookies["CookiesPRN231"] != null;
+
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Page Wrapper Start -->
+<section class="page--wrapper pt--20 pb--20">
+
+    @if (isLoggedIn && Model.Account != null)
+    {
+        @* ADD POST *@
+        <div class="container" style="margin-left: 30px;">
+            <div class="row">
+                <div class="col-md-8 p-2">
+
+                    <div class="wrapper-add-post">
+                        <div class="post-header">
+                            <a href="#">
+                                <img src="~/image/avatar2.png" alt="Profile Picture">
+                            </a>
+
+                            <input id="postInput" type="text" placeholder="@Model.Account.FullName ơi, bạn đang nghĩ gì thế?">
+                        </div>
+                    </div>
+
+                    <div class="popup" id="popupPost" style="z-index: 100;">
+                        <div class="popup-content">
+                            <button class="close-btn" id="closePopupBtn">×</button>
+                            <h2>Tạo bài viết</h2>
+
+                            <form id="postForm" method="post" asp-page-handler="AddPost" enctype="multipart/form-data">
+                                <textarea name="ContentPost" placeholder="@Model.Account.FullName ơi, bạn đang nghĩ gì thế?" class="content-post"
+                                          required></textarea>
+
+                                <input type="file" id="imageInput" accept="image/*" style="display: none;" multiple>
+
+                                <div class="select">
+                                    <label for="select-input">Chọn danh mục: </label>
+                                    <select id="select-input" name="CategoryPostId">
+                                        <option value="" disabled selected>Chọn danh mục</option>
+                                        @foreach (var categoryPost in Model.categoryPosts)
+                                        {
+                                            <option value="@categoryPost.CategoryPostId">@categoryPost.CategoryPostName</option>
+                                        }
+
+                                    </select>
+                                </div>
+
+                                <button type="button" id="clearImagesButton" style="display: none;">Xóa ảnh</button>
+                                <div id="imagePreview" style="margin-top: 10px; display: flex; flex-wrap: wrap;"></div>
+
+
+                                <div class="actions" style="margin-top: 10px;">
+                                    <button type="button" id="selectImageButton">
+                                        <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Ảnh/video
+                                    </button>
+                                    
+                                </div>
+
+                                <button type="submit"
+                                        style="width: 100%; margin-top: 10px; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 5px;">
+                                    Đăng
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+
+    @* BODY INDEX *@
+    <div class="container">
+        <div class="row">
+
+            <!-- Main Content Start -->
+            <div class="main--content col-md-8 pb--60" data-trigger="stickyScroll">
+                <div class="main--content-inner drop--shadow">
+
+                    <!-- Activity List Start -->
+                    <div class="activity--list">
+                        <ul class="activity--items nav">
+
+                            @if (Model.PostDTOs != null)
+                            {
+                                @foreach (var post in Model.PostDTOs)
+                                {
+                                    <!-- Activity Item Start -->
+                                    <li>
+                                        <div class="activity--item">
+                                            <div>
+                                                @if (post.Account == null)
+                                                {
+                                                    <a asp-controller="Authen" asp-action="Index">
+                                                        <img src="~/image/avatar2.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-controller="Profiles" asp-route-id="@post.Account.AccountId">
+                                                        <img src="@post.Account.Avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+                                                    </a>
+                                                }
+
+                                            </div>
+
+                                            <div class="activity--info fs--14">
+                                                <div class="activity--header">
+                                                    @if (post.Account == null)
+                                                    {
+                                                        <p><a asp-controller="Authen" asp-action="Index">Người dùng ẩn danh</a> </p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p><a asp-controller="Profiles" asp-route-id="@post.Account.AccountId">@post.Account.FullName</a> </p>
+                                                    }
+
+                                                </div>
+
+                                                <div class="activity--meta fs--12">
+                                                    <p><i class="fa mr--8 fa-clock-o"></i>@post.post.CreatedAt</p>
+                                                </div>
+
+                                                <div class="activity--content">
+                                                    <h6 class="content-text-ellipsis">@post.post.PostContent</h6>
+
+                                                    @if (post.postImages != null && post.postImages.Count() > 0)
+                                                    {
+                                                        <div>
+                                                            <ul class="nav AdjustRow">
+                                                                <li class="p-0">
+                                                                    <a class="p-0" href="/Posts/PostDetail/@post.post.PostId">
+                                                                        <img src="@post.postImages.FirstOrDefault().ImageUrl" alt="">
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    }
+
+                                                </div>
+
+
+                                                @* KHI KHONG LOGIN THI KHÔNG XEM ĐƯỢC CHI TIẾT *@
+                                                @if (Model.Account == null)
+                                                {
+                                                    <div class="activity--action fw--700">
+                                                        <a asp-controller="Authen" asp-action="Index">Xem thêm...</a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    @* KHI LOGIN ROI THI XEM DUOC *@
+                                                    <div class="activity--action fw--700">
+                                                        <a asp-controller="Post" asp-action="Detail" asp-route-id="@post.post.PostId">Xem thêm...</a>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <!-- Activity Item End -->
+                                }
+                            }
+                            else
+                            {
+                                <h1>không có bài đăng</h1>
+                            }
+
+                        </ul>
+                    </div>
+                    <!-- Activity List End -->
+                </div>
+
+            </div>
+            <!-- Main Content End -->
+            <!-- Main Sidebar Start -->
+            <div class="main--sidebar col-md-4 pb--60" data-trigger="stickyScroll">
+
+                <!-- Widget Start -->
+                <div class="widget">
+                    <h2 class="h4 fw--700 widget--title">Tìm kiếm bạn bè</h2>
+
+                    <!-- Buddy Finder Widget Start -->
+                    <div class="buddy-finder--widget">
+                        <form action="#">
+                            <div class="row">
+                                <div class="col-xs-6 col-xxs-12">
+                                    <div class="form-group">
+                                        <label>
+                                            <span class="text-darker ff--primary fw--500">Tuổi</span>
+
+                                            <select name="age" class="form-control form-sm" data-trigger="selectmenu">
+                                                <option value="18to25">18 to 25</option>
+                                                <option value="25to30">25 to 30</option>
+                                                <option value="30to35">30 to 35</option>
+                                                <option value="35to40">35 to 40</option>
+                                                <option value="40plus">40+</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6 col-xxs-12">
+                                    <div class="form-group">
+                                        <label>
+                                            <span class="text-darker ff--primary fw--500">Thành phố</span>
+
+                                            <select name="city" class="form-control form-sm" data-trigger="selectmenu">
+                                                <option value="newyork">New York</option>
+                                                <option value="California">California</option>
+                                                <option value="Atlanta">Atlanta</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12">
+                                    <div class="form-group">
+                                        <label>
+                                            <span class="text-darker ff--primary fw--500">Đất nước</span>
+
+                                            <select name="city" class="form-control form-sm" data-trigger="selectmenu">
+                                                <option value="unitedstates">United States</option>
+                                                <option value="australia">Australia</option>
+                                                <option value="turkey">Turkey</option>
+                                                <option value="vietnam">Vietnam</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-primary">Tìm</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Buddy Finder Widget End -->
+                </div>
+                <!-- Widget End -->
+
+            </div>
+            <!-- Main Sidebar End -->
+
+        </div>
+    </div>
+</section>
+<!-- Page Wrapper End -->

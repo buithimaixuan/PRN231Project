@@ -2,6 +2,7 @@
 {
     public class AccountDTO
     {
+        public int AccountId { get; set; }
         public int RoleId { get; set; }
 
         public string Username { get; set; } = null!;
@@ -31,5 +32,7 @@
         public string? Major { get; set; }
 
         public string? Address { get; set; }
+
+        public int? Otp { get; set; }
     }
 }

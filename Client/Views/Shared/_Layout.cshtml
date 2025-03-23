@@ -1,13 +1,55 @@
-﻿
-@* @model Client.ViewModel.HomeViewModel *@
 @inject IHttpContextAccessor HttpContextAccessor
 
+﻿@using Microsoft.AspNetCore.Http
+@using System.Net.Http
+@using System.Net.Http.Headers
+@using System.Text.Json
+@using Client.Models
+@inject IHttpContextAccessor HttpContextAccessor
 @{
-    int? getIdAccount = null;
-    if (HttpContextAccessor.HttpContext.Session.GetString("AccountID") != null)
+    Client.DTOs.AccountDTO account = null;
+    var isLoggedIn = HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
+    var user = HttpContextAccessor.HttpContext?.User;
+
+    if (isLoggedIn)
     {
-        getIdAccount = Convert.ToInt32(HttpContextAccessor.HttpContext.Session.GetInt32("AccountID"));
+        // Lấy AccountID từ Cookie
+        var accountIdClaim = HttpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "AccountID");
+        if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId) && accountId > 0)
+        {
+            Console.WriteLine(accountId);
+            using var client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            client.DefaultRequestHeaders.Accept.Add(contentType);
+            var authenUrl = "https://localhost:7272/api/Accounts";
+
+            try
+            {
+                // Thêm UserToken vào header nếu cần gọi API bảo mật
+                var userToken = HttpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserToken")?.Value;
+                if (!string.IsNullOrEmpty(userToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userToken);
+                }
+
+                var response = await client.GetAsync($"{authenUrl}/personal-page/{accountId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var profile = JsonSerializer.Deserialize<Client.DTOs.PersonalPageDTO>(content, new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+                    account = profile?.accountDTO;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching account: {ex.Message}");
+            }
+        }
     }
+
     int? roleId = null;
     roleId = Convert.ToInt32(HttpContextAccessor.HttpContext.Session.GetInt32("UserRole"));
 }
@@ -40,46 +82,47 @@
     <link rel="stylesheet" href="~/css//personalPage.css" asp-append-version="true" />
     <link href="~/image/logo.jpg" rel="icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.0/css/boxicons.min.css"
-          integrity="sha512-pVCM5+SN2+qwj36KonHToF2p1oIvoU3bsqxphdOIWMYmgr4ZqD3t5DjKvvetKhXGc/ZG5REYTT6ltKfExEei/Q=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    integrity="sha512-pVCM5+SN2+qwj36KonHToF2p1oIvoU3bsqxphdOIWMYmgr4ZqD3t5DjKvvetKhXGc/ZG5REYTT6ltKfExEei/Q=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="https://kit.fontawesome.com/1bd9fa3a2e.js" crossorigin="anonymous"></script>
     <style>
         .chat-online {
-            color: #34ce57
+        color: #34ce57
         }
 
         .chat-offline {
-            color: #e4606d
+        color: #e4606d
         }
 
 
 
         .flex-grow-0 {
-            flex-grow: 0 !important;
+        flex-grow: 0 !important;
         }
 
         .border-top {
-            border-top: 1px solid #dee2e6 !important;
+        border-top: 1px solid #dee2e6 !important;
         }
 
         #popupListChat {
-            position: fixed;
-            right: 0;
-            top: 0;
-            z-index: 1000;
-            overflow-y: auto;
-            width: 300px;
-            /* height : 500px; */
-            margin-top: 59px;
-            margin-right: 5px;
-            background-color: #6ed941;
-            border: 2px dashed #000000;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 300px;
+        /* height : 500px; */
+        margin-top: 59px;
+        margin-right: 5px;
+        background-color: #6ed941;
+        border: 2px dashed #000000;
         }
     </style>
 
 </head>
 <body class="wrapper">
+    
     <!-- Header Section Start -->
     <header class="header--section style--1">
 
@@ -111,12 +154,17 @@
                 <!-- Header Topbar Links Start -->
                 <ul class="header--topbar-links nav ff--primary float--right">
 
-                    @if (Model.Account != null)
+                    @*
+                    @if (isLoggedIn)
                     {
                         <li>
-                            <a asp-controller="Profiles" asp-action="Index" asp-route-id="@Model.Account.AccountId" class="btn-link">
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@account.AccountId" class="btn-link"> *@
+                    @if (isLoggedIn)
+                    {
+                        <li>
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@account.AccountId" class="btn-link">
                                 <i class="fa mr--8 fa-user-o"></i>
-                                <span>Tài khoản của tôi</span>
+                                <span>@account?.FullName</span>
                             </a>
                         </li>
 
@@ -136,7 +184,7 @@
                     else
                     {
                         <li>
-                            <a asp-controller="Authen" asp-action="Index" class="btn-link">
+                        <a asp-controller="Authen" asp-action="Index" class="btn-link">
                                 <i class="fa mr--8 fa-user-o"></i>
                                 <span>Đăng nhập</span>
                             </a>
@@ -591,6 +639,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/mainServiceDetail.js"></script>
+    <script src="~/js/updateProfile.js"></script>
     @* <script type="text/javascript">
         if (window.location.hash === '#_=_') {
             if (history.replaceState) {

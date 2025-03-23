@@ -63,7 +63,7 @@ namespace UserService.Services.Implement
                 Major = null,
                 Address = null,
                 IsDeleted = false,
-                Otp = null
+                Otp = -1
             };
             await _accountRepo.Add(newAcc);
         }
@@ -194,6 +194,7 @@ namespace UserService.Services.Implement
 
             var accountDTO = new AccountDTO
             {
+                AccountId = account.AccountId,
                 RoleId = account.RoleId,
                 Username = account.Username,
                 Password = "", // Lưu ý: Không nên trả password thực tế
@@ -208,7 +209,8 @@ namespace UserService.Services.Implement
                 DegreeUrl = account.DegreeUrl,
                 Avatar = account.Avatar,
                 Major = account.Major,
-                Address = account.Address
+                Address = account.Address,
+                Otp = account.Otp
             };
 
             // Lấy danh sách bạn bè, yêu cầu gửi/nhận (giả định đã có logic trong repository)
@@ -275,6 +277,10 @@ namespace UserService.Services.Implement
             int countPhotos = photos.Count();
 
             return new AccountPhotosDTO(accountId, countPhotos, photos);
+        }
+        public async Task Unfriend(int accountId1, int accountId2)
+        {
+            await _friendRequestRepository.Unfriend(accountId1, accountId2);
         }
     }
 }

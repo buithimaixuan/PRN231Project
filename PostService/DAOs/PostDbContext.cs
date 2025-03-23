@@ -36,7 +36,7 @@ public partial class PostDbContext : DbContext
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         // chạy docker
         //=> optionsBuilder.UseSqlServer("Server=host.docker.internal,1433;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=1234;Encrypt=True;Trust Server Certificate=True");
-        // cái cũ nè
+        // PHUONG NAM
         => optionsBuilder.UseSqlServer("Data Source=DESKTOP-G595621\\SQLEXPRESS;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=123123;Encrypt=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
