@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using System.Net.Http;
+using System.Text.Json;
 using UserService.DAOs;
 using UserService.DTOs;
 using UserService.Models;
@@ -19,12 +21,69 @@ namespace UserService.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly PasswordHasher _passwordHasher;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public AccountsController(IAccountService accountService)
+        public AccountsController(IAccountService accountService, IHttpClientFactory httpClientFactory)
         {
             _accountService = accountService;
             _passwordHasher = new PasswordHasher();
+            _httpClientFactory = httpClientFactory;
         }
+
+        [HttpPut("UpdateAvatar/{id}")]
+        public async Task<IActionResult> UpdateAvatar(int id, [FromForm] UpdateAvatarDTO request)
+        {
+            try
+            {
+                // Validate the request
+                if (request == null || request.AvatarFile == null || request.AvatarFile.Length == 0)
+                    return BadRequest("Invalid avatar file.");
+
+                // Get the existing account
+                var existingAccount = await _accountService.GetByIdAccount(id);
+                if (existingAccount == null)
+                    return NotFound("Account not found.");
+
+                // Create HttpClient for PostService
+                var client = _httpClientFactory.CreateClient("PostService");
+
+                // Prepare the form data for the API call
+                using var formData = new MultipartFormDataContent();
+                using var fileStream = request.AvatarFile.OpenReadStream();
+                var fileContent = new StreamContent(fileStream);
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(request.AvatarFile.ContentType);
+                formData.Add(fileContent, "formFile", request.AvatarFile.FileName);
+
+                // Call the PostService Cloudinary upload API
+                var response = await client.PostAsync("https://localhost:7231/api/cloudinary/upload", formData);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return BadRequest($"Failed to upload avatar: {errorContent}");
+                }
+
+                // Parse the response to get the new avatar URL directly
+                var responseContent = await response.Content.ReadAsStringAsync();
+                using var jsonDoc = JsonDocument.Parse(responseContent);
+                var root = jsonDoc.RootElement;
+                var uploadedAvatarUrl = root.GetProperty("imageUrl").GetString();
+
+                if (string.IsNullOrEmpty(uploadedAvatarUrl))
+                    return BadRequest("Failed to retrieve the uploaded avatar URL.");
+
+                // Update the account's avatar URL (without deleting the old avatar)
+                existingAccount.Avatar = uploadedAvatarUrl;
+                await _accountService.UpdateAccount(existingAccount);
+
+                // Return only the avatar URL
+                return Ok(new { AvatarUrl = uploadedAvatarUrl });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error updating avatar: {ex.Message}");
+            }
+        }
+
 
         // GET: api/account
         [HttpGet("All")]
@@ -46,7 +105,7 @@ namespace UserService.Controllers
         
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> UpdateAccount(int id, [FromBody] AccountDTO accountDTO)
+        public async Task<IActionResult> UpdateAccount(int id, [FromBody] UpdateAccountDTO accountDTO)
         {
             if (accountDTO == null)
                 return BadRequest("Invalid account.");
@@ -55,25 +114,17 @@ namespace UserService.Controllers
             if (existingAccount == null)
                 return NotFound("Account not found.");
 
-            string hashedPassword = _passwordHasher.HashPassword(accountDTO.Password);
-
-            existingAccount.RoleId = existingAccount.RoleId; // mặc định 3 (Farmer)
-            existingAccount.Username = accountDTO.Username;
-            existingAccount.Password = hashedPassword;
+            existingAccount.FullName = accountDTO.FullName ?? null;
+            existingAccount.ShortBio = accountDTO.ShortBio ?? null;
+            existingAccount.Gender = accountDTO.Gender ?? null;
             existingAccount.Email = accountDTO.Email;
             existingAccount.Phone = accountDTO.Phone ?? null;
-            existingAccount.Gender = accountDTO.Gender ?? null;
-            existingAccount.FullName = accountDTO.FullName ?? null;
             existingAccount.DateOfBirth = accountDTO.DateOfBirth ?? null;
-            existingAccount.ShortBio = accountDTO.ShortBio ?? null;
+            existingAccount.Address = accountDTO.Address ?? null;
             existingAccount.EducationUrl = accountDTO.EducationUrl ?? null;
             existingAccount.YearOfExperience = accountDTO.YearOfExperience ?? null;
             existingAccount.DegreeUrl = accountDTO.DegreeUrl ?? null;
-            existingAccount.Avatar = accountDTO.Avatar ?? null;
             existingAccount.Major = accountDTO.Major ?? null;
-            existingAccount.Address = accountDTO.Address ?? null;
-            existingAccount.IsDeleted = false;
-            existingAccount.Otp = null;
 
             await _accountService.UpdateAccount(existingAccount);
             return Ok(existingAccount);
@@ -95,6 +146,52 @@ namespace UserService.Controllers
 
             existingAccount.Password = _passwordHasher.HashPassword(changePasswordDTO.newPassword);
             return Ok("Password changed successfully!");
+        }
+
+        [HttpPut("SetPassword/{id}")]
+        public async Task<IActionResult> SetPassword(int id, [FromBody] SetPasswordDTO request)
+        {
+            try
+            {
+                // Kiểm tra tài khoản tồn tại
+                var account = await _accountService.GetByIdAccount(id);
+                if (account == null)
+                {
+                    return NotFound("Account not found.");
+                }
+
+                // Kiểm tra xem tài khoản có được tạo bằng Google không (Otp = -1)
+                if (!account.Otp.HasValue || account.Otp != -1)
+                {
+                    return BadRequest("This account was not created using Google or already has a password set.");
+                }
+
+                // Kiểm tra dữ liệu đầu vào
+                if (string.IsNullOrEmpty(request.NewPassword) || string.IsNullOrEmpty(request.ConfirmNewPassword))
+                {
+                    return BadRequest("New password and confirm password are required.");
+                }
+
+                // Kiểm tra mật khẩu mới và xác nhận mật khẩu có khớp không
+                if (request.NewPassword != request.ConfirmNewPassword)
+                {
+                    return BadRequest("New password and confirm password do not match.");
+                }
+
+                // Hash mật khẩu mới
+                account.Password = _passwordHasher.HashPassword(request.NewPassword);
+                account.Otp = null; // Xóa dấu hiệu tài khoản Google
+
+                // Cập nhật tài khoản
+                await _accountService.UpdateAccount(account);
+
+                return Ok("Password set successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}\nInner Exception: {ex.InnerException?.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
+            }
         }
 
         [HttpGet("{email}")]

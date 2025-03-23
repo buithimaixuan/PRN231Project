@@ -11,7 +11,7 @@
 <!-- Page Wrapper Start -->
 <section class="page--wrapper pt--20 pb--20">
 
-    @if (isLoggedIn)
+    @if (isLoggedIn && Model.Account != null)
     {
         @* ADD POST *@
         <div class="container" style="margin-left: 30px;">

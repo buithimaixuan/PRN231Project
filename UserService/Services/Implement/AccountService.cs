@@ -63,7 +63,7 @@ namespace UserService.Services.Implement
                 Major = null,
                 Address = null,
                 IsDeleted = false,
-                Otp = null
+                Otp = -1
             };
             await _accountRepo.Add(newAcc);
         }
@@ -209,7 +209,8 @@ namespace UserService.Services.Implement
                 DegreeUrl = account.DegreeUrl,
                 Avatar = account.Avatar,
                 Major = account.Major,
-                Address = account.Address
+                Address = account.Address,
+                Otp = account.Otp
             };
 
             // Lấy danh sách bạn bè, yêu cầu gửi/nhận (giả định đã có logic trong repository)

@@ -58,7 +58,6 @@ namespace PostService.Controllers
 
             if (postDto == null)
                 return BadRequest("Error message: Fail to get post!");
-
             return Ok(postDto);
         }
 

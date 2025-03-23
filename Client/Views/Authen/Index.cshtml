@@ -1,24 +1,23 @@
 ﻿@model Client.DTOs.LoginDTO
 
 @{
-	ViewData["Title"] = "Index";
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutAccess.cshtml";
 }
 
 <section class="container forms">
-
     <div class="form login">
         <div class="form-content">
             <h1 class="title-login">Đăng nhập</h1>
 
             <form method="post" asp-action="Login" asp-controller="Authen">
                 <div class="field input-field">
-                    <input asp-for="@Model.Identifier" type="text" placeholder="Tên đăng nhập" class="input"/>
+                    <input asp-for="@Model.Identifier" type="text" placeholder="Tên đăng nhập" class="input" />
                     <span asp-validation-for="@Model.Identifier"></span>
                 </div>
 
                 <div class="field input-field">
-                    <input asp-for="@Model.Password" type="password" placeholder="Mật khẩu" class="password"/>
+                    <input asp-for="@Model.Password" type="password" placeholder="Mật khẩu" class="password" />
                     <span asp-validation-for="@Model.Password"></span>
                     <i class='bx bx-hide eye-icon'></i>
                 </div>
@@ -35,10 +34,17 @@
             <div class="form-link">
                 <span>Bạn chưa có tài khoản? <a href="/Access/OptionsRole" class="link signup-link">Đăng ký</a></span>
             </div>
+
+            <div class="line"></div>
+
+            <div class="media-options">
+                <a asp-action="LoginWithGoogle" asp-controller="Authen" class="field google">
+                    <img src="~/image/google.png" alt="" class="google-img">
+                    <span>Đăng nhập bằng Google</span>
+                </a>
+            </div>
         </div>
-
     </div>
-
 </section>
 
 <!-- JavaScript -->
@@ -61,7 +67,7 @@
 @section scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var successMessage = document.getElementById('success-message').innerText;
+            var successMessage = document.getElementById('success-message')?.innerText;
 
             if (successMessage) {
                 Swal.fire({

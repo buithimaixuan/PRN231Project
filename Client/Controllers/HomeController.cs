@@ -2,9 +2,12 @@
 using Client.Models;
 using Client.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace Client.Controllers
 {
@@ -15,10 +18,12 @@ namespace Client.Controllers
         private string accountUrl = "";
         private string postUrl = "";
         private string categoryPostUrl = "";
+        private readonly IConfiguration _config;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
@@ -28,6 +33,8 @@ namespace Client.Controllers
             postUrl = "https://localhost:7231/api/post";
             categoryPostUrl = "https://localhost:7231/api/post-categories";
             this._logger = logger;
+            _config = config;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IActionResult> Index()
@@ -35,43 +42,26 @@ namespace Client.Controllers
             int accId = GetCookiesAccId();
             var viewModel = new HomeViewModel();
 
-            // Tạo danh sách các task để gọi API song song
-            var tasks = new List<Task>();
-
             //Lay account cua nguoi dung hien tai
             if (accId > 0)
             {
-                tasks.Add(Task.Run(async () =>
+                var accountInfor = await client.GetAsync($"{accountUrl}/DetailFarmer{accId}");
+                if (accountInfor.IsSuccessStatusCode)
                 {
-                    var accountInfor = await client.GetAsync($"{accountUrl}/DetailFarmer{accId}");
-                    if (accountInfor.IsSuccessStatusCode)
-                    {
-                        var responseAccount = await accountInfor.Content.ReadAsStringAsync();
-                        viewModel.Account = JsonConvert.DeserializeObject<Account>(responseAccount);
-                    }
-                }));
+                    var responseAccount = await accountInfor.Content.ReadAsStringAsync();
+                    viewModel.Account = JsonConvert.DeserializeObject<Account>(responseAccount);
+                }
             }
 
-            //Lấy danh sách bài viết từ PostService
-            var postTask = client.GetAsync($"{postUrl}/all/available");
-            tasks.Add(postTask);
-
-            //Lấy danh mục bài viết
-            var categoryTask = client.GetAsync($"{categoryPostUrl}");
-            tasks.Add(categoryTask);
-
-            // Chạy tất cả các task song song
-            await Task.WhenAll(tasks);
-
-            //Xu ly lay list post o day, neu co
-            var listPostDTO = await postTask;
-            if (listPostDTO.IsSuccessStatusCode)
+            // Lấy danh sách bài viết từ PostService
+            var postResponse = await client.GetAsync($"{postUrl}/all/available");
+            if (postResponse.IsSuccessStatusCode)
             {
-                var responseListPost = await listPostDTO.Content.ReadAsStringAsync();
+                var responseListPost = await postResponse.Content.ReadAsStringAsync();
                 viewModel.PostDTOs = JsonConvert.DeserializeObject<List<PostDTO>>(responseListPost);
 
-                // ✅ Gọi API AccountService để lấy thông tin Account của từng bài viết song song
-                var accountTasks = viewModel.PostDTOs.Select(async postDto =>
+                // Lấy thông tin Account của từng bài viết
+                foreach (var postDto in viewModel.PostDTOs)
                 {
                     var accountResponse = await client.GetAsync($"{accountUrl}/DetailFarmer{postDto.post.AccountId}");
                     if (accountResponse.IsSuccessStatusCode)
@@ -79,20 +69,17 @@ namespace Client.Controllers
                         var responseAccount = await accountResponse.Content.ReadAsStringAsync();
                         postDto.Account = JsonConvert.DeserializeObject<Account>(responseAccount);
                     }
-                });
-                await Task.WhenAll(accountTasks);
+                }
             }
 
-            //Xu ly category post
-            var listCategoryPost = await categoryTask;
-            if (listCategoryPost.IsSuccessStatusCode)
+            // Lấy danh mục bài viết
+            var categoryResponse = await client.GetAsync($"{categoryPostUrl}");
+            if (categoryResponse.IsSuccessStatusCode)
             {
-                var responseListCategoryPost = await listCategoryPost.Content.ReadAsStringAsync();
+                var responseListCategoryPost = await categoryResponse.Content.ReadAsStringAsync();
                 viewModel.categoryPosts = JsonConvert.DeserializeObject<List<CategoryPost>>(responseListCategoryPost);
             }
 
-            bool isHaveCookies = Request.Cookies.ContainsKey("CookiesPRN231");
-            ViewData["isLoggedIn"] = isHaveCookies;
             return View(viewModel);
         }
 
@@ -107,14 +94,22 @@ namespace Client.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private int GetCookiesAccId()
+        public int GetCookiesAccId()
         {
-            // Lấy giá trị AccountID từ Claim
-            var accountIdClaim = User.FindFirst("AccountID");
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext == null || !httpContext.User.Identity.IsAuthenticated)
+            {
+                return -1; // Người dùng chưa đăng nhập
+            }
 
-            if (accountIdClaim == null) return -1;
+            var accountIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == "AccountID");
+            if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId))
+            {
+                return accountId;
+            }
 
-            return int.Parse(accountIdClaim.Value);
+            return -1; // Không tìm thấy AccountID
         }
+
     }
 }
