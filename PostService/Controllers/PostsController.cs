@@ -32,11 +32,7 @@ namespace PostService.Controllers
         [HttpGet("all/available")]
         public async Task<IActionResult> GetListPostAvailable()
         {
-            List<PostDTO> res = await _postService.GetListPostAvailable();
-            if (res == null)
-            {
-                return BadRequest("List post is null");
-            }
+            var res = await _postService.GetListPostAvailable() ?? new List<PostDTO>(); // Trả về danh sách rỗng nếu null
             return Ok(res);
         }
 
