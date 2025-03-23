@@ -331,14 +331,17 @@
                         </li> *@
 
                         <li class="dropdown">
-                            <a href="/News/ListNews" class="dropdown-toggle"><span>Tin tức</span></a>
+                            <a asp-controller="News" asp-action="Index" class="dropdown-toggle"><span>Tin tức</span></a>
                             <ul class="dropdown-menu">
-                                @* @foreach (var category in categories)
+                                @if (ViewBag.Categories != null)
                                 {
-                                    <li>
-                                        <a asp-page="/News/ListNews" asp-route-cat="@category.CategoryNewsId">@category.CategoryNewsName</a>
-                                    </li>
-                                } *@
+                                    @foreach (var category in ViewBag.Categories as List<Client.Models.CategoryNews>)
+                                    {
+                                        <li>
+                                            <a asp-controller="News" asp-action="Index" asp-route-cat="@category.CategoryNewsId">@category.CategoryNewsName</a>
+                                        </li>
+                                    }
+                                }
                             </ul>
                         </li>
 

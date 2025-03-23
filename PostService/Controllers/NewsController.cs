@@ -34,6 +34,13 @@ namespace PostService.Controllers
             return Ok(newsList);
         }
 
+        [HttpGet("Latest")]
+        public async Task<IActionResult> GetLatestNews([FromQuery] int count = 2)
+        {
+            var newsList = await _newsService.GetLatestNews(count);
+            return Ok(newsList);
+        }
+
         // GET: api/news/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetNewsById(int id)
@@ -133,5 +140,22 @@ namespace PostService.Controllers
             return Ok(newsList);
         }
 
+        [HttpGet("NewsCategory/HaveNews")]
+        public async Task<IActionResult> GetAllNewsCategoryHaveNews()
+        {
+            var categoryList = await _newsService.GetCategoriesHaveNews();
+            return Ok(categoryList);
+        }
+
+        [HttpGet("Categories/{id}")]
+        public async Task<IActionResult> GetCategoryNewsById(int id)
+        {
+            var category = await _newsService.GetCategoryNewsById(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return Ok(category);
+        }
     }
 }
