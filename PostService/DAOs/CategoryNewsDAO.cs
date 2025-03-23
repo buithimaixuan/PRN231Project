@@ -26,7 +26,7 @@ namespace PostService.DAOs
         {
             // Truy vấn để lấy danh sách các CategoryNews có bài báo
             return await _context.CategoryNews
-                .Where(c => _context.News.Any(n => n.CategoryNewsId == c.CategoryNewsId))
+                .Where(c => _context.News.Any(n => n.CategoryNewsId == c.CategoryNewsId && n.IsDeleted != true))
                 .ToListAsync();
         }
     }

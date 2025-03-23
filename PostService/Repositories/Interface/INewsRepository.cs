@@ -11,6 +11,7 @@ namespace PostService.Repositories.Interface
     {
         Task<IEnumerable<News>> GetAllNewsAvailable();
         Task<IEnumerable<News>> GetAllNews();
+        Task<List<News>> GetLatestNews(int count);
         Task<News> GetById(int id);
         Task Add(News item);
         Task Update(News item);
