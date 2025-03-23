@@ -7,6 +7,7 @@
 @{
     Client.DTOs.AccountDTO account = null;
     var isLoggedIn = HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
+    var user = HttpContextAccessor.HttpContext?.User;
 
     if (isLoggedIn)
     {
@@ -14,6 +15,7 @@
         var accountIdClaim = HttpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "AccountID");
         if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId) && accountId > 0)
         {
+            Console.WriteLine(accountId);
             using var client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
@@ -76,46 +78,47 @@
     <link rel="stylesheet" href="~/css//personalPage.css" asp-append-version="true" />
     <link href="~/image/logo.jpg" rel="icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.0/css/boxicons.min.css"
-          integrity="sha512-pVCM5+SN2+qwj36KonHToF2p1oIvoU3bsqxphdOIWMYmgr4ZqD3t5DjKvvetKhXGc/ZG5REYTT6ltKfExEei/Q=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    integrity="sha512-pVCM5+SN2+qwj36KonHToF2p1oIvoU3bsqxphdOIWMYmgr4ZqD3t5DjKvvetKhXGc/ZG5REYTT6ltKfExEei/Q=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="https://kit.fontawesome.com/1bd9fa3a2e.js" crossorigin="anonymous"></script>
     <style>
         .chat-online {
-            color: #34ce57
+        color: #34ce57
         }
 
         .chat-offline {
-            color: #e4606d
+        color: #e4606d
         }
 
 
 
         .flex-grow-0 {
-            flex-grow: 0 !important;
+        flex-grow: 0 !important;
         }
 
         .border-top {
-            border-top: 1px solid #dee2e6 !important;
+        border-top: 1px solid #dee2e6 !important;
         }
 
         #popupListChat {
-            position: fixed;
-            right: 0;
-            top: 0;
-            z-index: 1000;
-            overflow-y: auto;
-            width: 300px;
-            /* height : 500px; */
-            margin-top: 59px;
-            margin-right: 5px;
-            background-color: #6ed941;
-            border: 2px dashed #000000;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 300px;
+        /* height : 500px; */
+        margin-top: 59px;
+        margin-right: 5px;
+        background-color: #6ed941;
+        border: 2px dashed #000000;
         }
     </style>
 
 </head>
 <body class="wrapper">
+    
     <!-- Header Section Start -->
     <header class="header--section style--1">
 
