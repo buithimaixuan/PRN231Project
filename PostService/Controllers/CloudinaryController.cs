@@ -27,6 +27,25 @@ namespace PostService.Controllers
             return Ok(response);
         }
 
+        [HttpPost("upload-list")]
+        public async Task<IActionResult> UploadListImages([FromForm] List<IFormFile> request)
+        {
+            if (request == null || request.Count == 0)
+            {
+                return BadRequest();
+            }
+
+            List<ImageUploadResponseDTO> response = new List<ImageUploadResponseDTO>();
+
+            foreach (var item in request)
+            {
+                var result = await _service.UploadImageAsync(item);
+                response.Add(new ImageUploadResponseDTO(result.ImageUrl, result.PublicId));
+            }
+
+            return Ok(response);
+        }
+
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteImage([FromRoute] string publicId)
         {

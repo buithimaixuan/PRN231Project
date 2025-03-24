@@ -34,10 +34,10 @@
                             <h2>Tạo bài viết</h2>
 
                             <form id="postForm" method="post" asp-action="CreatePost" asp-controller="Post" enctype="multipart/form-data">
-                                <input type="hidden" value="@Model.Account.AccountId" name="AccountId">
+                                <input type="hidden" value="@Model.Account.AccountId" asp-for="PostViewModel.AccountId">
 
                                 <textarea asp-for="PostViewModel.ContentPost" placeholder="@Model.Account.FullName ơi, bạn đang nghĩ gì thế?" class="content-post"
-                                          required></textarea>
+                                required></textarea>
 
                                 <div class="select">
                                     <label for="select-input">Chọn danh mục: </label>
@@ -54,7 +54,7 @@
                                 <button type="button" id="clearImagesButton" style="display: none;">Xóa ảnh</button>
                                 <div id="imagePreview" style="margin-top: 10px; display: flex; flex-wrap: wrap;"></div>
 
-                                <input type="file" id="imageInput" name="Images" accept="image/*" style="display: none;" multiple>
+                                <input onchange="console.log(this.files)" type="file" id="imageInput" asp-for="PostViewModel.Images" accept="image/*" style="display: none;" multiple>
 
                                 <div class="actions" style="margin-top: 10px;">
                                     <button type="button" id="selectImageButton">
@@ -63,7 +63,7 @@
                                 </div>
 
                                 <button type="submit"
-                                        style="width: 100%; margin-top: 10px; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 5px;">
+                                style="width: 100%; margin-top: 10px; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 5px;">
                                     Đăng
                                 </button>
                             </form>
@@ -136,8 +136,11 @@
                                                         <div>
                                                             <ul class="nav AdjustRow">
                                                                 <li class="p-0">
-                                                                    <a class="p-0" href="/Posts/PostDetail/@post.post.PostId">
-                                                                        <img src="@post.postImages.FirstOrDefault().ImageUrl" alt="">
+                                                                    <a class="p-0" asp-action="PostDetail" asp-controller="Post" asp-route-id="@post.post.PostId">
+                                                                        @if(post.postImages.Any())
+                                                                        {
+                                                                            <img src="@post.postImages.FirstOrDefault().ImageUrl" alt="">
+                                                                        }
                                                                     </a>
                                                                 </li>
                                                             </ul>
