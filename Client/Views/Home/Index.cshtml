@@ -104,14 +104,14 @@
                                                 }
                                                 else
                                                 {
-                                                    <a asp-controller="Profiles" asp-route-id="@post.Account.AccountId">
+                                                    <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@post.Account.AccountId">
                                                         <img src="@post.Account.Avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
                                                     </a>
                                                 }
 
                                             </div>
 
-                                            <div class="activity--info fs--14">
+                                            <div class="activity--info fs--14 pt-0">
                                                 <div class="activity--header">
                                                     @if (post.Account == null)
                                                     {
@@ -119,7 +119,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <p><a asp-controller="Profiles" asp-route-id="@post.Account.AccountId">@post.Account.FullName</a> </p>
+                                                        <p><a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@post.Account.AccountId">@post.Account.FullName</a> </p>
                                                     }
 
                                                 </div>
@@ -136,7 +136,7 @@
                                                         <div>
                                                             <ul class="nav AdjustRow">
                                                                 <li class="p-0">
-                                                                    <a class="p-0" href="/Posts/PostDetail/@post.post.PostId">
+                                                                    <a class="p-0" asp-controller="Post" asp-action="PostDetail" asp-route-id="@post.post.PostId">
                                                                         <img src="@post.postImages.FirstOrDefault().ImageUrl" alt="">
                                                                     </a>
                                                                 </li>
