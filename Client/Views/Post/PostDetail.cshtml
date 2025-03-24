@@ -1,7 +1,6 @@
 ﻿@model Client.ViewModel.PostDetailViewModel
-
 @{
-    ViewData["Title"] = Model?.PostDTO?.Account?.FullName ?? "Chi tiết bài viết";
+    ViewData["Title"] = Model.PostDTO.Account?.FullName ?? "Chi tiết bài đăng";
 }
 
 <!-- Page Wrapper Start -->
@@ -11,170 +10,181 @@
             <!-- Main Content Start -->
             <div class="main--content col-md-8 pb--30" data-trigger="stickyScroll">
                 <div class="main--content-inner">
-                    @if (Model?.PostDTO == null)
-                    {
-                        <div class="alert alert-danger">
-                            <p>Không thể tải bài đăng. Vui lòng thử lại sau.</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <!-- Post Item Start -->
-                        <div class="post--item post--single pb--30">
-                            <!-- Post Info Start -->
-                            <div class="post--info">
-                                <div class="post-detail-info">
-                                    <!-- Post AVATAR Start -->
-                                    <div class="post-detail-avatar">
-                                        @if (Model.PostDTO.Account == null)
-                                        {
-                                            <a href="@Url.Action("Login", "Access")">
-                                                <img src="https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f" alt="">
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("PersonalPage", "Profile", new { id = Model.PostDTO.Account.AccountId })">
-                                                <img src="@Model.PostDTO.Account.Avatar" alt="Alternate Text" onerror="this.onerror=null; this.src='https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f';" />
-                                            </a>
-                                        }
-                                    </div>
-                                    <!-- Post avatar End -->
-                                    <div class="post-detail-title">
-                                        @if (Model.PostDTO.Account == null)
-                                        {
-                                            <div class="post-detail-header">
-                                                <p><a href="@Url.Action("Login", "Access")">Người dùng ẩn danh</a></p>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="post-detail-header">
-                                                <a class="text-dark fw-bold" href="@Url.Action("PersonalPage", "Profile", new { id = Model.PostDTO.Account.AccountId })">@Model.PostDTO.Account.FullName</a>
-                                            </div>
-                                        }
-                                        <div class="post-detail-date">
-                                            <p><i class="fa mr--8 fa-clock-o"></i>@Model.PostDTO.post.CreatedAt</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Post Content Start -->
-                                <div class="post-detail-content text-darker">
-                                    <p class="text-dark">@Model.PostDTO.post.PostContent</p>
-                                    @if (Model.PostDTO.postImages != null && Model.PostDTO.postImages.Any())
+                    <!-- Post Item Start -->
+                    <div class="post--item post--single pb--30">
+                        <!-- Post Info Start -->
+                        <div class="post--info">
+                            <div class="post-detail-info">
+                                <!-- Post AVATAR Start -->
+                                <div class="post-detail-avatar">
+                                    @if (Model.PostDTO.Account == null)
                                     {
-                                        <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px">
-                                            @foreach (var imageItem in Model.PostDTO.postImages)
-                                            {
-                                                <img style="" src="@imageItem.ImageUrl">
-                                            }
-                                        </div>
+                                        <a href="/Access/Login">
+                                            <img src="" alt="" onerror="this.onerror=null; this.src='https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f';">
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("PersonalPage", "Profile", new { id = Model.PostDTO.Account.AccountId })">
+                                            <img src="@Model.PostDTO.Account.Avatar" alt="Avatar" onerror="this.onerror=null; this.src='https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f';" />
+                                        </a>
                                     }
                                 </div>
-                                <!-- Post Content End -->
-                                <!-- Post Footer Start -->
-                                <div class="post--footer">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <!-- Post Meta Start -->
-                                            <div class="post--meta">
-                                                <ul class="nav" style="display: flex; flex-direction: column">
-                                                    <li>
-                                                        <i class="mr--8 fa fa-folder-open-o"></i>
-                                                        <a href="#"><span>Thể loại: </span></a>
-                                                    </li>
-                                                    <li>
-                                                        <i class="mr--8 fa fa-tags"></i>
-                                                        <a href="#"><span>@Model.View lượt xem</span></a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <!-- Post Meta End -->
+                                <!-- Post avatar End -->
+                                <div class="post-detail-title">
+                                    @if (Model.PostDTO.Account == null)
+                                    {
+                                        <div class="post-detail-header">
+                                            <p><a href="/Access/Login">Người dùng ẩn danh</a></p>
                                         </div>
-                                        <div class="col-sm-6">
-                                            <!-- Post Social Start -->
-                                            <div class="post--social-share clearfix">
-                                                <ul class="nav">
-                                                    <li class="d-flex align-items-center">
-                                                        <button class="like-btn rounded-circle border-0 @(Model.IsLikedByUser ? "liked" : "")"
-                                                                style="@(Model.IsLikedByUser ? "background-color: #1da1f2;" : "") width: 35px; height: 35px; margin: 0 7.5px"
-                                                                data-post-id="@Model.PostDTO.post.PostId">
-                                                            <i class="fa-solid fa-thumbs-up" style="@(Model.IsLikedByUser ? "color: white;" : "")"></i>
-                                                        </button>
-                                                        <span id="like-count-@Model.PostDTO.post.PostId">@Model.CountLikePost lượt thích</span>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#"><i class="fa-solid fa-share"></i></a>
-                                                        <span>@Model.CountSharePost lượt chia sẻ</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <!-- Post Social End -->
+                                    }
+                                    else
+                                    {
+                                        <div class="post-detail-header">
+                                            <a class="text-dark fw-bold" href="@Url.Action("PersonalPage", "Profile", new { id = Model.PostDTO.Account.AccountId })">@Model.PostDTO.Account.FullName</a>
                                         </div>
+                                    }
+                                    <div class="post-detail-date">
+                                        <p><i class="fa mr--8 fa-clock-o"></i>@Model.PostDTO.post.CreatedAt</p>
                                     </div>
                                 </div>
-                                <!-- Post Footer End -->
                             </div>
-                            <!-- Post Info End -->
-                        </div>
-                        <!-- Post Item End -->
-                        <!-- Comment Form Start -->
-                        <div class="comment--form pb--30" data-form="validate">
-                            <h4 class="h4 pb--15">Bình luận</h4>
-                            <form id="comment-form" data-post-id="@Model.PostDTO.post.PostId">
-                                <div class="row gutter--15">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <textarea id="comment-content" name="CommentContent" placeholder="Comment *" class="form-control"></textarea>
-                                        </div>
+
+                            <!-- Post Content Start -->
+                            <div class="post-detail-content text-darker">
+                                <p class="text-dark">@Model.PostDTO.post.PostContent</p>
+
+                                @if (Model.PostImageUrls != null && Model.PostImageUrls.Any())
+                                {
+                                    <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px">
+                                        @foreach (var imageUrl in Model.PostImageUrls)
+                                        {
+                                            <img style="" src="@imageUrl" alt="Hình ảnh bài đăng">
+                                        }
                                     </div>
-                                    <div class="col-sm-12 pt--10">
-                                        <button type="submit" class="btn btn-sm btn-primary fs--14">Đăng</button>
+                                }
+                            </div>
+                            <!-- Post Content End -->
+                            <!-- Post Footer Start -->
+                            <div class="post--footer">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <!-- Post Meta Start -->
+                                        <div class="post--meta">
+                                            <ul class="nav" style="display: flex; flex-direction: column">
+                                                <li>
+                                                    <i class="mr--8 fa fa-folder-open-o"></i>
+                                                    <a href="@Url.Action("Index", "Post", new { cat = Model.PostDTO.post.CategoryPostId })"><span>Thể loại: @Model.CategoryPost?.CategoryPostName</span></a>
+                                                </li>
+                                                <li>
+                                                    <i class="mr--8 fa fa-tags"></i>
+                                                    <a href="#"><span>@Model.View lượt xem</span></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- Post Meta End -->
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <!-- Post Social Start -->
+                                        <div class="post--social-share clearfix">
+                                            <ul class="nav">
+                                                <li class="d-flex align-items-center">
+                                                    @if (!Model.IsLikedByUser)
+                                                    {
+                                                        <form method="post" action="@Url.Action("Like", "Post", new { postId = Model.PostDTO.post.PostId })">
+                                                            <button type="submit" class="rounded-circle border-0" style="width: 35px; height: 35px; margin: 0 7.5px">
+                                                                <i class="fa-solid fa-thumbs-up"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    else
+                                                    {
+                                                        <form method="post" action="@Url.Action("Unlike", "Post", new { postId = Model.PostDTO.post.PostId })">
+                                                            <button type="submit" class="rounded-circle border-0" style="background-color: #1da1f2; width: 35px; height: 35px; margin: 0 7.5px">
+                                                                <i class="fa-solid fa-thumbs-up" style="color: white"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    <span>@Model.CountLikePost lượt thích</span>
+                                                </li>
+                                                <li>
+                                                    <a href="#"><i class="fa-solid fa-share"></i></a>
+                                                    <span>@Model.CountSharePost lượt chia sẻ</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- Post Social End -->
                                     </div>
                                 </div>
-                            </form>
+                            </div>
+                            <!-- Post Footer End -->
                         </div>
-                        <!-- Comment Form End -->
-                    }
-
+                        <!-- Post Info End -->
+                    </div>
+                    <!-- Post Item End -->
+                    <!-- Comment Form Start -->
+                    <div class="comment--form pb--30" data-form="validate">
+                        <h4 class="h4 pb--15">Bình luận</h4>
+                        <form method="post" action="@Url.Action("Comment", "Post")">
+                            <div class="row gutter--15">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <textarea name="CommentContent" placeholder="Comment *" class="form-control">@Model.CommentContent</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 pt--10">
+                                    <button type="submit" class="btn btn-sm btn-primary fs--14">Đăng</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Comment Form End -->
                     <!-- Comment List Start -->
                     <div class="comment--list pt--40">
-                        <h4 class="h4 pb--20" id="comment-count">@Model.CountCommentPost bình luận</h4>
+                        <h4 class="h4 pb--20">@Model.CountCommentPost bình luận</h4>
                         <ul class="comment--items nav">
-                            @foreach (var comment in Model.ListComment)
+                            @if (Model.ListComment != null && Model.ListComment.Any())
                             {
-                                var account = Model.CommentAccounts.ContainsKey(comment.AccountId.Value) ? Model.CommentAccounts[comment.AccountId.Value] : null;
-                                <!-- Comment Item Start -->
-                                <li class="w-100">
-                                    <div class="comment--item mr--15 clearfix">
-                                        <!-- AVATAR USER COMMENT -->
-                                        <div class="img float--left" data-overlay="0.3" data-overlay-color="primary">
-                                            <img src="@(account?.Avatar ?? "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f")" alt="">
-                                        </div>
-                                        <!-- END AVATAR USER COMMENT -->
-                                        <div class="info ov--h">
-                                            <!-- INFORMATION OF USER COMMENT -->
-                                            <div class="header clearfix">
-                                                <div class="meta float--left">
-                                                    <p class="fs--14 fw--700 text-darkest">
-                                                        <a href="@Url.Action("PersonalPage", "Profile", new { id = account?.AccountId })">@(account?.FullName ?? "Người dùng ẩn danh")</a>
-                                                    </p>
-                                                    <p>
-                                                        <i class="mr--10 fa fa-clock-o"></i>
-                                                        <span>@comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
-                                                    </p>
+                                @foreach (var comment in Model.ListComment)
+                                {
+                                    var commentAccount = comment.AccountId.HasValue && Model.CommentAccounts.ContainsKey(comment.AccountId) ? Model.CommentAccounts[comment.AccountId] : null;
+                                    <!-- Comment Item Start -->
+                                    <li class="w-100">
+                                        <div class="comment--item mr--15 clearfix">
+                                            <!-- AVATAR USER COMMENT -->
+                                            <div class="img float--left" data-overlay="0.3" data-overlay-color="primary">
+                                                <img src="@(commentAccount?.Avatar ?? "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f")" alt="Avatar">
+                                            </div>
+                                            <!-- END AVATAR USER COMMENT -->
+                                            <div class="info ov--h">
+                                                <!-- INFORMATION OF USER COMMENT -->
+                                                <div class="header clearfix">
+                                                    <div class="meta float--left">
+                                                        <p class="fs--14 fw--700 text-darkest">
+                                                            <a href="@Url.Action("PersonalPage", "Profile", new { id = commentAccount?.AccountId })">@(commentAccount?.FullName ?? "Người dùng không xác định")</a>
+                                                        </p>
+                                                        <p>
+                                                            <i class="mr--10 fa fa-clock-o"></i>
+                                                            <span>@comment.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                                        </p>
+                                                    </div>
                                                 </div>
+                                                <!-- END COMMENT INFORMATION USER -->
+                                                <!-- CONTENT COMMENT -->
+                                                <div class="content pt--8 fs--14">
+                                                    <p class="text-dark">@comment.Content</p>
+                                                </div>
+                                                <!-- END CONTENT COMMENT -->
                                             </div>
-                                            <!-- END COMMENT INFORMATION USER -->
-                                            <!-- CONTENT COMMENT -->
-                                            <div class="content pt--8 fs--14">
-                                                <p class="text-dark">@comment.Content</p>
-                                            </div>
-                                            <!-- END CONTENT COMMENT -->
                                         </div>
-                                    </div>
-                                </li>
-                                <!-- Comment Item End -->
+                                    </li>
+                                    <!-- Comment Item End -->
+                                }
+                            }
+                            else
+                            {
+                                <p>Chưa có bình luận nào.</p>
                             }
                         </ul>
                     </div>
@@ -184,157 +194,18 @@
             <!-- Main Content End -->
             <!-- Main Sidebar Start -->
             <div class="main--sidebar col-md-4 pb--60" data-trigger="stickyScroll">
-                <!-- Widget Start -->
                 <div class="widget">
-                    <h2 class="h4 fw--700 widget--title">Tìm kiếm bạn bè</h2>
-                    <!-- Buddy Finder Widget Start -->
-                    <div class="buddy-finder--widget">
-                        <form action="#">
-                            <div class="row">
-                                <div class="col-xs-6 col-xxs-12">
-                                    <div class="form-group">
-                                        <label>
-                                            <span class="text-darker ff--primary fw--500">Tuổi</span>
-                                            <select name="age" class="form-control form-sm" data-trigger="selectmenu">
-                                                <option value="18to25">18 to 25</option>
-                                                <option value="25to30">25 to 30</option>
-                                                <option value="30to35">30 to 35</option>
-                                                <option value="35to40">35 to 40</option>
-                                                <option value="40plus">40+</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-xs-6 col-xxs-12">
-                                    <div class="form-group">
-                                        <label>
-                                            <span class="text-darker ff--primary fw--500">Thành phố</span>
-                                            <select name="city" class="form-control form-sm" data-trigger="selectmenu">
-                                                <option value="newyork">New York</option>
-                                                <option value="California">California</option>
-                                                <option value="Atlanta">Atlanta</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12">
-                                    <div class="form-group">
-                                        <label>
-                                            <span class="text-darker ff--primary fw--500">Đất nước</span>
-                                            <select name="city" class="form-control form-sm" data-trigger="selectmenu">
-                                                <option value="unitedstates">United States</option>
-                                                <option value="australia">Australia</option>
-                                                <option value="turkey">Turkey</option>
-                                                <option value="vietnam">Vietnam</option>
-                                            </select>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12">
-                                    <button type="submit" class="btn btn-primary">Tìm</button>
-                                </div>
-                            </div>
-                        </form>
+                    <h2 class="h4 fw--700 widget--title">Thông tin tác giả</h2>
+                    <div class="author--info">
+                        <img src="@(Model.PostDTO.Account?.Avatar ?? "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f")" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%;">
+                        <h5>@(Model.PostDTO.Account?.FullName ?? "Người dùng không xác định")</h5>
+                        <p>Email: @(Model.PostDTO.Account?.Email ?? "Không có thông tin")</p>
+                        <p>Username: @(Model.PostDTO.Account?.Username ?? "Không có thông tin")</p>
                     </div>
-                    <!-- Buddy Finder Widget End -->
                 </div>
-                <!-- Widget End -->
             </div>
             <!-- Main Sidebar End -->
         </div>
     </div>
 </section>
 <!-- Page Wrapper End -->
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Xử lý Like/Unlike
-            $(".like-btn").click(function (e) {
-                e.preventDefault();
-                var postId = $(this).data("post-id");
-                var isLiked = $(this).hasClass("liked");
-                var url = isLiked ? "@Url.Action("Unlike", "Post")" : "@Url.Action("Like", "Post")";
-                var $button = $(this);
-                var $likeCount = $("#like-count-" + postId);
-
-                $.ajax({
-                    url: url,
-                    type: "POST",
-                    data: { postId: postId },
-                    success: function (response) {
-                        if (response.success) {
-                            // Cập nhật trạng thái nút
-                            if (isLiked) {
-                                $button.removeClass("liked").css("background-color", "").find("i").css("color", "");
-                            } else {
-                                $button.addClass("liked").css("background-color", "#1da1f2").find("i").css("color", "white");
-                            }
-                            // Cập nhật số lượt thích
-                            $likeCount.text(response.likeCount + " lượt thích");
-                        } else {
-                            alert("Có lỗi xảy ra khi thực hiện thao tác Like/Unlike.");
-                        }
-                    },
-                    error: function () {
-                        alert("Lỗi kết nối đến server.");
-                    }
-                });
-            });
-
-            // Xử lý Comment
-            $("#comment-form").submit(function (e) {
-                e.preventDefault();
-                var postId = $(this).data("post-id");
-                var commentContent = $("#comment-content").val();
-
-                $.ajax({
-                    url: "@Url.Action("Comment", "Post")",
-                    type: "POST",
-                    data: { postId: postId, commentContent: commentContent },
-                    success: function (response) {
-                        if (response.success) {
-                            // Thêm bình luận mới vào danh sách
-                            var newComment = `
-                                <li class="w-100">
-                                    <div class="comment--item mr--15 clearfix">
-                                        <div class="img float--left" data-overlay="0.3" data-overlay-color="primary">
-                                            <img src="${response.comment.avatar}" alt="">
-                                        </div>
-                                        <div class="info ov--h">
-                                            <div class="header clearfix">
-                                                <div class="meta float--left">
-                                                    <p class="fs--14 fw--700 text-darkest">
-                                                        <a href="@Url.Action("PersonalPage", "Profile")/${response.comment.accountId}">${response.comment.fullName}</a>
-                                                    </p>
-                                                    <p>
-                                                        <i class="mr--10 fa fa-clock-o"></i>
-                                                        <span>${response.comment.createdAt}</span>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="content pt--8 fs--14">
-                                                <p class="text-dark">${response.comment.content}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>`;
-                            $(".comment--items").prepend(newComment);
-
-                            // Cập nhật số lượng bình luận
-                            $("#comment-count").text(response.commentCount + " bình luận");
-
-                            // Xóa nội dung textarea
-                            $("#comment-content").val("");
-                        } else {
-                            alert("Có lỗi xảy ra khi đăng bình luận.");
-                        }
-                    },
-                    error: function () {
-                        alert("Lỗi kết nối đến server.");
-                    }
-                });
-            });
-        });
-    </script>
-}

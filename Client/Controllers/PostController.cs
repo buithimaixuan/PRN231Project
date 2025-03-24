@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Client.Models;
 using Client.DTOs;
 using Client.ViewModel;
+using Microsoft.Extensions.Internal;
 
 namespace Client.Controllers
 {
@@ -52,19 +53,121 @@ namespace Client.Controllers
                     return View(new PostDetailViewModel());
                 }
 
+                // Lấy thông tin Account (nếu AccountId có giá trị)
+                Account account = null;
+                if (postDTO.post.AccountId.HasValue)
+                {
+                    Console.WriteLine($"{accountUrl}/{postDTO.post.AccountId}");
+                    HttpResponseMessage accountResponse = await client.GetAsync($"{accountUrl}/DetailFarmer{postDTO.post.AccountId.Value}");
+                    if (accountResponse.IsSuccessStatusCode)
+                    {
+                        string accountData = await accountResponse.Content.ReadAsStringAsync();
+                        account = JsonConvert.DeserializeObject<Account>(accountData);
+                    }
+                }
+                postDTO.Account = account;
+
+                // Lấy thông tin danh mục
+                HttpResponseMessage categoryResponse = await client.GetAsync($"{categoryPostUrl}/{postDTO.post.CategoryPostId}");
+                CategoryPost categoryPost = null;
+                if (categoryResponse.IsSuccessStatusCode)
+                {
+                    string categoryData = await categoryResponse.Content.ReadAsStringAsync();
+                    categoryPost = JsonConvert.DeserializeObject<CategoryPost>(categoryData);
+                }
+
+                // Lấy số lượng lượt thích
+                HttpResponseMessage likeResponse = await client.GetAsync($"{postUrl}/all-likes/{id}");
+                List<LikePost> likes = new List<LikePost>();
+                int likeCount = 0;
+                if (likeResponse.IsSuccessStatusCode)
+                {
+                    string likeData = await likeResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Like API Response: {likeData}");
+                    var likeResult = JsonConvert.DeserializeObject<LikeResponse>(likeData);
+
+                    if (likeResult != null && likeResult.Likes != null)
+                    {
+                        likes = likeResult.Likes;
+                        likeCount = likes.Count;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Likes data is null or missing in the API response.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Like API failed: {await likeResponse.Content.ReadAsStringAsync()}");
+                }
+
+                // Lấy số lượng bình luận và danh sách bình luận
+                HttpResponseMessage commentResponse = await client.GetAsync($"{postUrl}/comments/{id}");
+                List<Comment> comments = new List<Comment>();
+                int commentCount = 0;
+                if (commentResponse.IsSuccessStatusCode)
+                {
+                    string commentData = await commentResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Comment API Response: {commentData}");
+                    var commentResult = JsonConvert.DeserializeObject<CommentResponse>(commentData);
+
+                    if (commentResult != null)
+                    {
+                        commentCount = commentResult.CommentCount;
+                        comments = commentResult.Comments ?? new List<Comment>(); // Fallback to empty list if null
+                    }
+                    else
+                    {
+                        Console.WriteLine("Comment API response could not be deserialized.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Comment API failed: {await commentResponse.Content.ReadAsStringAsync()}");
+                }
+
+                // Lấy số lượng chia sẻ (từ postDTO.sharePosts)
+                int shareCount = postDTO.sharePosts?.Count() ?? 0;
+
+                // Lấy danh sách URL hình ảnh
+                List<string> postImageUrls = postDTO.postImages?.Select(pi => pi.ImageUrl).ToList() ?? new List<string>();
+
+                // Kiểm tra xem người dùng hiện tại có thích bài đăng không (giả sử bạn có thông tin người dùng đăng nhập)
+                bool isLikedByUser = false; // Cần logic để kiểm tra, ví dụ: so sánh với AccountId của người dùng hiện tại
+
                 // Tạo ViewModel
                 var viewModel = new PostDetailViewModel
                 {
                     PostDTO = postDTO,
-                    ListComment = new List<Comment>(),
-                    CommentAccounts = new Dictionary<int, Account>(),
-                    CountCommentPost = 0,
-                    CountLikePost = 0,
-                    CountSharePost = 0,
-                    IsLikedByUser = false,
-                    View = 100,
-                    CommentContent = ""
+                    ListComment = comments,
+                    CommentAccounts = new Dictionary<int?, Account>(), // Cần lấy thông tin Account cho từng bình luận nếu muốn hiển thị
+                    CountCommentPost = commentCount,
+                    CountLikePost = likeCount,
+                    CountSharePost = shareCount,
+                    IsLikedByUser = isLikedByUser,
+                    View = 100, // Giá trị giả lập, bạn có thể lấy từ API nếu có
+                    CommentContent = "",
+                    CategoryPost = categoryPost,
+                    PostImageUrls = postImageUrls
                 };
+
+                // Lấy thông tin Account cho từng bình luận
+                foreach (var comment in viewModel.ListComment)
+                {
+                    if (comment.AccountId != null) // Chỉ kiểm tra null
+                    {
+                        HttpResponseMessage commentAccountResponse = await client.GetAsync($"{accountUrl}/DetailFarmer{comment.AccountId}");
+                        if (commentAccountResponse.IsSuccessStatusCode)
+                        {
+                            string commentAccountData = await commentAccountResponse.Content.ReadAsStringAsync();
+                            var commentAccount = JsonConvert.DeserializeObject<Account>(commentAccountData);
+                            if (commentAccount != null)
+                            {
+                                viewModel.CommentAccounts[comment.AccountId] = commentAccount;
+                            }
+                        }
+                    }
+                }
 
                 return View(viewModel);
             }
@@ -75,134 +178,15 @@ namespace Client.Controllers
                 return View(new PostDetailViewModel());
             }
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Like(int postId)
+        public class LikeResponse
         {
-            try
-            {
-                int currentUserId = 1;
-                var like = new LikePost { AccountId = currentUserId, PostId = postId };
-                var content = new StringContent(JsonConvert.SerializeObject(like), System.Text.Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync($"{postUrl}/like", content);
-                if (response.IsSuccessStatusCode)
-                {
-                    HttpResponseMessage likesResponse = await client.GetAsync($"{postUrl}/all-likes/{postId}");
-                    int likeCount = 0;
-                    if (likesResponse.IsSuccessStatusCode)
-                    {
-                        string likesData = await likesResponse.Content.ReadAsStringAsync();
-                        var likesResult = JsonConvert.DeserializeObject<dynamic>(likesData);
-                        likeCount = likesResult.LikeCount;
-                    }
-                    return Json(new { success = true, likeCount = likeCount });
-                }
-                else
-                {
-                    string errorMessage = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Error from API /like: {errorMessage}");
-                    return Json(new { success = false, message = $"Không thể thích bài viết: {errorMessage}" });
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in Like: {ex.Message}");
-                return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
-            }
+            public List<LikePost> Likes { get; set; }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Unlike(int postId)
+        public class CommentResponse
         {
-            try
-            {
-                int currentUserId = 1;
-                HttpResponseMessage response = await client.DeleteAsync($"{postUrl}/unlike?accountId={currentUserId}&postId={postId}");
-                if (response.IsSuccessStatusCode)
-                {
-                    HttpResponseMessage likesResponse = await client.GetAsync($"{postUrl}/all-likes/{postId}");
-                    int likeCount = 0;
-                    if (likesResponse.IsSuccessStatusCode)
-                    {
-                        string likesData = await likesResponse.Content.ReadAsStringAsync();
-                        var likesResult = JsonConvert.DeserializeObject<dynamic>(likesData);
-                        likeCount = likesResult.LikeCount;
-                    }
-                    return Json(new { success = true, likeCount = likeCount });
-                }
-                else
-                {
-                    string errorMessage = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Error from API /unlike: {errorMessage}");
-                    return Json(new { success = false, message = $"Không thể bỏ thích bài viết: {errorMessage}" });
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in Unlike: {ex.Message}");
-                return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Comment(int postId, string commentContent)
-        {
-            try
-            {
-                int currentUserId = 1;
-                var comment = new Comment
-                {
-                    AccountId = currentUserId,
-                    PostId = postId,
-                    Content = commentContent
-                };
-                var content = new StringContent(JsonConvert.SerializeObject(comment), System.Text.Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync($"{postUrl}/comment-on-post", content);
-                if (response.IsSuccessStatusCode)
-                {
-                    HttpResponseMessage commentsResponse = await client.GetAsync($"{postUrl}/comments/{postId}");
-                    int commentCount = 0;
-                    if (commentsResponse.IsSuccessStatusCode)
-                    {
-                        string commentsData = await commentsResponse.Content.ReadAsStringAsync();
-                        var commentsResult = JsonConvert.DeserializeObject<dynamic>(commentsData);
-                        commentCount = commentsResult.CommentCount;
-                    }
-
-                    HttpResponseMessage accountResponse = await client.GetAsync($"{accountUrl}/{currentUserId}");
-                    Account account = null;
-                    if (accountResponse.IsSuccessStatusCode)
-                    {
-                        string accountData = await accountResponse.Content.ReadAsStringAsync();
-                        account = JsonConvert.DeserializeObject<Account>(accountData);
-                    }
-
-                    return Json(new
-                    {
-                        success = true,
-                        commentCount = commentCount,
-                        comment = new
-                        {
-                            accountId = currentUserId,
-                            fullName = account?.FullName ?? "Người dùng ẩn danh",
-                            avatar = account?.Avatar ?? "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f",
-                            content = commentContent,
-                            createdAt = comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")
-                        }
-                    });
-                }
-                else
-                {
-                    string errorMessage = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Error from API /comment-on-post: {errorMessage}");
-                    return Json(new { success = false, message = $"Không thể đăng bình luận: {errorMessage}" });
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Exception in Comment: {ex.Message}");
-                return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
-            }
+            public int CommentCount { get; set; }
+            public List<Comment> Comments { get; set; }
         }
     }
 }

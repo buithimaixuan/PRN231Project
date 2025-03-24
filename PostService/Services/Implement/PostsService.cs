@@ -187,7 +187,8 @@ namespace PostService.Services.Implement
         }
         public async Task<IEnumerable<Comment>> GetAllCommentPostByPostId(int id)
         {
-            return await _commentRepository.GetAllCommentPostByPostId(id);
+            var comments = await _commentRepository.GetAllCommentPostByPostId(id);
+            return comments.Where(c => c.AccountId != null).ToList();
         }
 
         public async Task<Comment> FindCommentById(int id)
