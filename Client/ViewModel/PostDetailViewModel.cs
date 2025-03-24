@@ -7,7 +7,7 @@ namespace Client.ViewModel
     {
         public PostDTO PostDTO { get; set; }
         public List<Comment> ListComment { get; set; }
-        public Dictionary<int?, Account> CommentAccounts { get; set; } // Thay đổi từ int sang int?
+        public Dictionary<int?, Account> CommentAccounts { get; set; }
         public int CountCommentPost { get; set; }
         public int CountLikePost { get; set; }
         public int CountSharePost { get; set; }
@@ -16,10 +16,6 @@ namespace Client.ViewModel
         public string CommentContent { get; set; }
         public CategoryPost CategoryPost { get; set; }
         public List<string> PostImageUrls { get; set; }
-
-        public PostDetailViewModel()
-        {
-            CommentAccounts = new Dictionary<int?, Account>();
-        }
+        public int? CurrentUserId { get; set; } // Add this property
     }
 }

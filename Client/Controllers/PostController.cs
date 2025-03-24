@@ -5,6 +5,7 @@ using Client.Models;
 using Client.DTOs;
 using Client.ViewModel;
 using Microsoft.Extensions.Internal;
+using System.Text;
 
 namespace Client.Controllers
 {
@@ -132,15 +133,16 @@ namespace Client.Controllers
                 // Lấy danh sách URL hình ảnh
                 List<string> postImageUrls = postDTO.postImages?.Select(pi => pi.ImageUrl).ToList() ?? new List<string>();
 
-                // Kiểm tra xem người dùng hiện tại có thích bài đăng không (giả sử bạn có thông tin người dùng đăng nhập)
-                bool isLikedByUser = false; // Cần logic để kiểm tra, ví dụ: so sánh với AccountId của người dùng hiện tại
+                // Kiểm tra xem người dùng hiện tại có thích bài đăng không
+                int? currentUserId = 1; // Replace with actual logged-in user's AccountId (e.g., from session or authentication)
+                bool isLikedByUser = likes.Any(l => l.AccountId == currentUserId);
 
                 // Tạo ViewModel
                 var viewModel = new PostDetailViewModel
                 {
                     PostDTO = postDTO,
                     ListComment = comments,
-                    CommentAccounts = new Dictionary<int?, Account>(), // Cần lấy thông tin Account cho từng bình luận nếu muốn hiển thị
+                    CommentAccounts = new Dictionary<int?, Account>(),
                     CountCommentPost = commentCount,
                     CountLikePost = likeCount,
                     CountSharePost = shareCount,
@@ -148,13 +150,14 @@ namespace Client.Controllers
                     View = 100, // Giá trị giả lập, bạn có thể lấy từ API nếu có
                     CommentContent = "",
                     CategoryPost = categoryPost,
-                    PostImageUrls = postImageUrls
+                    PostImageUrls = postImageUrls,
+                    CurrentUserId = currentUserId // Pass the current user's ID to the view
                 };
 
                 // Lấy thông tin Account cho từng bình luận
                 foreach (var comment in viewModel.ListComment)
                 {
-                    if (comment.AccountId != null) // Chỉ kiểm tra null
+                    if (comment.AccountId != null)
                     {
                         HttpResponseMessage commentAccountResponse = await client.GetAsync($"{accountUrl}/DetailFarmer{comment.AccountId}");
                         if (commentAccountResponse.IsSuccessStatusCode)
@@ -178,15 +181,186 @@ namespace Client.Controllers
                 return View(new PostDetailViewModel());
             }
         }
-        public class LikeResponse
+
+        [HttpPost]
+        public async Task<IActionResult> LikePost(int postId)
         {
-            public List<LikePost> Likes { get; set; }
+            try
+            {
+                // Lấy currentUserId từ session hoặc authentication (thay thế giá trị cứng 1)
+                int? currentUserId = HttpContext.Session.GetInt32("CurrentUserId") ?? 1; // Giả sử bạn lưu trong session
+                if (!currentUserId.HasValue)
+                {
+                    return Json(new { success = false, message = "Bạn cần đăng nhập để thích bài đăng." });
+                }
+
+                // Gọi API để thích bài đăng
+                HttpResponseMessage response = await client.PostAsync(
+                    $"{postUrl}/like?accountId={currentUserId}&postId={postId}", null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Lấy lại số lượt thích (tuỳ chọn, nếu cần cập nhật chính xác)
+                    HttpResponseMessage likeResponse = await client.GetAsync($"{postUrl}/all-likes/{postId}");
+                    int likeCount = 0;
+                    if (likeResponse.IsSuccessStatusCode)
+                    {
+                        string likeData = await likeResponse.Content.ReadAsStringAsync();
+                        var likeResult = JsonConvert.DeserializeObject<LikeResponse>(likeData);
+                        likeCount = likeResult?.Likes?.Count ?? 0;
+                    }
+
+                    return Json(new { success = true, likeCount = likeCount });
+                }
+
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                return Json(new { success = false, message = $"Không thể thích bài đăng: {errorMessage}" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
         }
 
-        public class CommentResponse
+        [HttpPost]
+        public async Task<IActionResult> UnlikePost(int postId)
         {
-            public int CommentCount { get; set; }
-            public List<Comment> Comments { get; set; }
+            try
+            {
+                // Lấy currentUserId từ session hoặc authentication
+                int? currentUserId = HttpContext.Session.GetInt32("CurrentUserId") ?? 1; // Giả sử bạn lưu trong session
+                if (!currentUserId.HasValue)
+                {
+                    return Json(new { success = false, message = "Bạn cần đăng nhập để bỏ thích bài đăng." });
+                }
+
+                // Gọi API để bỏ thích bài đăng
+                HttpResponseMessage response = await client.DeleteAsync(
+                    $"{postUrl}/unlike?accountId={currentUserId}&postId={postId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Lấy lại số lượt thích (tuỳ chọn)
+                    HttpResponseMessage likeResponse = await client.GetAsync($"{postUrl}/all-likes/{postId}");
+                    int likeCount = 0;
+                    if (likeResponse.IsSuccessStatusCode)
+                    {
+                        string likeData = await likeResponse.Content.ReadAsStringAsync();
+                        var likeResult = JsonConvert.DeserializeObject<LikeResponse>(likeData);
+                        likeCount = likeResult?.Likes?.Count ?? 0;
+                    }
+
+                    return Json(new { success = true, likeCount = likeCount });
+                }
+
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                return Json(new { success = false, message = $"Không thể bỏ thích bài đăng: {errorMessage}" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int postId, string content)
+        {
+            try
+            {
+                // Lấy currentUserId từ session hoặc authentication
+                int? currentUserId = HttpContext.Session.GetInt32("CurrentUserId") ?? 1; // Thay bằng cách lấy thực tế nếu có
+                if (!currentUserId.HasValue)
+                {
+                    return Json(new { success = false, message = "Bạn cần đăng nhập để bình luận." });
+                }
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    return Json(new { success = false, message = "Nội dung bình luận không được để trống." });
+                }
+
+                // Tạo object Comment để gửi lên API
+                var comment = new
+                {
+                    AccountId = currentUserId.Value,
+                    PostId = postId,
+                    Content = content
+                };
+
+                var jsonContent = new StringContent(JsonConvert.SerializeObject(comment), Encoding.UTF8, "application/json");
+
+                // Gọi API comment-on-post
+                HttpResponseMessage response = await client.PostAsync($"{postUrl}/comment-on-post", jsonContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string commentData = await response.Content.ReadAsStringAsync();
+                    var newComment = JsonConvert.DeserializeObject<Comment>(commentData);
+
+                    // Lấy thông tin tài khoản
+                    string fullName = "Người dùng không xác định";
+                    string avatar = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f";
+                    HttpResponseMessage accountResponse = await client.GetAsync($"{accountUrl}/DetailFarmer{currentUserId}");
+                    if (accountResponse.IsSuccessStatusCode)
+                    {
+                        string accountData = await accountResponse.Content.ReadAsStringAsync();
+                        var account = JsonConvert.DeserializeObject<Account>(accountData);
+                        if (account != null)
+                        {
+                            fullName = account.FullName ?? fullName;
+                            avatar = account.Avatar ?? avatar;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to fetch account: {await accountResponse.Content.ReadAsStringAsync()}");
+                    }
+
+                    // Lấy lại số lượng bình luận
+                    HttpResponseMessage commentResponse = await client.GetAsync($"{postUrl}/comments/{postId}");
+                    int commentCount = 0;
+                    if (commentResponse.IsSuccessStatusCode)
+                    {
+                        string commentsData = await commentResponse.Content.ReadAsStringAsync();
+                        var commentResult = JsonConvert.DeserializeObject<CommentResponse>(commentsData);
+                        commentCount = commentResult?.CommentCount ?? 0;
+                    }
+
+                    // Trả về JSON với cấu trúc rõ ràng
+                    return Json(new
+                    {
+                        success = true,
+                        comment = new
+                        {
+                            accountId = newComment.AccountId,
+                            postId = newComment.PostId,
+                            content = newComment.Content,
+                            createdAt = newComment.CreatedAt.ToString("dd/MM/yyyy")
+                        },
+                        fullName = fullName, // Đảm bảo tên trường khớp với JS
+                        avatar = avatar,     // Đảm bảo tên trường khớp với JS
+                        commentCount = commentCount
+                    });
+                }
+
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                return Json(new { success = false, message = $"Không thể thêm bình luận: {errorMessage}" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
+        }
+    }
+
+    public class LikeResponse
+    {
+        public List<LikePost> Likes { get; set; }
+    }
+
+    public class CommentResponse
+    {
+        public int CommentCount { get; set; }
+        public List<Comment> Comments { get; set; }
     }
 }

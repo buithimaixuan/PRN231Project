@@ -128,14 +128,13 @@ namespace PostService.Controllers
             }
         }
 
-        // Thêm Like
         [HttpPost("like")]
-        public async Task<IActionResult> AddLike([FromBody] LikePost like)
+        public async Task<IActionResult> AddLike([FromQuery] int accountId, [FromQuery] int postId)
         {
             try
             {
-                var l = await _postService.AddLike(like.AccountId, like.PostId);
-                return Ok(new { Message = "Like added successfully.", LikePostId = l.LikePostId });
+                await _postService.AddLike(accountId, postId);
+                return Ok(new { Message = "Like successfully." });
             }
             catch (Exception ex)
             {
