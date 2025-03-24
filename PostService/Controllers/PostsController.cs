@@ -115,7 +115,6 @@ namespace PostService.Controllers
             try
             {
                 var comments = await _postService.GetAllCommentPostByPostId(postId);
-                // Đếm số lượng bình luận
                 var commentCount = comments.Count();
                 return Ok(new
                 {
