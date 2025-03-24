@@ -3,6 +3,28 @@
     ViewData["Title"] = Model.PostDTO.Account?.FullName ?? "Chi tiết bài đăng";
 }
 
+<style>
+    .like-button {
+        width: 35px;
+        height: 35px;
+        margin: 0 7.5px;
+        border: 0;
+        border-radius: 50%;
+        transition: background-color 0.3s;
+    }
+
+    .like-button.liked {
+        background-color: #1da1f2;
+    }
+
+    .like-button.liked i {
+        color: white;
+    }
+</style>
+<!-- Include jQuery and Font Awesome -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
 <!-- Page Wrapper Start -->
 <section class="page--wrapper pt--80 pb--20">
     <div class="container">
@@ -90,23 +112,13 @@
                                         <div class="post--social-share clearfix">
                                             <ul class="nav">
                                                 <li class="d-flex align-items-center">
-                                                    @if (!Model.IsLikedByUser)
-                                                    {
-                                                        <form method="post" action="@Url.Action("Like", "Post", new { postId = Model.PostDTO.post.PostId })">
-                                                            <button type="submit" class="rounded-circle border-0" style="width: 35px; height: 35px; margin: 0 7.5px">
-                                                                <i class="fa-solid fa-thumbs-up"></i>
-                                                            </button>
-                                                        </form>
-                                                    }
-                                                    else
-                                                    {
-                                                        <form method="post" action="@Url.Action("Unlike", "Post", new { postId = Model.PostDTO.post.PostId })">
-                                                            <button type="submit" class="rounded-circle border-0" style="background-color: #1da1f2; width: 35px; height: 35px; margin: 0 7.5px">
-                                                                <i class="fa-solid fa-thumbs-up" style="color: white"></i>
-                                                            </button>
-                                                        </form>
-                                                    }
-                                                    <span>@Model.CountLikePost lượt thích</span>
+                                                    <button class="like-button rounded-circle border-0 @(Model.IsLikedByUser ? "liked" : "")"
+                                                            style="width: 35px; height: 35px; margin: 0 7.5px"
+                                                            data-post-id="@Model.PostDTO.post.PostId"
+                                                            data-is-liked="@Model.IsLikedByUser.ToString().ToLower()">
+                                                        <i class="fa-solid fa-thumbs-up"></i>
+                                                    </button>
+                                                    <span class="like-count">@Model.CountLikePost lượt thích</span>
                                                 </li>
                                                 <li>
                                                     <a href="#"><i class="fa-solid fa-share"></i></a>
@@ -126,43 +138,41 @@
                     <!-- Comment Form Start -->
                     <div class="comment--form pb--30" data-form="validate">
                         <h4 class="h4 pb--15">Bình luận</h4>
-                        <form method="post" action="@Url.Action("Comment", "Post")">
-                            <div class="row gutter--15">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <textarea name="CommentContent" placeholder="Comment *" class="form-control">@Model.CommentContent</textarea>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 pt--10">
-                                    <button type="submit" class="btn btn-sm btn-primary fs--14">Đăng</button>
+                        <div class="row gutter--15">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <textarea id="commentContent" placeholder="Comment *" class="form-control"></textarea>
                                 </div>
                             </div>
-                        </form>
+                            <div class="col-sm-12 pt--10">
+                                <button type="button" id="submitComment" class="btn btn-sm btn-primary fs--14" data-post-id="@Model.PostDTO.post.PostId">Đăng</button>
+                            </div>
+                        </div>
                     </div>
                     <!-- Comment Form End -->
                     <!-- Comment List Start -->
                     <div class="comment--list pt--40">
-                        <h4 class="h4 pb--20">@Model.CountCommentPost bình luận</h4>
+                        <h4 class="h4 pb--20"><span class="comment-count">@Model.CountCommentPost</span> bình luận</h4>
                         <ul class="comment--items nav">
                             @if (Model.ListComment != null && Model.ListComment.Any())
                             {
-                                @foreach (var comment in Model.ListComment)
+                                @foreach (var comment in Model.ListComment.OrderByDescending(c => c.CommentId))
                                 {
                                     var commentAccount = comment.AccountId.HasValue && Model.CommentAccounts.ContainsKey(comment.AccountId) ? Model.CommentAccounts[comment.AccountId] : null;
                                     <!-- Comment Item Start -->
                                     <li class="w-100">
                                         <div class="comment--item mr--15 clearfix">
                                             <!-- AVATAR USER COMMENT -->
-                                            <div class="img float--left" data-overlay="0.3" data-overlay-color="primary">
+                                            <a asp-action="PersonalPage" asp-controller="Profile" asp-route-id="@commentAccount?.AccountId" class="img float--left" data-overlay="0.3" data-overlay-color="primary">
                                                 <img src="@(commentAccount?.Avatar ?? "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f")" alt="Avatar">
-                                            </div>
+                                            </a>
                                             <!-- END AVATAR USER COMMENT -->
                                             <div class="info ov--h">
                                                 <!-- INFORMATION OF USER COMMENT -->
                                                 <div class="header clearfix">
                                                     <div class="meta float--left">
                                                         <p class="fs--14 fw--700 text-darkest">
-                                                            <a href="@Url.Action("PersonalPage", "Profile", new { id = commentAccount?.AccountId })">@(commentAccount?.FullName ?? "Người dùng không xác định")</a>
+                                                            <a asp-action="PersonalPage" asp-controller="Profile" asp-route-id="@commentAccount?.AccountId">@(commentAccount?.FullName ?? "Người dùng không xác định")</a>
                                                         </p>
                                                         <p>
                                                             <i class="mr--10 fa fa-clock-o"></i>
@@ -209,3 +219,162 @@
     </div>
 </section>
 <!-- Page Wrapper End -->
+<!-- JavaScript for AJAX -->
+<script>
+    $(document).ready(function () {
+        const currentUserId = @Model.CurrentUserId;
+
+        function updateLikeUI(button, isLiked, likeCount) {
+            console.log('Updating UI:', { isLiked, likeCount });
+            button.toggleClass('liked', isLiked);
+            button.attr('data-is-liked', isLiked);
+            button.siblings('.like-count').text(`${likeCount} lượt thích`);
+        }
+
+        $('.like-button').click(function () {
+            // Logic Like/Unlike (giữ nguyên)
+            const button = $(this);
+            const postId = button.data('post-id');
+            const isLiked = button.attr('data-is-liked') === 'true';
+            let currentLikeCount = parseInt(button.siblings('.like-count').text()) || 0;
+
+            if (!postId) {
+                alert('ID bài đăng không hợp lệ.');
+                return;
+            }
+
+            console.log('Before request:', { isLiked, postId });
+
+            if (!isLiked) {
+                $.ajax({
+                    url: '/Post/LikePost',
+                    type: 'POST',
+                    data: { postId: postId },
+                    success: function (response) {
+                        if (response.success) {
+                            console.log('Like success:', response);
+                            updateLikeUI(button, true, response.likeCount || currentLikeCount + 1);
+                        } else {
+                            console.log('Like failed:', response.message);
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log('Like Error:', xhr.responseText);
+                        alert('Lỗi khi thích bài đăng: ' + (xhr.responseText || 'Không xác định'));
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: '/Post/UnlikePost',
+                    type: 'POST',
+                    data: { postId: postId },
+                    success: function (response) {
+                        if (response.success) {
+                            console.log('Unlike success:', response);
+                            updateLikeUI(button, false, response.likeCount || currentLikeCount - 1);
+                        } else {
+                            console.log('Unlike failed:', response.message);
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log('Unlike Error:', xhr.responseText);
+                        alert('Lỗi khi bỏ thích bài đăng: ' + (xhr.responseText || 'Không xác định'));
+                    }
+                });
+            }
+        });
+
+        // Comment
+        $('#submitComment').click(function () {
+            const postId = $(this).data('post-id');
+            const content = $('#commentContent').val().trim();
+
+            if (!postId || !content) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Lỗi',
+                    text: 'Vui lòng nhập nội dung bình luận.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            $.ajax({
+                url: '/Post/AddComment',
+                type: 'POST',
+                data: { postId: postId, content: content },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('Comment success:', response);
+
+                        // Hiển thị SweetAlert khi bình luận thành công
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: 'Bình luận của bạn đã được đăng!',
+                            confirmButtonText: 'OK',
+                            timer: 1500, // Tự động đóng sau 1.5 giây
+                            timerProgressBar: true
+                        }).then(() => {
+                            // Cập nhật UI sau khi thông báo đóng
+                            const fullName = response.fullName || 'Người dùng không xác định';
+                            const avatar = response.avatar || 'https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fuser.png?alt=media&token=e669a837-b9c8-4983-b2bd-8eb5c091d48f';
+
+                            const newCommentHtml = `
+                                <li class="w-100">
+                                    <div class="comment--item mr--15 clearfix">
+                                        <div class="img float--left" data-overlay="0.3" data-overlay-color="primary">
+                                            <img src="${avatar}" alt="Avatar">
+                                        </div>
+                                        <div class="info ov--h">
+                                            <div class="header clearfix">
+                                                <div class="meta float--left">
+                                                    <p class="fs--14 fw--700 text-darkest">
+                                                        <a href="/Profile/PersonalPage/${response.comment.accountId}">${fullName}</a>
+                                                    </p>
+                                                    <p>
+                                                        <i class="mr--10 fa fa-clock-o"></i>
+                                                        <span>${response.comment.createdAt}</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="content pt--8 fs--14">
+                                                <p class="text-dark">${response.comment.content}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>`;
+
+                            if ($('.comment--items').children().length === 0) {
+                                $('.comment--list p').remove();
+                            }
+
+                            $('.comment--items').prepend(newCommentHtml);
+                            $('.comment-count').text(response.commentCount);
+                            $('#commentContent').val('');
+                        });
+                    } else {
+                        console.log('Comment failed:', response.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: response.message,
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    console.log('Comment Error:', xhr.responseText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Lỗi khi gửi bình luận: ' + (xhr.responseText || 'Không xác định'),
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>

@@ -230,7 +230,7 @@ else
 
                                     <div class="w3-margin-top">
                                         <div class="activity--action fw--700 w3-margin-bottom">
-                                            <a asp-page="/Posts/PostDetail" asp-route-postId="@post.post.PostId">See More...</a>
+                                            <a asp-controller="Post" asp-action="PostDetail" asp-route-id="@post.post.PostId" class="h5">See More...</a>
                                         </div>
                                     </div>
                                 </div>
