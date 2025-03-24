@@ -346,7 +346,7 @@ namespace UserService.Controllers
 
         //*****************MINH UYEN***********
 
-        [HttpPost("createFarmer")]
+        [HttpPost("Farmers/Create")]
         public async Task<IActionResult> CreateFarmerAccount([FromBody] AccountDTO accountDTO)
         {
             if (accountDTO == null)
@@ -358,27 +358,20 @@ namespace UserService.Controllers
 
             string hashedPassword = _passwordHasher.HashPassword(accountDTO.Password);
 
-            await _accountService.CreateNewFarmerAccount(
-                accountDTO.Username,
-                hashedPassword,
-                accountDTO.FullName,
-                accountDTO.Email,
-                accountDTO.Phone,
-                accountDTO.Address,
-                accountDTO.Avatar
-            );
+            accountDTO.Password = hashedPassword;
+
+            await _accountService.CreateNewFarmerAccount(accountDTO);
 
             return Ok("Farmer account created successfully!");
         }
 
 
         [HttpGet("AllFarmer")]
-        public async Task<IActionResult> GetAllAccountsFarmer(int roleId)
+        public async Task<ActionResult<IEnumerable<Account>>> GetAllFarmer(int roleId)
         {
-            var accounts = await _accountService.GetListAccountByRoleId(roleId);
-            return Ok(accounts);
+            IEnumerable<Account> List = await _accountService.GetListAccountByRoleId(2);
+            return Ok(List);
         }
-
 
 
         [HttpGet("DetailFarmer{id}")]
@@ -405,7 +398,7 @@ namespace UserService.Controllers
         public async Task<IActionResult> GetTotalFarmers()
         {
             int totalFarmers = await _accountService.GetTotalFarmerService();
-            return Ok(totalFarmers); 
+            return Ok(totalFarmers);
         }
         [HttpGet("total-experts")]
         public async Task<IActionResult> GetTotalExperts()

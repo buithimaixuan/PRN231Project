@@ -29,6 +29,18 @@ namespace PostService.Controllers
             return Ok(res);
         }
 
+
+        [HttpGet("countPostInYear/{year}")]
+        public async Task<IActionResult> GetPostCountByYear(int year)
+        {
+            var counts = await _postService.GetPostCountByYear(year);
+            return Ok(counts);
+        }
+
+
+
+
+
         [HttpGet("all/available")]
         public async Task<IActionResult> GetListPostAvailable()
         {

@@ -22,7 +22,28 @@ namespace PostService.Services.Implement
             _commentRepository = commentRepository;
             _sharePostRepository = sharePostRepository;
         }
+        //public Task<int[]> GetPostCountByYear(int year)
+        //{
+        //    return _postRepository.GetPostCountByYear(year);
+        //}
 
+
+        public async Task<int[]> GetPostCountByYear(int year)
+        {
+            // Khởi tạo mảng với 12 tháng
+            int[] monthlyCounts = new int[12];
+
+            // Lấy số lượng bài viết theo tháng
+            var results = await _postRepository.GetPostCountByYear(year);
+
+            // Gán số lượng bài viết vào mảng
+            for (int month = 0; month < results.Length; month++)
+            {
+                monthlyCounts[month] = results[month];
+            }
+
+            return monthlyCounts;
+        }
         public async Task<List<PostDTO>> GetAllPostByAccountId(int id)
         {
             var response = new List<PostDTO>();
@@ -242,9 +263,9 @@ namespace PostService.Services.Implement
         return _postRepository.CountPostsByAccount();
     }
 
-        public Task<int> GetTotalPostService()
+        public async Task<int> GetTotalPostService()
         {
-            throw new NotImplementedException();
+            return await _postRepository.GetTotalPostRepo();
         }
     }
 }

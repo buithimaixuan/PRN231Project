@@ -1,126 +1,126 @@
-﻿@model Client.Models.Account
+﻿@using Client.DTOs
+@model ExpertDTO
 
 @{
     ViewData["Title"] = "Create";
 }
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
 
-<h1>Create</h1>
+<h1>Create farmer</h1>
+<div class="container">
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="FullName">What is your full name?</label>
+                <input type="text" class="form-control" asp-for="FullName"
+                       placeholder="Enter full name at here">
+                <span class="text-danger" asp-validation-for="FullName"></span>
 
-<h4>Account</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="AccountId" class="control-label"></label>
-                <input asp-for="AccountId" class="form-control" />
-                <span asp-validation-for="AccountId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <input asp-for="RoleId" class="form-control" />
-                <span asp-validation-for="RoleId" class="text-danger"></span>
+            <div class="form-group  w-50">
+                <label asp-for="Username">Username</label>
+                <input asp-for="Username" type="text" class="form-control" placeholder="Enter your username at here">
+                <span class="text-danger" asp-validation-for="Username"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="Email">What is your email address?</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="Enter email" />
+                <small class="form-text text-muted">
+                    We'll never share your email with anyone
+                    else.
+                </small>
+                <span class="text-danger" asp-validation-for="Email"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+            <div class="form-group  w-50">
+                <label asp-for="Phone">Can I have your phone number?</label>
+                <input asp-for="Phone" type="number" class="form-control"
+                       placeholder="Enter your phone number at here">
             </div>
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="DateOfBirth">When is your birthday?</label>
+                <input asp-for="DateOfBirth" class="form-control" />
+                <span class="text-danger" asp-validation-for="DateOfBirth"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EmailConfirmed" class="control-label"></label>
-                <input asp-for="EmailConfirmed" class="form-control" />
-                <span asp-validation-for="EmailConfirmed" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneConfirmed" class="control-label"></label>
-                <input asp-for="PhoneConfirmed" class="form-control" />
-                <span asp-validation-for="PhoneConfirmed" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
+            <div class="form-group w-50">
+                <label asp-for="Gender">And your gender is?</label>
+                <div class="d-flex">
+                    <div class="form-check me-3">
+                        <input asp-for="Gender" class="form-check-input" type="radio" value="Male" checked="@(Model.Gender == "Male")" />
+                        <label class="form-check-label">Male</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input asp-for="Gender" class="form-check-input" type="radio" value="Female" checked="@(Model.Gender == "Female")" />
+                        <label class="form-check-label">Female</label>
+                    </div>
+                </div>
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ShortBio" class="control-label"></label>
-                <input asp-for="ShortBio" class="form-control" />
-                <span asp-validation-for="ShortBio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EducationUrl" class="control-label"></label>
-                <input asp-for="EducationUrl" class="form-control" />
-                <span asp-validation-for="EducationUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="YearOfExperience" class="control-label"></label>
-                <input asp-for="YearOfExperience" class="form-control" />
-                <span asp-validation-for="YearOfExperience" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DegreeUrl" class="control-label"></label>
-                <input asp-for="DegreeUrl" class="form-control" />
-                <span asp-validation-for="DegreeUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Avatar" class="control-label"></label>
-                <input asp-for="Avatar" class="form-control" />
-                <span asp-validation-for="Avatar" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Major" class="control-label"></label>
-                <input asp-for="Major" class="form-control" />
-                <span asp-validation-for="Major" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IsDeleted" class="control-label"></label>
-                <input asp-for="IsDeleted" class="form-control" />
-                <span asp-validation-for="IsDeleted" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Otp" class="control-label"></label>
-                <input asp-for="Otp" class="form-control" />
-                <span asp-validation-for="Otp" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FacebookId" class="control-label"></label>
-                <input asp-for="FacebookId" class="form-control" />
-                <span asp-validation-for="FacebookId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+
+
+
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="Address">Where do you live?</label>
+                <input asp-for="Address" class="form-control" placeholder="Enter your address at here">
+                <span class="text-danger" asp-validation-for="Address"></span>
+
+            </div>
+            <div class="form-group  w-50">
+                <label>Can I have your avatar?</label>
+                <input type="file" class="form-control" id="AvatarFile" name="AvatarFile" accept="image/*">
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="form-group w-50">
+                <label asp-for="Major">Your major is:</label>
+                <input asp-for="Major" class="form-control" placeholder="Enter your major at here">
+                <span class="text-danger" asp-validation-for="Major"></span>
+            </div>
+            <div class="form-group  w-50">
+                <label asp-for="Password">What is your password?</label>
+                <input asp-for="Password" type="password" class="form-control">
+                <span class="text-danger" asp-validation-for="Password"></span>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="form-group w-50">
+                <label>Can I get your degree image?</label>
+                <input type="file" id="DegreeFile" name="DegreeFile"
+                       class="form-control" accept="image/*">
+            </div>
+            <div class="form-group  w-50">
+                <label>Can I get your education image?</label>
+                <input type="file" class="form-control" id="EducationFile" name="EducationFile" accept="image/*">
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="form-group w-50">
+                <label asp-for="YearOfExperience">The number of years experience is:</label>
+                <input asp-for="YearOfExperience" class="form-control">
+                <span class="text-danger" asp-validation-for="YearOfExperience"></span>
+            </div>
+            <div class="form-group  w-50">
+                <label asp-for="ShortBio">Can I get your short bio?</label>
+                <input asp-for="ShortBio" class="form-control">
+                <span class="text-danger" asp-validation-for="ShortBio"></span>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-info mx-3">Reset</button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

@@ -2,6 +2,9 @@
 using System.Text.Json;
 using System.Text;
 using Client.Models;
+using Newtonsoft.Json;
+using System.Net.Http;
+using Client.DTOs;
 
 namespace Client.Controllers
 {
@@ -9,152 +12,188 @@ namespace Client.Controllers
     {
         private readonly HttpClient client;
         private string VoucherODataUri = "";
+        private readonly IHttpClientFactory httpClient;
 
-        public FarmersController(IHttpClientFactory httpClientFactory)
+
+        //private readonly HttpClient client;
+        private string StatisticPostUri = "";
+        private string StatisticNewUri = "";
+        private string StatisticServiceUri = "";
+        //private readonly IHttpClientFactory httpClient;
+        public FarmersController(IHttpClientFactory clientFactory)
         {
-            //_httpClientFactory = httpClientFactory;
-
-            client = new HttpClient();
-
-            VoucherODataUri = "http://localhost:5157/api/Accounts";
-
+            httpClient = clientFactory;
+            VoucherODataUri = "http://localhost:5157/api/Accounts/AllFarmer";
+            StatisticPostUri = "http://localhost:5007/api/post";
+            StatisticNewUri = "http://localhost:5007/api/News";
+            StatisticServiceUri = "http://localhost:5122/api/Services";
         }
+
+
+        public async Task<int> GetTotalPosts()
+        {
+            using var client = httpClient.CreateClient();
+            var responseP = await client.GetFromJsonAsync<int>($"{StatisticPostUri}/total-post");
+            return responseP;
+        }
+
+        public async Task<int> GetTotalNews()
+        {
+            using var client = httpClient.CreateClient();
+            var responseN = await client.GetFromJsonAsync<int>($"{StatisticNewUri}/total-news");
+            return responseN;
+        }
+
+        public async Task<int> GetTotalServices()
+        {
+            using var client = httpClient.CreateClient();
+            var response = await client.GetFromJsonAsync<int>($"{StatisticServiceUri}/count-all");
+            return response;
+        }
+
+
+
+
 
         public async Task<IActionResult> Index()
         {
-            //var client = _httpClientFactory.CreateClient();
+            var client = httpClient.CreateClient();
+            //call odata service
+            var respone = await client.GetStringAsync(VoucherODataUri);
+            //deserialize the respone of list Book
+            var listPro = JsonConvert.DeserializeObject<IEnumerable<Account>>(respone);
 
 
+            int totalPosts = await GetTotalPosts();
+            Console.WriteLine($"Total Posts: {totalPosts}");
+            ViewBag.TotalPosts = totalPosts;
 
+            int totalNews = await GetTotalNews();
+            Console.WriteLine($"Total Posts: {totalNews}");
+            ViewBag.TotalNews = totalNews;
 
-            var response = await client.GetAsync(VoucherODataUri);
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-
-                var Farmers = JsonSerializer.Deserialize<IEnumerable<Account>>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                return View(Farmers);
-            }
-            return View();
-
-
+            int totalServices = await GetTotalServices();
+            Console.WriteLine($"Total Posts: {totalServices}");
+            ViewBag.TotalServices = totalServices;
+            return View(listPro);
         }
 
-        public async Task<IActionResult> Details(int id)
-        {
-            //var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync($"{VoucherODataUri}/{id}");
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                var account = JsonSerializer.Deserialize<Account>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return View(account);
-            }
-            return NotFound();
-        }
-
-        [HttpGet]
         public IActionResult Create()
         {
-            return View(); 
+            var model = new ExpertDTO(); // Đảm bảo model được khởi tạo
+            return View(model);
+
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Account form)
+        public async Task<IActionResult> Create(ExpertDTO book)
         {
-            //var client = _httpClientFactory.CreateClient();
-            if (ModelState.IsValid)
+            var client = httpClient.CreateClient();
+            var client2 = httpClient.CreateClient();
+            var client3 = httpClient.CreateClient();
+
+            var part1 = Request.Form.Files.GetFile("AvatarFile");
+            var part2 = Request.Form.Files.GetFile("DegreeFile");
+            var part3 = Request.Form.Files.GetFile("EducationFile");
+            //Upload avatar
+
+            string avatar = part1 != null ? await UploadImage(part1, client) : null;
+            string degree = part2 != null ? await UploadImage(part2, client2) : null;
+            string education = part3 != null ? await UploadImage(part3, client3) : null;
+
+            DateTime? nullableDateTime = book.DateOfBirth;
+            DateOnly? dateOnly = nullableDateTime.HasValue ? DateOnly.FromDateTime(nullableDateTime.Value) : null;
+
+
+            var expert = new AccountDTO
             {
+                RoleId = 2,
+                FullName = book.FullName,
+                Username = book.Username,
+                Email = book.Email,
+                Phone = book.Phone,
+                Gender = book.Gender,
+                DateOfBirth = dateOnly,
+                ShortBio = book.ShortBio,
+                EducationUrl = education,
+                YearOfExperience = book.YearOfExperience,
+                DegreeUrl = degree,
+                Avatar = avatar,
+                Major = book.Major,
+                Address = book.Address,
+                Password = book.Password,
+            };
 
 
-                var jsonContent = new StringContent(JsonSerializer.Serialize(form), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(VoucherODataUri, jsonContent);
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "Không thể tạo account. Vui lòng thử lại.");
-            }
-            return View(form);
-        }
-
-
-
-
-
-        [HttpGet("accounts/edit/{id}")]
-        public async Task<IActionResult> Edit(int id)
-        {
-            //var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync($"{VoucherODataUri}/{id}");
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                var account = JsonSerializer.Deserialize<Account>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-
-                return View(account);
-            }
-            return NotFound();
-        }
-
-        //[HttpPost("Edit/{id}")]
-
-        [HttpPost("accounts/edit/{id}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Account form)
-        {
-            //var client = _httpClientFactory.CreateClient();
-
-
-            var jsonContent = new StringContent(JsonSerializer.Serialize(form), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"{VoucherODataUri}/{id}", jsonContent);
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            ModelState.AddModelError("", "Không thể cập nhật voucher. Vui lòng thử lại.");
-
-            return View(form);
-        }
-
-
-        public async Task<IActionResult> Delete(int id)
-        {
-            //var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync($"{VoucherODataUri}/{id}");
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                var account = JsonSerializer.Deserialize<Account>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return View(account);
-            }
-            return NotFound();
-        }
-
-
-        [HttpPost]
-        [ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            //var client = _httpClientFactory.CreateClient();
-            var response = await client.DeleteAsync($"{VoucherODataUri}/{id}");
-            Console.WriteLine($"dddddd.......{VoucherODataUri}/{id}");
-
+            var content = new StringContent(JsonConvert.SerializeObject(expert), System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("http://localhost:5157/api/Accounts/Farmers/Create", content);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
             }
+            Console.WriteLine(expert.FullName);
+            return View(book);
+        }
+        private async Task<string> UploadImage(IFormFile file, HttpClient client)
+        {
+            using var content = new MultipartFormDataContent();
+            using var fileStream = file.OpenReadStream();
+            content.Add(new StreamContent(fileStream), "formFile", file.FileName);
 
-            ModelState.AddModelError("", "Failed to delete the Voucher.");
+            var response = await client.PostAsync("http://localhost:5007/api/cloudinary/upload", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error uploading image.");
+            }
+
+            var responseData = await response.Content.ReadFromJsonAsync<ImageUploadResponseDTO>();
+
+            return responseData.ImageUrl;
+        }
+
+        public async Task<IActionResult> Detail(int id)
+        {
+            var client = httpClient.CreateClient();
+
+            var response = await client.GetStringAsync($"http://localhost:5157/api/Accounts/DetailFarmer{id}");
+
+            var account = JsonConvert.DeserializeObject<Account>(response);
+            //var Book = Books.FirstOrDefault(); // Get the first Book
+
+            return View(account);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var client = httpClient.CreateClient();
+
+            var response = await client.GetStringAsync($"http://localhost:5157/api/Accounts/DetailFarmer{id}");
+
+            var account = JsonConvert.DeserializeObject<Account>(response);
+            //var Book = Books.FirstOrDefault(); // Get the first Book
+
+            return View(account);
+        }
+        // POST: Books/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var client = httpClient.CreateClient();
+            var response = await client.DeleteAsync($"http://localhost:5157/api/Accounts/DeleteFarmer{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index"); // Or wherever you want to redirect after deletion
+            }
+
+            // Handle failure (optional)
+            ModelState.AddModelError("", "Failed to delete the Expert.");
             return RedirectToAction("Index");
         }
+
+
+
     }
 }

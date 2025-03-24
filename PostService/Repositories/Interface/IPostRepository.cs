@@ -4,6 +4,7 @@ namespace PostService.Repositories.Interface
 {
     public interface IPostRepository
     {
+        Task<int[]> GetPostCountByYear(int year);
         Task<IEnumerable<Post>> GetAll();
         Task<Post?> GetById(int postId);
         Task<Post> AddPost(Post post);

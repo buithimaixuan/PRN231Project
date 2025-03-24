@@ -4,6 +4,7 @@
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="container">
 
@@ -20,8 +21,8 @@
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Visitors</p>
-                                <h4 class="card-title">1,294</h4>
+                                <p class="card-category">Total Post</p>
+                                <h4 class="card-title">>@ViewBag.TotalPosts</h4>
                             </div>
                         </div>
                     </div>
@@ -39,8 +40,8 @@
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Subscribers</p>
-                                <h4 class="card-title">1303</h4>
+                                <p class="card-category">Total Service</p>
+                                <h4 class="card-title">>@ViewBag.TotalServices</h4>
                             </div>
                         </div>
                     </div>
@@ -58,113 +59,138 @@
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Sales</p>
-                                <h4 class="card-title">$ 1,345</h4>
+                                <p class="card-category">Total News</p>
+                                <h4 class="card-title">>@ViewBag.TotalNews</h4>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center icon-secondary bubble-shadow-small">
-                                <i class="far fa-check-circle"></i>
-                            </div>
-                        </div>
-                        <div class="col col-stats ms-3 ms-sm-0">
-                            <div class="numbers">
-                                <p class="card-category">Order</p>
-                                <h4 class="card-title">576</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+    </div>
+    <div class="container">
+        <h2>Số Lượng Bài Viết Theo Tháng</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <input type="number" id="year" placeholder="Nhập năm" class="form-control" min="2000" max="2100" />
+            </div>
+            <div class="col-md-2">
+                <button id="submitYear" class="btn btn-primary">Xem Bảng</button>
             </div>
         </div>
+        <table class="table table-bordered mt-3" id="postCountTable">
+            <thead>
+                <tr>
+                    <th>Tháng</th>
+                    <th>Số Lượng Bài Viết</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dữ liệu sẽ được thêm vào đây -->
+            </tbody>
+        </table>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+                $(document).ready(function() {
+            $('#submitYear').click(function(event) {
+                event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card card-round">
-                <div class="card-header">
-                    <div class="card-head-row">
-                        <div class="card-title">User Statistics</div>
-                        <div class="card-tools">
-                            <a href="#"
-                               class="btn btn-label-success btn-round btn-sm me-2">
-                                <span class="btn-label">
-                                    <i class="fa fa-pencil"></i>
-                                </span>
-                                Export
-                            </a>
-                            <a href="#" class="btn btn-label-info btn-round btn-sm">
-                                <span class="btn-label">
-                                    <i class="fa fa-print"></i>
-                                </span>
-                                Print
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="min-height: 375px">
-                        <canvas id="statisticsChart"></canvas>
-                    </div>
-                    <div id="myChartLegend"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-primary card-round">
-                <div class="card-header">
-                    <div class="card-head-row">
-                        <div class="card-title">Daily Sales</div>
-                        <div class="card-tools">
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-label-light dropdown-toggle"
-                                        type="button"
-                                        id="dropdownMenuButton"
-                                        data-bs-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                    Export
-                                </button>
-                                <div class="dropdown-menu"
-                                     aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-category">March 25 - April 02</div>
-                </div>
-                <div class="card-body pb-0">
-                    <div class="mb-4 mt-2">
-                        <h1>$4,578.58</h1>
-                    </div>
-                    <div class="pull-in">
-                        <canvas id="dailySalesChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="card card-round">
-                <div class="card-body pb-0">
-                    <div class="h1 fw-bold float-end text-primary">+5%</div>
-                    <h2 class="mb-2">17</h2>
-                    <p class="text-muted">Users online</p>
-                    <div class="pull-in sparkline-fix">
-                        <div id="lineChart"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                var year = $('#year').val(); // Lấy giá trị năm từ input
 
-</div>
+                // Kiểm tra xem năm có hợp lệ không
+                if (!year || year < 2000 || year > new Date().getFullYear()) {
+                    alert("Vui lòng nhập một năm hợp lệ.");
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("MonthlyPostChart", "Statistic")/' + year,
+                    type: 'GET',
+                    success: function(data) {
+                        // Dữ liệu trả về từ server
+                        var monthlyCounts = data;
+
+                        // Xóa nội dung cũ trong bảng
+                        $('#postCountTable tbody').empty();
+
+                        // Thêm dữ liệu vào bảng
+                        for (var i = 0; i < monthlyCounts.length; i++) {
+                            $('#postCountTable tbody').append(
+                                `<tr>
+                                    <td>Tháng ${i + 1}</td>
+                                    <td>${monthlyCounts[i]}</td>
+                                </tr>`
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error occurred: " + error);
+                        alert("Có lỗi xảy ra khi lấy dữ liệu. Vui lòng thử lại.");
+                    }
+                });
+            });
+        });
+        // $(document).ready(function() {
+        //     $('#submitYear').click(function(event) {
+        //         event.preventDefault(); Ngăn chặn hành vi mặc định của nút submit
+
+        //         var year = $('#year').val(); Lấy giá trị năm từ input
+
+        //         Kiểm tra xem năm có hợp lệ không
+        //         if (!year || year < 2000 || year > new Date().getFullYear()) {
+        //             alert("Vui lòng nhập một năm hợp lệ.");
+        //             return;
+        //         }
+
+        //         $.ajax({
+        //             url: '@Url.Action("MonthlyPostChart", "Statistic")/' + year,
+        //             type: 'GET',
+        //                  success: function(data) {
+        //     console.log(data); In ra dữ liệu để kiểm tra
+        //     var monthlyCounts = data;
+
+        //     Kiểm tra xem monthlyCounts có phải là mảng không
+        //     if (!Array.isArray(monthlyCounts)) {
+        //         console.error("Dữ liệu không phải là mảng");
+        //         return;
+        //     }
+
+        //     Xóa biểu đồ cũ nếu có
+        //     if (window.postChart) {
+        //         window.postChart.destroy();
+        //     }
+
+        //     Vẽ biểu đồ
+        //     var ctx = document.getElementById('postChart').getContext('2d');
+        //     window.postChart = new Chart(ctx, {
+        //         type: 'bar',
+        //         data: {
+        //             labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+        //             datasets: [{
+        //                 label: 'Số Lượng Bài Viết',
+        //                 data: monthlyCounts,
+        //                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        //                 borderColor: 'rgba(75, 192, 192, 1)',
+        //                 borderWidth: 1
+        //             }]
+        //         },
+        //         options: {
+        //             scales: {
+        //                 y: {
+        //                     beginAtZero: true
+        //                 }
+        //             }
+        //         }
+        //     });
+        // },
+        //             error: function(xhr, status, error) {
+        //                 console.error("Error occurred: " + error);
+        //                 alert("Có lỗi xảy ra khi lấy dữ liệu. Vui lòng thử lại.");
+        //             }
+        //         });
+        //     });
+        // });
+    </script>

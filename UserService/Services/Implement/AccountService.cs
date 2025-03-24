@@ -67,28 +67,28 @@ namespace UserService.Services.Implement
             };
             await _accountRepo.Add(newAcc);
         }
-        public async Task CreateNewFarmerAccount(string username, string password, string fullName, string email, string phone, string address, string avatar)
+        public async Task CreateNewFarmerAccount(AccountDTO account)
         {
             Account newFarmer = new Account
             {
                 AccountId = 0,
-                RoleId = 2,  // 2 là Farmer
-                Username = username,
-                Password = password,
-                FullName = fullName,
-                Email = email,
+                RoleId = 2,
+                Username = account.Username,
+                Password = account.Password,
+                FullName = account.FullName,
+                Email = account.Email,
                 EmailConfirmed = 0,
-                Phone = phone,
+                Phone = account.Phone,
                 PhoneConfirmed = 0,
-                Gender = null,
-                DateOfBirth = null,
-                ShortBio = null,
-                EducationUrl = null,
-                YearOfExperience = 0,
-                DegreeUrl = null,
-                Avatar = avatar,
-                Major = null,
-                Address = address,
+                Gender = account.Gender,
+                DateOfBirth = account.DateOfBirth,
+                ShortBio = account.ShortBio,
+                EducationUrl = account.EducationUrl,
+                YearOfExperience = account.YearOfExperience,
+                DegreeUrl = account.DegreeUrl,
+                Avatar = account.Avatar,
+                Major = account.Major,
+                Address = account.Address,
                 IsDeleted = false,
                 Otp = null,
                 FacebookId = null,
@@ -97,7 +97,6 @@ namespace UserService.Services.Implement
 
             await _accountRepo.Add(newFarmer);
         }
-
         // mai xuan create expert
         public async Task CreateNewExpertAccount(AccountDTO account)
         {
