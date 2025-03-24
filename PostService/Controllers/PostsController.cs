@@ -36,8 +36,8 @@ namespace PostService.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetOnePost([FromQuery] int postId)
+        [HttpGet("{postId}")]
+        public async Task<IActionResult> GetOnePost(int postId)
         {
             if (postId < 0) return NotFound("Post Id is not valid");
             var postDto = await _postService.GetPostAndImage(postId);
