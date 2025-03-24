@@ -58,7 +58,7 @@ namespace Client.Controllers
             if (postResponse.IsSuccessStatusCode)
             {
                 var responseListPost = await postResponse.Content.ReadAsStringAsync();
-                viewModel.PostDTOs = JsonConvert.DeserializeObject<List<PostDTO>>(responseListPost);
+                viewModel.PostDTOs = JsonConvert.DeserializeObject<List<PostDTO>>(responseListPost) ?? new List<PostDTO>();
 
                 // Lấy thông tin Account của từng bài viết
                 foreach (var postDto in viewModel.PostDTOs)
@@ -70,6 +70,9 @@ namespace Client.Controllers
                         postDto.Account = JsonConvert.DeserializeObject<Account>(responseAccount);
                     }
                 }
+            } else
+            {
+                viewModel.PostDTOs = new List<PostDTO>(); // Tránh lỗi khi API thất bại
             }
 
             // Lấy danh mục bài viết

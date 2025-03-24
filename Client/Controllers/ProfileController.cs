@@ -41,7 +41,6 @@ namespace Client.Controllers
                     }
 
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Failed to fetch profile: {response.ReasonPhrase}. Details: {errorContent}");
                 }
 
                 // Đọc và deserialize dữ liệu từ API

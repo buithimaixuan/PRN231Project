@@ -1,4 +1,4 @@
-﻿$red: #e74c3c;
+﻿/*$red: #e74c3c;
 
 *,
 *:before,
@@ -73,15 +73,15 @@ textarea {
         width: 100%;
         margin-bottom: 0;
     }
-}
+}*/
 
 
 /* Clearfix */
-.cf:before,
+/*.cf:before,
 .cf:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
-}
+    content: " ";*/ /* 1 */
+    /*display: table;*/ /* 2 */
+/*}
 
 .cf:after {
     clear: both;
@@ -100,4 +100,117 @@ textarea {
 
 .title-input{
     text-align: start;
+}*/
+
+
+
+/* Định nghĩa màu sắc */
+$red: #e74c3c;
+$green: #11ab3a;
+$green-hover: #7ca386;
+/* Reset chung */
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    color: #a8a8a8;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* Định dạng container form */
+.body-form {
+    margin: 20px auto;
+    width: 800px;
+    border-radius: 10px;
+    background: #fcf2f2;
+    padding: 10px 10px;
+}
+
+.cf {
+    max-width: 800px;
+    text-align: center;
+    margin: 20px auto;
+}
+
+/* Định dạng input và textarea */
+.input-form,
+textarea,
+#category-dropdown {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    outline: 0;
+    padding: 1em;
+    display: block;
+    width: 100%;
+    margin-top: 1em;
+    font-family: 'Merriweather', sans-serif;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    background-color: white;
+}
+
+/* Định dạng riêng cho textarea */
+textarea {
+    height: 126px;
+    resize: none;
+}
+
+/* Định dạng riêng cho select */
+#category-ser-dropdown {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    outline: 0;
+    padding: 1em;
+    appearance: none;
+    height: 52px; /* Điều chỉnh chiều cao để khớp với input */
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1em;
+    font-family: 'Merriweather', sans-serif;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    background-color: white;
+}
+
+    /* Kiểm soát kiểu dropdown trên trình duyệt */
+    #category-ser-dropdown::-ms-expand {
+        display: none;
+    }
+
+.submit-service {
+    border-radius: 10px;
+    margin: 10px auto 0 auto;
+    width: 500px;
+    background: #11ab3a;
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+}
+
+    .submit-service:hover {
+        background: #7ca386;
+    }
+
+.title-input {
+    text-align: start;
+}
+
+/* Tiêu đề input */
+.title-input {
+    text-align: start;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Đáp ứng màn hình nhỏ */
+@media (max-width: 480px) {
+    .half {
+        width: 100%;
+        margin-bottom: 0;
+    }
 }

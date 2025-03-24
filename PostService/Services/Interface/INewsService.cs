@@ -6,6 +6,7 @@ namespace PostService.Services.Interface
     {
         Task<IEnumerable<News>> GetAllNewsAvailable();
         Task<IEnumerable<News>> GetAllNews();
+        Task<List<News>> GetLatestNews(int count);
         Task<IEnumerable<CategoryNews>> GetAllCategoryNews();
         Task<News> GetByIdNews(int id);
         Task AddNews(News item);

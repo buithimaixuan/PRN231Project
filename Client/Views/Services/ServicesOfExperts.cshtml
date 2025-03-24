@@ -1,0 +1,223 @@
+﻿@model Client.DTOs.ServiceListViewModel
+
+@{
+	ViewData["Title"] = "Quản lý dịch vụ";
+}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+<script>
+	new DataTable('#example');
+</script>
+@{
+	ViewData["Title"] = "Quản lý dịch vụ";
+}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+@* <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"> *@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="~/css/listServiceExpertStyle.css" />
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js" />
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.0/css/dataTables.bootstrap5.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<script src="https://kit.fontawesome.com/1bd9fa3a2e.js" crossorigin="anonymous"></script>
+
+<style>
+	.action-service {
+		display: flex;
+	}
+</style>
+
+<section class="body">
+	<div class="container-xl">
+		<div class="table-responsive">
+			<div class="table-wrapper">
+				<div class="table-title">
+					<div class="row">
+						<div class="col-sm-6">
+							<h2>Quản lý <b>dịch vụ</b></h2>
+						</div>
+						<div class="col-sm-6">
+							<a asp-controller="Services" asp-action="CreateServices" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Tạo dịch vụ mới</span></a>
+						</div>
+					</div>
+				</div>
+				<table id="example" class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Tiêu đề</th>
+							<th>Ngày tạo</th>
+							<th>Giá</th>
+							<th>Đánh giá</th>
+							<th>Tình trạng</th>
+							<th>Thao tác</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var serviceList in Model.ServiceList)
+						{
+							<tr>
+								<td>@serviceList.ServiceId</td>
+								<td>@serviceList.Title</td>
+								<td>@serviceList.CreateAt</td>
+								<td>@serviceList.Price</td>
+								<td>@serviceList.AverageRating</td>
+								@if (serviceList.IsEnable == true)
+								{
+									<td>Hoạt động</td>
+								}
+								else
+								{
+									<td>Ngừng hoạt động</td>
+								}
+								<td class="action-service">
+									<a asp-controller="Services" asp-action="UpdateServices" asp-route-id="@serviceList.ServiceId" class="edit"><i class="material-icons" title="Edit">&#xE254;</i></a>
+									<a href="#deleteEmployeeModal" class="delete" data-id="@serviceList.ServiceId" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+									@if (serviceList.IsEnable == true)
+									{
+										<a href="#disableModal" class="disable-service" data-id="@serviceList.ServiceId" data-toggle="modal"><i class="fa-solid fa-arrows-rotate" data-toggle="tooltip0"></i></a>
+									}
+									else
+									{
+										<a href="#enableModal" class="enable-service" data-id="@serviceList.ServiceId" data-toggle="modal"><i class="fa-solid fa-arrows-rotate" data-toggle="tooltip1"></i></a>
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+			<div id="deleteEmployeeModal" class="modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<form>
+							<div class="modal-header">
+								<h4 class="modal-title">Xóa dịch vụ</h4>
+								@* <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> *@
+							</div>
+							<div class="modal-body">
+								<p>Bạn có muốn xóa dịch vụ này không?</p>
+							</div>
+							<div class="modal-footer">
+								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
+								<a id="confirmDelete" class="btn btn-danger">Xóa</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div id="disableModal" class="modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<form>
+							<div class="modal-header">
+								<h4 class="modal-title">Thay đổi tình trạng dịch vụ</h4>
+								@* <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> *@
+							</div>
+							<div class="modal-body">
+								<p>Bạn có muốn ngừng hoạt động dịch vụ này không?</p>
+							</div>
+							<div class="modal-footer">
+								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
+								<a id="confirmDisable" class="btn btn-primary">Xác nhận</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div id="enableModal" class="modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<form>
+							<div class="modal-header">
+								<h4 class="modal-title">Thay đổi tình trạng dịch vụ</h4>
+								@* <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> *@
+							</div>
+							<div class="modal-body">
+								<p>Bạn có muốn hoạt động trờ lại dịch vụ này không?</p>
+							</div>
+							<div class="modal-footer">
+								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
+								<a id="confirmEnable" class="btn btn-primary">Xác nhận</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
+
+<script>
+	$(document).ready(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+
+		$(document).on('click', '.delete', function () {
+			var serviceId = $(this).data('id');
+			$('#confirmDelete').attr('href', '/Services/DeleteServices/' + serviceId);
+			$('#deleteEmployeeModal').modal('show');
+
+			$('.btnBack').on('click', function () {
+				const modalBackdrop = document.querySelector('.modal-backdrop');
+				if (modalBackdrop) {
+					modalBackdrop.remove();
+				}
+
+				document.body.classList.remove('modal-open'); // Mở khóa cuộn trang
+			});
+		});
+
+		$('[data-toggle="tooltip0"]').tooltip();
+
+		$(document).on('click', '.disable-service', function () {
+			var serviceId = $(this).data('id');
+			$('#confirmDisable').attr('href', '/Services/DisableService/' + serviceId);
+			$('#disableModal').modal('show');
+
+			$('.btnBack').on('click', function () {
+				const modalBackdrop = document.querySelector('.modal-backdrop');
+				if (modalBackdrop) {
+					modalBackdrop.remove();
+				}
+
+				document.body.classList.remove('modal-open'); // Mở khóa cuộn trang
+			});
+		});
+
+		$('[data-toggle="tooltip1"]').tooltip();
+
+		$(document).on('click', '.enable-service', function () {
+			var serviceId = $(this).data('id');
+			$('#confirmEnable').attr('href', '/Services/EnableService/' + serviceId);
+			$('#enableModal').modal('show');
+
+			$('.btnBack').on('click', function () {
+				const modalBackdrop = document.querySelector('.modal-backdrop');
+				if (modalBackdrop) {
+					modalBackdrop.remove();
+				}
+
+				document.body.classList.remove('modal-open'); // Mở khóa cuộn trang
+			});
+		});
+	});
+
+
+</script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.0/js/dataTables.bootstrap5.js"></script>
+<script>
+	new DataTable('#example');
+</script>

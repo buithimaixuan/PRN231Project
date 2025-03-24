@@ -32,16 +32,12 @@ namespace PostService.Controllers
         [HttpGet("all/available")]
         public async Task<IActionResult> GetListPostAvailable()
         {
-            List<PostDTO> res = await _postService.GetListPostAvailable();
-            if (res == null)
-            {
-                return BadRequest("List post is null");
-            }
+            var res = await _postService.GetListPostAvailable() ?? new List<PostDTO>(); // Trả về danh sách rỗng nếu null
             return Ok(res);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetOnePost([FromQuery] int postId)
+        [HttpGet("{postId}")]
+        public async Task<IActionResult> GetOnePost(int postId)
         {
             if (postId < 0) return NotFound("Post Id is not valid");
             var postDto = await _postService.GetPostAndImage(postId);
@@ -119,7 +115,6 @@ namespace PostService.Controllers
             try
             {
                 var comments = await _postService.GetAllCommentPostByPostId(postId);
-                // Đếm số lượng bình luận
                 var commentCount = comments.Count();
                 return Ok(new
                 {

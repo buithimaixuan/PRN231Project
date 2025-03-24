@@ -18,7 +18,9 @@ namespace PostService.Services.Implement
         public async Task<IEnumerable<News>> GetAllNewsAvailable() => await _newsRepo.GetAllNewsAvailable();
 
         public async Task<IEnumerable<News>> GetAllNews() => await _newsRepo.GetAllNews();
-        
+
+        public async Task<List<News>> GetLatestNews(int count) => await _newsRepo.GetLatestNews(count);
+
         public async Task<News> GetByIdNews(int id) => await _newsRepo.GetById(id);
         
         public async Task AddNews(News item) => await _newsRepo.Add(item);

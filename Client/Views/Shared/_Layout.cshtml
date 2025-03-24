@@ -1,3 +1,5 @@
+@inject IHttpContextAccessor HttpContextAccessor
+
 ﻿@using Microsoft.AspNetCore.Http
 @using System.Net.Http
 @using System.Net.Http.Headers
@@ -47,8 +49,10 @@
             }
         }
     }
-}
 
+    int? roleId = null;
+    roleId = Convert.ToInt32(HttpContextAccessor.HttpContext.Session.GetInt32("UserRole"));
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -196,7 +200,7 @@
         <div id="popup2" style="display: none;">
         </div>
 
-        <script>
+        @* <script>
             function hideListChat() {
                 document.getElementById('popupListChat').style.display = 'none';
             }
@@ -222,7 +226,7 @@
                 event.stopPropagation();
             });
 
-        </script>
+        </script> *@
 
         <style>
             #popup2 {
@@ -327,33 +331,36 @@
                         </li> *@
 
                         <li class="dropdown">
-                            <a href="/News/ListNews" class="dropdown-toggle"><span>Tin tức</span></a>
+                            <a asp-controller="News" asp-action="Index" class="dropdown-toggle"><span>Tin tức</span></a>
                             <ul class="dropdown-menu">
-                                @* @foreach (var category in categories)
+                                @if (ViewBag.Categories != null)
                                 {
-                                    <li>
-                                        <a asp-page="/News/ListNews" asp-route-cat="@category.CategoryNewsId">@category.CategoryNewsName</a>
-                                    </li>
-                                } *@
+                                    @foreach (var category in ViewBag.Categories as List<Client.Models.CategoryNews>)
+                                    {
+                                        <li>
+                                            <a asp-controller="News" asp-action="Index" asp-route-cat="@category.CategoryNewsId">@category.CategoryNewsName</a>
+                                        </li>
+                                    }
+                                }
                             </ul>
                         </li>
 
                         <li class="dropdown">
-                            @* @if (getAcc != null && getAcc.RoleId == 2)
+                            @if (roleId != null && roleId == 3)
                             {
-                                <a href="/Service/ListServices" class="dropdown-toggle">
+                                <a asp-controller="Services" asp-action="Services" class="dropdown-toggle">
                                     <span>Dịch vụ</span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/Service/ListServiceExpert">Tùy chỉnh dịch vụ</a></li>
+                                <li><a asp-controller="Services" asp-action="ServicesOfExperts">Tùy chỉnh dịch vụ</a></li>
                                 </ul>
                             }
                             else
-                            { *@
-                                <a href="/Service/ListServices">
+                            {
+                                <a asp-controller="Services" asp-action="Services">
                                     <span>Dịch vụ</span>
                                 </a>
-                            @* } *@
+                            }
                         </li>
                         <li><a href=""><span>Liên hệ hỗ trợ</span></a></li>
                     </ul>
