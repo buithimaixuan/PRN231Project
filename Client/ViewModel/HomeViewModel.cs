@@ -8,5 +8,6 @@ namespace Client.ViewModel
         public Account? Account { get; set; } // Thông tin tài khoản (null nếu chưa đăng nhập)
         public List<PostDTO>? PostDTOs { get; set; } // Danh sách bài viết
         public List<CategoryPost> categoryPosts { get; set; }
+        public PostViewModel PostViewModel { get; set; }
     }
 }
