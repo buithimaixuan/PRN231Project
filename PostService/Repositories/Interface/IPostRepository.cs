@@ -8,6 +8,7 @@ namespace PostService.Repositories.Interface
         Task<IEnumerable<Post>> GetAll();
         Task<Post?> GetById(int postId);
         Task<Post> AddPost(Post post);
+        Task<string?> GetAccountWithMostPostsThisMonth();
         Task<int> UpdatePost(Post post);
         Task<int> DeletePost(int postId);
         Task<IEnumerable<Post>> GetAllPostByAccountId(int id);

@@ -18,6 +18,16 @@ namespace PostService.Controllers
             _postService = postService;
         }
 
+        [HttpGet("accountWithMostPosts")]
+        public async Task<IActionResult> GetTopAccountThisMonth()
+        {
+            var result = await _postService.GetAccountWithMostPostsThisMonth();
+            return Ok(new { message = result });
+        }
+
+
+
+
 
         [HttpGet("countPostInYear/{year}")]
         public async Task<IActionResult> GetPostCountByYear(int year)

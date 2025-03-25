@@ -3,7 +3,7 @@
     public class PostStatisticsViewModel
     {
 
-        public int Year { get; set; }
-        public int TotalPosts { get; set; }
+        public int? AccountId { get; set; }
+        public string Message { get; set; }
     }
 }
