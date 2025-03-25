@@ -1,9 +1,11 @@
 ﻿using Client.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net.Http;
 
 namespace Client.Controllers
 {
+ 
     public class StatisticController : Controller
     {
 
@@ -16,36 +18,36 @@ namespace Client.Controllers
         public StatisticController(IHttpClientFactory clientFactory)
         {
             httpClient = clientFactory;
+            client = clientFactory.CreateClient();
             StatisticPostUri = "http://localhost:5007/api/post";
             StatisticNewUri = "http://localhost:5007/api/News";
             StatisticServiceUri = "http://localhost:5122/api/Services";
+
         }
 
-
-
-
-        //[HttpGet("MonthlyPostChart/{year}")]
-        //public async Task<IActionResult> MonthlyPostChart(int year)
+        //public async Task<IActionResult> PostStatistics(int year = 2025)
         //{
-        //    var client = httpClient.CreateClient();
-        //    var monthlyCounts = await client.GetFromJsonAsync<int[]>($"{StatisticPostUri}/countPostInYear/{year}");
+        //    var apiUrl = $"https://localhost:7231/api/post/countPostInYear/{year}";
+        //    int[] postCounts = new int[12]; // Mặc định là 12 tháng, tránh null
 
-        //    ViewBag.MonthlyCounts = monthlyCounts;
-        //    ViewBag.Year = year;
+        //    try
+        //    {
+        //        var response = await client.GetAsync(apiUrl);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var jsonData = await response.Content.ReadAsStringAsync();
+        //            postCounts = JsonConvert.DeserializeObject<int[]>(jsonData) ?? new int[12];
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.Error = $"Lỗi khi gọi API: {ex.Message}";
+        //    }
 
-        //    return View();
+        //    return View(postCounts);
         //}
 
-        [HttpGet("MonthlyPostChart/{year}")]
-        public async Task<IActionResult> MonthlyPostChart(int year)
-        {
-            var client = httpClient.CreateClient();
-            var monthlyCounts = await client.GetFromJsonAsync<int[]>($"{StatisticPostUri}/countPostInYear/{year}");
-
-            return Json(monthlyCounts); // Trả về dữ liệu JSON
-        }
-
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? year)
         {
             int totalPosts = await GetTotalPosts();
             Console.WriteLine($"Total Posts: {totalPosts}");
@@ -58,8 +60,35 @@ namespace Client.Controllers
             int totalServices = await GetTotalServices();
             Console.WriteLine($"Total Posts: {totalServices}");
             ViewBag.TotalServices = totalServices;
+
+
+            int selectedYear = year ?? DateTime.Now.Year; // Nếu không có thì lấy năm hiện tại
+            var apiUrl = $"https://localhost:7231/api/post/countPostInYear/{selectedYear}";
+            int[] postCounts = new int[12];
+
+            try
+            {
+                var response = await client.GetAsync(apiUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonData = await response.Content.ReadAsStringAsync();
+                    postCounts = JsonConvert.DeserializeObject<int[]>(jsonData) ?? new int[12];
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = $"Lỗi khi gọi API: {ex.Message}";
+            }
+
+            ViewBag.SelectedYear = selectedYear; // Truyền năm đã chọn xuống View
+            ViewBag.PostCounts = postCounts;
+
+
             return View();
         }
+
+
+
 
 
         public async Task<int> GetTotalPosts()

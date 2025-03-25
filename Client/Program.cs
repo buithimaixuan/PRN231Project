@@ -46,6 +46,14 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        policy => policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 builder.Services.AddAuthorization();
 var app = builder.Build();
 
@@ -58,14 +66,17 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseCors("AllowAllOrigins");
 app.UseRouting();
+
 
 app.UseSession();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+
 
 app.MapControllerRoute(
     name: "default",

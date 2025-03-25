@@ -22,17 +22,14 @@ namespace PostService.DAOs
 
         public async Task<int[]> GetPostCountByYear(int year)
         {
-            // Khởi tạo mảng với 12 tháng
             int[] monthlyCounts = new int[12];
 
-            // Lấy số lượng bài viết theo tháng
             var results = await _context.Posts
                 .Where(p => p.CreatedAt.HasValue && p.CreatedAt.Value.Year == year && p.IsDeleted == false)
                 .GroupBy(p => p.CreatedAt.Value.Month)
                 .Select(g => new { Month = g.Key, Count = g.Count() })
                 .ToListAsync();
 
-            // Gán số lượng bài viết vào mảng
             foreach (var result in results)
             {
                 monthlyCounts[result.Month - 1] = result.Count; // Tháng 1 là chỉ số 0 trong mảng

@@ -18,6 +18,15 @@ namespace PostService.Controllers
             _postService = postService;
         }
 
+
+        [HttpGet("countPostInYear/{year}")]
+        public async Task<IActionResult> GetPostCountByYear(int year)
+        {
+            var result = await _postService.GetPostCountByYear(year);
+            return Ok(result);
+        }
+
+
         [HttpGet("all")]
         public async Task<IActionResult> GetAllPosts()
         {
@@ -27,14 +36,6 @@ namespace PostService.Controllers
                 return BadRequest("List post is null");
             }
             return Ok(res);
-        }
-
-
-        [HttpGet("countPostInYear/{year}")]
-        public async Task<IActionResult> GetPostCountByYear(int year)
-        {
-            var counts = await _postService.GetPostCountByYear(year);
-            return Ok(counts);
         }
 
 
