@@ -37,7 +37,7 @@ public partial class PostDbContext : DbContext
         // chạy docker
         //=> optionsBuilder.UseSqlServer("Server=host.docker.internal,1433;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=1234;Encrypt=True;Trust Server Certificate=True");
         // PHUONG NAM
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-CTS44AC\\MAIN;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=0789616573;Encrypt=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=MSI\\SQLEXPRESS;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=khoa31102003;Encrypt=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
