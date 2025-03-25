@@ -84,6 +84,46 @@ namespace Client.Controllers
             ViewBag.PostCounts = postCounts;
 
 
+
+            var apiUrlTopAccount = "https://localhost:7231/api/post/accountWithMostPosts";
+
+            try
+            {
+                var response = await client.GetAsync(apiUrlTopAccount);
+                if (response.IsSuccessStatusCode)
+                {
+                    // Đọc JSON response
+                    var jsonData = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                    if (jsonData != null && jsonData.ContainsKey("message"))
+                    {
+                        string message = jsonData["message"];
+
+                        // Kiểm tra nếu message là số (ID tài khoản)
+                        if (int.TryParse(message, out int accountId))
+                        {
+                            ViewBag.TopAccountMessage = $"Tài khoản có nhiều bài viết nhất: {accountId}";
+                        }
+                        else
+                        {
+                            ViewBag.TopAccountMessage = message; // Nếu không phải số, giữ nguyên
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.TopAccountMessage = "Không thể lấy dữ liệu";
+                    }
+                }
+                else
+                {
+                    ViewBag.TopAccountMessage = "Không thể lấy dữ liệu";
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.TopAccountMessage = $"Lỗi khi gọi API: {ex.Message}";
+            }
+
+
             return View();
         }
 

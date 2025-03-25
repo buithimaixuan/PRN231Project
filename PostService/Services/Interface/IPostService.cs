@@ -10,6 +10,8 @@ namespace PostService.Services.Interface
         Task<List<PostDTO>> GetListPostAndImage();
         Task<List<PostDTO>> GetListPostAvailable();
         Task<PostDTO> GetPostAndImage(int postId);
+
+        Task<string?> GetAccountWithMostPostsThisMonth();
         //Task<Account?> FarmerWithMostPosts();
         //Task<Account?> ExpertWithMostPosts();
         Task<IEnumerable<LikePost>> GetAllLikePostByPostId(int id);

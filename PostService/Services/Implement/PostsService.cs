@@ -27,7 +27,10 @@ namespace PostService.Services.Implement
         //    return _postRepository.GetPostCountByYear(year);
         //}
 
-
+        public async Task<string?> GetAccountWithMostPostsThisMonth()
+        {
+          return await _postRepository.GetAccountWithMostPostsThisMonth();
+        }
         public async Task<int[]> GetPostCountByYear(int year)
         {
             // Khởi tạo mảng với 12 tháng

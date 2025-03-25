@@ -13,7 +13,10 @@ namespace PostService.Repositories.Implement
         {
             _postDAO = postDAO;
         }
-
+        public async Task<string?> GetAccountWithMostPostsThisMonth()
+        {
+            return await _postDAO.GetAccountWithMostPostsThisMonth();
+        }
         public async Task<Post> AddPost(Post post)
         {
             return await _postDAO.Add(post);
