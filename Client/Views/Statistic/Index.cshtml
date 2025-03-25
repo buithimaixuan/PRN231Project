@@ -6,6 +6,7 @@
 }
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-notify/1.0.0/jquery.notify.min.js"></script>
 
 <div class="container">
@@ -16,13 +17,13 @@
                     <div class="row align-items-center">
                         <div class="col-icon">
                             <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                <i class="fas fa-users"></i>
+                                <i class="fa-solid fa-square-plus"></i>
                             </div>
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Post</p>
-                                <h4 class="card-title">>@ViewBag.TotalPosts</h4>
+                                <h4 class="card-title">@ViewBag.TotalPosts</h4>
                             </div>
                         </div>
                     </div>
@@ -35,13 +36,13 @@
                     <div class="row align-items-center">
                         <div class="col-icon">
                             <div class="icon-big text-center icon-info bubble-shadow-small">
-                                <i class="fas fa-user-check"></i>
+                                <i class="fa-solid fa-bookmark"></i>
                             </div>
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total Service</p>
-                                <h4 class="card-title">>@ViewBag.TotalServices</h4>
+                                <h4 class="card-title">@ViewBag.TotalServices</h4>
                             </div>
                         </div>
                     </div>
@@ -54,13 +55,34 @@
                     <div class="row align-items-center">
                         <div class="col-icon">
                             <div class="icon-big text-center icon-success bubble-shadow-small">
-                                <i class="fas fa-luggage-cart"></i>
+                                <i class="fa-solid fa-newspaper"></i>
                             </div>
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
                                 <p class="card-category">Total News</p>
-                                <h4 class="card-title">>@ViewBag.TotalNews</h4>
+                                <h4 class="card-title">@ViewBag.TotalNews</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-warning bubble-shadow-small">
+                           
+                                <i class="fa-solid fa-user-shield"></i>
+                                @* <i class="fa-solid fa-user-tie"></i> *@
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Top Account In Month</p>
+                                <h4 class="card">@ViewBag.TopAccountMessage</h4>
                             </div>
                         </div>
                     </div>
@@ -68,8 +90,7 @@
             </div>
         </div>
     </div>
-    <h3>Tài khoản có nhiều bài viết nhất tháng</h3>
-    <p>@ViewBag.TopAccountMessage</p>
+
 
     <div class="container">
         <div class="row">
@@ -87,7 +108,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Thống kê bài viết trong năm <span id="selectedYear">@ViewBag.SelectedYear</span></h4>
+                        <h4>Post statistic in year <span id="selectedYear">@ViewBag.SelectedYear</span></h4>
                     </div>
                     <div class="card-body">
                         <canvas id="postChart"></canvas>
@@ -109,7 +130,7 @@
                 data: {
                     labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
                     datasets: [{
-                        label: `Số bài viết (${selectedYear})`,
+                        label: `Posts (${selectedYear})`,
                         data: postCounts,
                         backgroundColor: "rgba(75, 192, 192, 0.5)",
                         borderColor: "rgba(75, 192, 192, 1)",
@@ -126,9 +147,37 @@
                 }
             });
 
-            // Cập nhật năm trên tiêu đề khi nhập năm mới
             document.getElementById("yearInput").addEventListener("change", function () {
                 document.getElementById("selectedYear").innerText = this.value;
+            });
+        });
+    </script>
+    <script>
+        function animateCount(target, end, duration) {
+            let start = 0;
+            let startTime = null;
+            let step = function (timestamp) {
+                if (!startTime) startTime = timestamp;
+                let progress = Math.min((timestamp - startTime) / duration, 1);
+                target.text(Math.floor(progress * end));
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    target.text(end); // Đảm bảo hiển thị đúng số cuối cùng
+                }
+            };
+            requestAnimationFrame(step);
+        }
+
+        $(document).ready(function () {
+            $(".card-title").each(function () {
+                let $this = $(this);
+                let finalValue = parseInt($this.text().replace(/,/g, "")); // Lấy số từ text
+
+                if (!isNaN(finalValue)) {
+                    $this.text("0"); // Đặt về 0 trước khi chạy hiệu ứng
+                    animateCount($this, finalValue, 1500); // Chạy hiệu ứng đếm trong 1.5 giây
+                }
             });
         });
     </script>

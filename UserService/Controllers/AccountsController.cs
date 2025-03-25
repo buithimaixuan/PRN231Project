@@ -30,6 +30,34 @@ namespace UserService.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
+
+
+
+
+        [HttpGet("GetFullName/{id}")]
+        public async Task<IActionResult> GetFullNameById(int id)
+        {
+            try
+            {
+                var account = await _accountService.GetByIdAccount(id);
+                if (account == null)
+                    return NotFound("Account not found.");
+
+                return Ok(new { FullName = account.FullName });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+
+
+
+
+
+
         [HttpPut("UpdateAvatar/{id}")]
         public async Task<IActionResult> UpdateAvatar(int id, [FromForm] UpdateAvatarDTO request)
         {

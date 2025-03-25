@@ -92,20 +92,19 @@ namespace Client.Controllers
                 var response = await client.GetAsync(apiUrlTopAccount);
                 if (response.IsSuccessStatusCode)
                 {
-                    // Đọc JSON response
                     var jsonData = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
                     if (jsonData != null && jsonData.ContainsKey("message"))
                     {
                         string message = jsonData["message"];
 
-                        // Kiểm tra nếu message là số (ID tài khoản)
                         if (int.TryParse(message, out int accountId))
                         {
-                            ViewBag.TopAccountMessage = $"Tài khoản có nhiều bài viết nhất: {accountId}";
+                            string fullName = await GetFullNameById(accountId);
+                            ViewBag.TopAccountMessage = $"{fullName} (ID: {accountId})";
                         }
                         else
                         {
-                            ViewBag.TopAccountMessage = message; // Nếu không phải số, giữ nguyên
+                            ViewBag.TopAccountMessage = message;
                         }
                     }
                     else
@@ -123,12 +122,35 @@ namespace Client.Controllers
                 ViewBag.TopAccountMessage = $"Lỗi khi gọi API: {ex.Message}";
             }
 
-
             return View();
         }
 
 
 
+        private async Task<string> GetFullNameById(int accountId)
+        {
+            var apiUrl = $"https://localhost:7272/api/Accounts/GetFullName/{accountId}";
+
+            try
+            {
+                var response = await client.GetAsync(apiUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonData = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonData);
+
+                    if (result != null && result.ContainsKey("fullName"))
+                        return result["fullName"];
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi gọi API lấy FullName: {ex.Message}");
+            }
+
+            return "Không xác định";
+        }
 
 
         public async Task<int> GetTotalPosts()

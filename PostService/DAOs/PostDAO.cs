@@ -83,43 +83,43 @@ namespace PostService.DAOs
         {
             return await _context.Posts.CountAsync(n => n.IsDeleted != true);
         }
-        public async Task<string> GetAccountWithMostPostsThisMonth()
+public async Task<string> GetAccountWithMostPostsThisMonth()
+{
+    var currentYear = DateTime.Now.Year;
+    var currentMonth = DateTime.Now.Month;
+
+    var postCounts = await _context.Posts
+        .Where(p => p.IsDeleted == false &&
+                    p.CreatedAt.HasValue && 
+                    p.CreatedAt.Value.Year == currentYear &&
+                    p.CreatedAt.Value.Month == currentMonth)
+        .GroupBy(p => p.AccountId)
+        .Select(g => new
         {
-            var currentYear = DateTime.Now.Year;
-            var currentMonth = DateTime.Now.Month;
+            AccountId = g.Key,
+            PostCount = g.Count()
+        })
+        .OrderByDescending(g => g.PostCount)
+        .ToListAsync(); // Lấy tất cả danh sách thay vì chỉ lấy 1 cái
 
-            var postCounts = await _context.Posts
-                .Where(p => p.IsDeleted == false &&
-                            p.CreatedAt.HasValue &&
-                            p.CreatedAt.Value.Year == currentYear &&
-                            p.CreatedAt.Value.Month == currentMonth)
-                .GroupBy(p => p.AccountId)
-                .Select(g => new
-                {
-                    AccountId = g.Key,
-                    PostCount = g.Count()
-                })
-                .OrderByDescending(g => g.PostCount)
-                .ToListAsync(); // Lấy tất cả danh sách thay vì chỉ lấy 1 cái
+    if (postCounts.Count == 0)
+    {
+        return "Chưa có xếp hạng tháng này";
+    }
 
-            if (postCounts.Count == 0)
-            {
-                return "Chưa có xếp hạng tháng này";
-            }
+    // Lấy số bài viết cao nhất
+    var topPostCount = postCounts.First().PostCount;
 
-            // Lấy số bài viết cao nhất
-            var topPostCount = postCounts.First().PostCount;
+    // Lọc các tài khoản có số bài viết bằng số cao nhất
+    var topAccounts = postCounts.Where(p => p.PostCount == topPostCount).ToList();
 
-            // Lọc các tài khoản có số bài viết bằng số cao nhất
-            var topAccounts = postCounts.Where(p => p.PostCount == topPostCount).ToList();
+    if (topAccounts.Count > 1)
+    {
+        return "Chưa có xếp hạng tháng này";
+    }
 
-            if (topAccounts.Count > 1)
-            {
-                return "Chưa có xếp hạng tháng này";
-            }
-
-            return topAccounts.First().AccountId.ToString(); // Chuyển ID thành chuỗi để tránh lỗi kiểu dữ liệu
-        }
+    return topAccounts.First().AccountId.ToString(); // Chuyển ID thành chuỗi để tránh lỗi kiểu dữ liệu
+}
 
 
 
