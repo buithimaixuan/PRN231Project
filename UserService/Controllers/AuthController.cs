@@ -66,7 +66,7 @@ namespace UserService.Controllers
                 // Tạo đối tượng Account để lưu
                 var account = new Account
                 {
-                    RoleId = 3, // mặc định 3 (Farmer)
+                    RoleId = 2, // mặc định 3 (Farmer)
                     Username = accountDTO.Username,
                     Password = hashedPassword,
                     Email = accountDTO.Email,
