@@ -25,7 +25,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "CookiesPRN231";
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme; // Sử dụng Google cho challenge
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Sử dụng Google cho challenge
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Thêm DefaultSignInScheme
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>

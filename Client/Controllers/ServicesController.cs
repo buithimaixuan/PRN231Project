@@ -6,6 +6,7 @@ using System.Text.Json;
 using Azure;
 using Client.DTOs;
 using Client.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -231,7 +232,7 @@ namespace Client.Controllers
         public string InputRequestContent { get; set; }
         [BindProperty]
         public int InputServiceId { get; set; }
-
+        [Authorize]
         [HttpPost("RequestService")]
         public async Task<IActionResult> OnPostRequestService()
         {
@@ -240,6 +241,8 @@ namespace Client.Controllers
             int? accountId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountID"));
 
             int getAccId = accountId.Value;
+
+
 
             //int getAccId = 2;
 
