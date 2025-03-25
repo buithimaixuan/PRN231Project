@@ -19,6 +19,10 @@ namespace PostService.Repositories.Implement
             return await _postDAO.Add(post);
         }
 
+        public Task<int[]> GetPostCountByYear(int year)
+        {
+            return _postDAO.GetPostCountByYear(year);
+        }
 
 
         public Task<int> DeletePost(int postId)

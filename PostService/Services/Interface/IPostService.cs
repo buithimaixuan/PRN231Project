@@ -6,6 +6,7 @@ namespace PostService.Services.Interface
 {
     public interface IPostService
     {
+        Task<int[]> GetPostCountByYear(int year);
         Task<List<PostDTO>> GetListPostAndImage();
         Task<List<PostDTO>> GetListPostAvailable();
         Task<PostDTO> GetPostAndImage(int postId);

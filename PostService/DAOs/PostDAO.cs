@@ -15,6 +15,29 @@ namespace PostService.DAOs
         {
             return await _context.Posts.FirstOrDefaultAsync(p => p.PostId == postId);
         }
+        //public async Task<int> GetPostCountByYear(int year)
+        //{
+        //    return _context.Posts.Count(p => p.CreatedAt.HasValue && p.CreatedAt.Value.Year == year && p.IsDeleted == false);
+        //}
+
+        public async Task<int[]> GetPostCountByYear(int year)
+        {
+            int[] monthlyCounts = new int[12];
+
+            var results = await _context.Posts
+                .Where(p => p.CreatedAt.HasValue && p.CreatedAt.Value.Year == year && p.IsDeleted == false)
+                .GroupBy(p => p.CreatedAt.Value.Month)
+                .Select(g => new { Month = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            foreach (var result in results)
+            {
+                monthlyCounts[result.Month - 1] = result.Count; // Tháng 1 là chỉ số 0 trong mảng
+            }
+
+            return monthlyCounts;
+        }
+
 
         public async Task<Post?> Add(Post post)
         {
@@ -95,112 +118,6 @@ namespace PostService.DAOs
                 .ToDictionaryAsync(x => x.AccountId.Value, x => x.Count);
         }
 
-
-        //public async Task<Account?> FarmerWithMostPosts()
-        //{
-        //    var currentYear = DateTime.Now.Year;
-        //    var currentMonth = DateTime.Now.Month;
-
-        //    var farmerWithMostPosts = await _context.Posts
-        //        .Where(p => p.IsDeleted == false &&
-        //                    p.CreatedAt.HasValue &&
-        //                     p.CreatedAt.Value.Year == currentYear &&
-        //                     p.CreatedAt.Value.Month == currentMonth) // Chỉ lấy các bài viết không bị xóa và thuộc tháng/năm hiện tại
-        //        .Join(_context.Accounts, // Kết hợp với bảng Accounts để lấy RoleId
-        //            post => post.AccountId,
-        //            account => account.AccountId,
-        //            (post, account) => new { post, account }) // Tạo đối tượng mới với post và account
-        //        .Where(pa => pa.account.RoleId == 1) // Lọc chỉ những bài viết của account có RoleId = 1
-        //        .GroupBy(pa => pa.post.AccountId) // Nhóm theo AccountId
-        //        .Select(g => new
-        //        {
-        //            AccountId = g.Key,
-        //            PostCount = g.Count()
-        //        })
-        //        .OrderByDescending(g => g.PostCount) // Sắp xếp theo số lượng bài viết giảm dần
-        //        .FirstOrDefaultAsync();
-
-        //    // Kiểm tra xem có bài viết nào không
-        //    if (farmerWithMostPosts != null)
-        //    {
-        //        Debug.WriteLine("AccountId with most posts: " + farmerWithMostPosts.AccountId);
-
-        //        // Lấy account tương ứng với AccountId
-        //        var expert = await _context.Accounts
-        //            .FirstOrDefaultAsync(a => a.AccountId == farmerWithMostPosts.AccountId);
-
-        //        if (expert != null)
-        //        {
-        //            Debug.WriteLine(".....acc....." + expert.AccountId);
-        //            Debug.WriteLine(".....role...." + expert.RoleId);
-        //            return expert; // Trả về account nếu tồn tại
-        //        }
-        //        else
-        //        {
-        //            Debug.WriteLine("No experts found with AccountId: " + farmerWithMostPosts.AccountId);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Debug.WriteLine("No posts found for farmers.");
-        //    }
-
-        //    Debug.WriteLine("No accounts found with posts.");
-        //    return null; // Trả về null nếu không tìm thấy
-        //}
-
-        //public async Task<Account?> ExpertWithMostPosts()
-        //{
-        //    var currentYear = DateTime.Now.Year;
-        //    var currentMonth = DateTime.Now.Month;
-
-        //    var expertWithMostPosts = await _context.Posts
-        //        .Where(p => p.IsDeleted == false &&
-        //                    p.CreatedAt.HasValue &&
-        //                     p.CreatedAt.Value.Year == currentYear &&
-        //                     p.CreatedAt.Value.Month == currentMonth) // Chỉ lấy các bài viết không bị xóa
-        //        .Join(_context.Accounts, // Kết hợp với bảng Accounts để lấy RoleId
-        //            post => post.AccountId,
-        //            account => account.AccountId,
-        //            (post, account) => new { post, account }) // Tạo đối tượng mới với post và account
-        //        .Where(pa => pa.account.RoleId == 2) // Lọc chỉ những bài viết của account có RoleId = 2
-        //        .GroupBy(pa => pa.post.AccountId) // Nhóm theo AccountId
-        //        .Select(g => new
-        //        {
-        //            AccountId = g.Key,
-        //            PostCount = g.Count()
-        //        })
-        //        .OrderByDescending(g => g.PostCount) // Sắp xếp theo số lượng bài viết giảm dần
-        //        .FirstOrDefaultAsync();
-
-        //    // Kiểm tra xem có bài viết nào không
-        //    if (expertWithMostPosts != null)
-        //    {
-        //        Debug.WriteLine("AccountId with most posts: " + expertWithMostPosts.AccountId);
-
-        //        // Lấy account tương ứng với AccountId
-        //        var expert = await _context.Accounts
-        //            .FirstOrDefaultAsync(a => a.AccountId == expertWithMostPosts.AccountId);
-
-        //        if (expert != null)
-        //        {
-        //            Debug.WriteLine(".....acc....." + expert.AccountId);
-        //            Debug.WriteLine(".....role...." + expert.RoleId);
-        //            return expert; // Trả về account nếu tồn tại
-        //        }
-        //        else
-        //        {
-        //            Debug.WriteLine("No experts found with AccountId: " + expertWithMostPosts.AccountId);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Debug.WriteLine("No posts found for experts.");
-        //    }
-
-        //    Debug.WriteLine("No accounts found with posts.");
-        //    return null; // Trả về null nếu không tìm thấy
-        //}
         //****************minhuyen************
 
 

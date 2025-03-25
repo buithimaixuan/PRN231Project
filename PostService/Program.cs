@@ -61,7 +61,16 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSwaggerGenMultipartSupport();  // ✅ Gọi từ file `SwaggerExtensions.cs`
 });
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 var app = builder.Build();
 //app.Urls.Add("http://0.0.0.0:5007");

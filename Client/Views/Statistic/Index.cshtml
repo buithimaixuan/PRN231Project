@@ -4,10 +4,11 @@
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-notify/1.0.0/jquery.notify.min.js"></script>
 
 <div class="container">
-
-
     <div class="row">
         <div class="col-sm-6 col-md-3">
             <div class="card card-stats card-round">
@@ -20,8 +21,8 @@
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Visitors</p>
-                                <h4 class="card-title">1,294</h4>
+                                <p class="card-category">Total Post</p>
+                                <h4 class="card-title">>@ViewBag.TotalPosts</h4>
                             </div>
                         </div>
                     </div>
@@ -39,8 +40,8 @@
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Subscribers</p>
-                                <h4 class="card-title">1303</h4>
+                                <p class="card-category">Total Service</p>
+                                <h4 class="card-title">>@ViewBag.TotalServices</h4>
                             </div>
                         </div>
                     </div>
@@ -58,27 +59,8 @@
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Sales</p>
-                                <h4 class="card-title">$ 1,345</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-icon">
-                            <div class="icon-big text-center icon-secondary bubble-shadow-small">
-                                <i class="far fa-check-circle"></i>
-                            </div>
-                        </div>
-                        <div class="col col-stats ms-3 ms-sm-0">
-                            <div class="numbers">
-                                <p class="card-category">Order</p>
-                                <h4 class="card-title">576</h4>
+                                <p class="card-category">Total News</p>
+                                <h4 class="card-title">>@ViewBag.TotalNews</h4>
                             </div>
                         </div>
                     </div>
@@ -87,84 +69,64 @@
         </div>
     </div>
 
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card card-round">
-                <div class="card-header">
-                    <div class="card-head-row">
-                        <div class="card-title">User Statistics</div>
-                        <div class="card-tools">
-                            <a href="#"
-                               class="btn btn-label-success btn-round btn-sm me-2">
-                                <span class="btn-label">
-                                    <i class="fa fa-pencil"></i>
-                                </span>
-                                Export
-                            </a>
-                            <a href="#" class="btn btn-label-info btn-round btn-sm">
-                                <span class="btn-label">
-                                    <i class="fa fa-print"></i>
-                                </span>
-                                Print
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="min-height: 375px">
-                        <canvas id="statisticsChart"></canvas>
-                    </div>
-                    <div id="myChartLegend"></div>
-                </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <form id="yearForm" method="get">
+                    <label for="yearInput">Nhập năm:</label>
+                    <input type="number" id="yearInput" name="year" class="form-control" value="@ViewBag.SelectedYear" min="2000" max="2100">
+                    <button type="submit" class="btn btn-primary mt-2">Xem thống kê</button>
+                </form>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-primary card-round">
-                <div class="card-header">
-                    <div class="card-head-row">
-                        <div class="card-title">Daily Sales</div>
-                        <div class="card-tools">
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-label-light dropdown-toggle"
-                                        type="button"
-                                        id="dropdownMenuButton"
-                                        data-bs-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                    Export
-                                </button>
-                                <div class="dropdown-menu"
-                                     aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="#">Action</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
+
+        <!-- Biểu đồ thống kê bài viết -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Thống kê bài viết trong năm <span id="selectedYear">@ViewBag.SelectedYear</span></h4>
                     </div>
-                    <div class="card-category">March 25 - April 02</div>
-                </div>
-                <div class="card-body pb-0">
-                    <div class="mb-4 mt-2">
-                        <h1>$4,578.58</h1>
-                    </div>
-                    <div class="pull-in">
-                        <canvas id="dailySalesChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="card card-round">
-                <div class="card-body pb-0">
-                    <div class="h1 fw-bold float-end text-primary">+5%</div>
-                    <h2 class="mb-2">17</h2>
-                    <p class="text-muted">Users online</p>
-                    <div class="pull-in sparkline-fix">
-                        <div id="lineChart"></div>
+                    <div class="card-body">
+                        <canvas id="postChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById("postChart").getContext("2d");
+
+            var postCounts = @Html.Raw(Json.Serialize(ViewBag.PostCounts)); // Lấy dữ liệu từ ViewBag
+            var selectedYear = @ViewBag.SelectedYear;
+
+            var chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
+                    datasets: [{
+                        label: `Số bài viết (${selectedYear})`,
+                        data: postCounts,
+                        backgroundColor: "rgba(75, 192, 192, 0.5)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Cập nhật năm trên tiêu đề khi nhập năm mới
+            document.getElementById("yearInput").addEventListener("change", function () {
+                document.getElementById("selectedYear").innerText = this.value;
+            });
+        });
+    </script>
