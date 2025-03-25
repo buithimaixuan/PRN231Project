@@ -30,7 +30,7 @@ public partial class MicroserviceUserDbContext : DbContext
         //=> optionsBuilder.UseSqlServer("Data Source=MSI\\SQLEXPRESS;Initial Catalog=Microservice_UserDB;Persist Security Info=True;User ID=sa;Password=khoa31102003;Encrypt=True;Trust Server Certificate=True");
 
         //PHUONG NAM
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-CTS44AC\\MAIN;Initial Catalog=Microservice_UserDB;Persist Security Info=True;User ID=sa;Password=0789616573;Encrypt=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=MSI\\SQLEXPRESS;Initial Catalog=Microservice_UserDB;Persist Security Info=True;User ID=sa;Password=khoa31102003;Encrypt=True;Trust Server Certificate=True");
 
 
 

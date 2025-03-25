@@ -10,6 +10,7 @@
     Client.DTOs.AccountDTO account = null;
     var isLoggedIn = HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
     var user = HttpContextAccessor.HttpContext?.User;
+    int? roleId = null;
 
     if (isLoggedIn)
     {
@@ -41,6 +42,7 @@
                                 PropertyNameCaseInsensitive = true
                             });
                     account = profile?.accountDTO;
+                    roleId = account.RoleId;
                 }
             }
             catch (Exception ex)
@@ -50,8 +52,8 @@
         }
     }
 
-    int? roleId = null;
-    roleId = Convert.ToInt32(HttpContextAccessor.HttpContext.Session.GetInt32("UserRole"));
+    
+    
 }
 
 <!DOCTYPE html>
@@ -346,7 +348,7 @@
                         </li>
 
                         <li class="dropdown">
-                            @if (account.RoleId != null && account.RoleId == 3)
+                            @if (roleId != null && roleId == 3)
                             {
                                 <a asp-controller="Services" asp-action="Services" class="dropdown-toggle">
                                     <span>Dịch vụ</span>
