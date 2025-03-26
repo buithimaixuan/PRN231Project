@@ -196,7 +196,7 @@ namespace PostService.Controllers
         }
 
         [HttpGet("total-post")]
-        public async Task<IActionResult> GetTotalExperts()
+        public async Task<IActionResult> GetTotalPosts()
         {
             int totalExperts = await _postService.GetTotalPostService();
             return Ok(totalExperts);

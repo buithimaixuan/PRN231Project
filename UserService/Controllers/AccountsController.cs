@@ -57,7 +57,6 @@ namespace UserService.Controllers
 
 
 
-
         [HttpPut("UpdateAvatar/{id}")]
         public async Task<IActionResult> UpdateAvatar(int id, [FromForm] UpdateAvatarDTO request)
         {

@@ -100,17 +100,17 @@ public async Task<string> GetAccountWithMostPostsThisMonth()
             PostCount = g.Count()
         })
         .OrderByDescending(g => g.PostCount)
-        .ToListAsync(); // Lấy tất cả danh sách thay vì chỉ lấy 1 cái
+        .ToListAsync(); 
 
     if (postCounts.Count == 0)
     {
         return "Chưa có xếp hạng tháng này";
     }
 
-    // Lấy số bài viết cao nhất
+
     var topPostCount = postCounts.First().PostCount;
 
-    // Lọc các tài khoản có số bài viết bằng số cao nhất
+
     var topAccounts = postCounts.Where(p => p.PostCount == topPostCount).ToList();
 
     if (topAccounts.Count > 1)
@@ -118,7 +118,7 @@ public async Task<string> GetAccountWithMostPostsThisMonth()
         return "Chưa có xếp hạng tháng này";
     }
 
-    return topAccounts.First().AccountId.ToString(); // Chuyển ID thành chuỗi để tránh lỗi kiểu dữ liệu
+    return topAccounts.First().AccountId.ToString();
 }
 
 
