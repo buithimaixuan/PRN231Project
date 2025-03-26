@@ -8,6 +8,7 @@ using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication.Google;
+using Client.ViewModel;
 
 namespace Client.Controllers
 {
@@ -83,6 +84,59 @@ namespace Client.Controllers
 
             ViewBag.ErrorMessage = "Invalid login credentials";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet] 
+        public async Task<IActionResult> OptionRole()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RegisterFarmer()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterFarmer(RegisterFarmerViewModel request)
+        {
+            client.Timeout = TimeSpan.FromMinutes(5);
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Error = "Thông tin không hợp lệ.";
+                return View(request);
+            }
+
+            AccountDTO accountDTO = new AccountDTO();
+            accountDTO.FullName = request.FullName;
+            accountDTO.Gender = request.Gender ?? "Male";
+            accountDTO.DateOfBirth = request.DateOfBirth;
+            accountDTO.Phone = request.PhoneNumber;
+            accountDTO.Username = request.Username;
+            accountDTO.Password = request.Password;
+            accountDTO.RoleId = 3;
+
+
+            var content = new StringContent(JsonConvert.SerializeObject(accountDTO), System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{authenUrl}/register", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["RegisterSuccess"] = "Đăng ký thành công.";
+                TempData.Keep("RegisterSuccess");
+                return View(request);
+            }
+
+            TempData["RegisterSuccess"] = "Đăng ký thành công.";
+            TempData.Keep("RegisterSuccess");
+            return RedirectToAction("Index", "Authen");
+        }
+        [HttpGet]
+        public async Task<IActionResult> RegisterExpert()
+        {
+            return View();
         }
 
         [HttpGet]

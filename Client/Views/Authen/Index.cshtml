@@ -32,7 +32,7 @@
             </form>
 
             <div class="form-link">
-                <span>Bạn chưa có tài khoản? <a href="/Access/OptionsRole" class="link signup-link">Đăng ký</a></span>
+                <span>Bạn chưa có tài khoản? <a asp-action="OptionRole" asp-controller="Authen" class="link signup-link">Đăng ký</a></span>
             </div>
 
             <div class="line"></div>
@@ -51,29 +51,30 @@
 <script src="~/js/loginMain.js"></script>
 <script type="text/javascript">
     if (window.location.hash === '#_=_') {
-        if (history.replaceState) {
-            var cleanUrl = window.location.href.split("#")[0];
-            history.replaceState(null, null, cleanUrl);
-        } else {
-            window.location.hash = '';
-        }
+    if (history.replaceState) {
+    var cleanUrl = window.location.href.split("#")[0];
+    history.replaceState(null, null, cleanUrl);
+    } else {
+    window.location.hash = '';
+    }
     }
 </script>
 
 @if (TempData["RegisterSuccess"] != null)
 {
-    <input type="hidden" id="success-message">
+    <input type="hidden" id="success-message" value="@TempData["RegisterSuccess"]">
+    Console.WriteLine(TempData["RegisterSuccess"]);
 }
 @section scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var successMessage = document.getElementById('success-message')?.innerText;
+            var successMessage = document.getElementById('success-message')?.value;
 
             if (successMessage) {
                 Swal.fire({
                     title: 'Alert',
                     text: successMessage,
-                    icon: 'error',
+                    icon: 'success',
                     confirmButtonText: 'OK'
                 });
                 console.log(successMessage);
