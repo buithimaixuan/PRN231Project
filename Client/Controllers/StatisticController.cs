@@ -12,6 +12,7 @@ namespace Client.Controllers
         private readonly HttpClient client;
         private string StatisticPostUri = "";
         private string StatisticNewUri = "";
+        private string StatisticAccUri = "";
         private string StatisticServiceUri = "";
         private readonly IHttpClientFactory httpClient;
 
@@ -21,6 +22,7 @@ namespace Client.Controllers
             client = clientFactory.CreateClient();
             StatisticPostUri = "http://localhost:5007/api/post";
             StatisticNewUri = "http://localhost:5007/api/News";
+            StatisticAccUri = "http://localhost:5157/api/Accounts";
             StatisticServiceUri = "http://localhost:5122/api/Services";
 
         }
@@ -60,6 +62,14 @@ namespace Client.Controllers
             int totalServices = await GetTotalServices();
             Console.WriteLine($"Total Posts: {totalServices}");
             ViewBag.TotalServices = totalServices;
+
+            int totalExperts = await GetTotalExperts();
+            Console.WriteLine($"Total Posts: {totalExperts}");
+            ViewBag.TotalExperts = totalExperts;
+
+            int totalFarmers = await GetTotalFarmers();
+            Console.WriteLine($"Total Posts: {totalFarmers}");
+            ViewBag.TotalFarmers = totalFarmers;
 
 
             int selectedYear = year ?? DateTime.Now.Year; // Nếu không có thì lấy năm hiện tại
@@ -165,6 +175,20 @@ namespace Client.Controllers
             using var client = httpClient.CreateClient();
             var responseN = await client.GetFromJsonAsync<int>($"{StatisticNewUri}/total-news");
             return responseN;
+        }
+
+        public async Task<int> GetTotalExperts()
+        {
+            using var client = httpClient.CreateClient();
+            var responseE = await client.GetFromJsonAsync<int>($"{StatisticAccUri}/total-experts");
+            return responseE;
+        }
+
+        public async Task<int> GetTotalFarmers()
+        {
+            using var client = httpClient.CreateClient();
+            var responseF = await client.GetFromJsonAsync<int>($"{StatisticAccUri}/total-farmers");
+            return responseF;
         }
 
         public async Task<int> GetTotalServices()

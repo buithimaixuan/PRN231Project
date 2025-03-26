@@ -50,5 +50,12 @@ namespace PostService.Controllers
 
             return (response <= 0) ? Ok("Output message: Delete post image successfully.") : BadRequest("Output message: Delete fail");
         }
+
+        [HttpDelete("delete-all-of-post/{postId}")]
+        public async Task<IActionResult> DeleteAllOfPost([FromRoute] int postId)
+        {
+            await _service.DeleteAllByPostId(postId);
+            return Ok("Delete successfully");
+        }
     }
 }

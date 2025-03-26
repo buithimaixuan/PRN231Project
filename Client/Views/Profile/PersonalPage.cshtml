@@ -262,7 +262,7 @@ else
                                         <img src="@Model.PersonalPageDTO.accountDTO.Avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
                                     </a>
                                     <div class="w3-right w3-opacity">
-                                        <a asp-page="/Posts/UpdatePost" asp-route-postid="@post.post.PostId" class="updatePost controlPostBtn">
+                                        <a asp-action="UpdatePost" asp-controller="Post" asp-route-postId="@post.post.PostId" asp-route-accountId="@post.post.AccountId" class="updatePost controlPostBtn">
                                             Chỉnh sửa
                                         </a>
                                         <a class="deletePost controlPostBtn" data-postid="@post.post.PostId" data-target="#deletePostModal" data-toggle="modal">Xóa</a>
@@ -599,7 +599,7 @@ else
                 var postId = $(this).data("postid"); // Lấy ID của bài post
                 $("#confirmDeletePost").data("postid", postId); // Gán ID vào nút xác nhận
 
-                $('#confirmDeletePost').attr('href', '/Posts/DeletePost/' + postId);
+                $('#confirmDeletePost').attr('href', '/Post/DeletePost/' + postId);
                 $('#deletePostModal').modal('show');
             });
         });

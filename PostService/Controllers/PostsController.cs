@@ -96,7 +96,7 @@ namespace PostService.Controllers
 
             if (newPost <= 0) return BadRequest("Error message: Fail to update post!");
 
-            return Ok("Output message: Update post successfully");
+            return Ok(newPost);
         }
 
         [HttpDelete("{postId}")]
@@ -196,7 +196,7 @@ namespace PostService.Controllers
         }
 
         [HttpGet("total-post")]
-        public async Task<IActionResult> GetTotalExperts()
+        public async Task<IActionResult> GetTotalPosts()
         {
             int totalExperts = await _postService.GetTotalPostService();
             return Ok(totalExperts);

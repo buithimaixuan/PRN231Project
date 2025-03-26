@@ -124,7 +124,7 @@ namespace PostService.Controllers
         }
 
         [HttpGet("total-news")]
-        public async Task<IActionResult> GetTotalExperts()
+        public async Task<IActionResult> GetTotalNews()
         {
             int totalExperts = await _newsService.GetTotalNewsCount();
             return Ok(totalExperts);
