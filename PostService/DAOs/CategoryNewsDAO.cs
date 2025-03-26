@@ -29,5 +29,24 @@ namespace PostService.DAOs
                 .Where(c => _context.News.Any(n => n.CategoryNewsId == c.CategoryNewsId && n.IsDeleted != true))
                 .ToListAsync();
         }
+
+
+        
+
+        public async Task Add(CategoryNews item)
+        {
+            _context.CategoryNews.Add(item);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Update(CategoryNews item)
+        {
+            var existingItem = await GetCategoryNewsById(item.CategoryNewsId);
+            if (existingItem == null) return;
+            _context.Entry(existingItem).CurrentValues.SetValues(item);
+            await _context.SaveChangesAsync();
+        }
+
+        
     }
 }

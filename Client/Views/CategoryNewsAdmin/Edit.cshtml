@@ -1,0 +1,43 @@
+﻿@model Client.Models.CategoryNews
+@{
+    ViewData["Title"] = "Edit";
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <form asp-action="Edit">
+        <div class="d-flex ">
+            <input asp-for="CategoryNewsId" hidden readonly />
+            <div class="form-group w-100">
+                <label asp-for="CategoryNewsName">Enter category news name:</label>
+                <input type="text" class="form-control" asp-for="CategoryNewsName">
+                <span class="text-danger" asp-validation-for="CategoryNewsName"></span>
+
+            </div>
+
+        </div>
+
+        <div class="d-flex">
+
+            <div class="form-group w-100">
+                <label asp-for="CategoryNewsDescription">Enter category news description?</label>
+                <textarea asp-for="CategoryNewsDescription" class="form-control" rows="5"></textarea>
+                <span class="text-danger" asp-validation-for="CategoryNewsDescription"></span>
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-center">
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-info mx-3">Reset</button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
