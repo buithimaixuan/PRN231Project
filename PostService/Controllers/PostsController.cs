@@ -25,17 +25,12 @@ namespace PostService.Controllers
             return Ok(new { message = result });
         }
 
-
-
-
-
         [HttpGet("countPostInYear/{year}")]
         public async Task<IActionResult> GetPostCountByYear(int year)
         {
             var result = await _postService.GetPostCountByYear(year);
             return Ok(result);
         }
-
 
         [HttpGet("all")]
         public async Task<IActionResult> GetAllPosts()
@@ -47,10 +42,6 @@ namespace PostService.Controllers
             }
             return Ok(res);
         }
-
-
-
-
 
         [HttpGet("all/available")]
         public async Task<IActionResult> GetListPostAvailable()
@@ -113,7 +104,7 @@ namespace PostService.Controllers
         {
             if (postId <= 0) return BadRequest("Error message: Fail to get Post Id!");
 
-            int isSuccess = await _postService.DeletePost(postId);
+            int isSuccess = await _postService.DeleteAllByPostId(postId);
 
             return (isSuccess > 0) ? Ok(isSuccess) : BadRequest("Output message: Fail to delete post.");
         }

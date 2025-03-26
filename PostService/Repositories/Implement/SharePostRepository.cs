@@ -14,5 +14,6 @@ namespace PostService.Repositories.Implement
         }
 
         public async Task<IEnumerable<SharePost>> GetAllSharePostByPostId(int id) => await _sharePostDAO.GetAllSharePostByPostId(id);
+        public async Task DeleteAllByPostId(int postId) => await _sharePostDAO.DeleteAllByPostId(postId);
     }
 }

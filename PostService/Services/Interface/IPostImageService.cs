@@ -7,5 +7,6 @@ namespace PostService.Services.Interface
         Task<IEnumerable<PostImage>> GetPostImagesByPostId(int postId);
         Task AddPostImage(int postId, string urlImage, string publicId);
         Task<int> DeletePostImage(int postImageId);
+        Task DeleteAllByPostId(int postId);
     }
 }

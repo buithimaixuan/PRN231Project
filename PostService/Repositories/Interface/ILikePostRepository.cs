@@ -14,5 +14,6 @@ namespace PostService.Repositories.Interface
         Task<LikePost> AddLike(int accountId, int postId, bool isLike = true);
         Task RemoveLike(int accountId, int postId);
         Task UpdateLike(int likePostId, bool isLike);
+        Task DeleteAllByPostId(int postId);
     }
 }

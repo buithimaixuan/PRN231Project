@@ -56,5 +56,18 @@ namespace PostService.DAOs
             _context.Comments.Update(item);
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteAllByPostId(int postId)
+        {
+            var comments = await _context.Comments
+                                 .Where(c => c.PostId == postId)
+                                 .ToListAsync();
+
+            if (comments.Any())
+            {
+                _context.Comments.RemoveRange(comments);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Client.DTOs.PersonalPageDTO
+﻿@model Client.ViewModel.PersonalPageViewModel
 @using Client.DTOs
 @using Microsoft.AspNetCore.Http;
 @using System.Net.Http.Headers
@@ -15,9 +15,9 @@
         int.TryParse(accountIdClaim.Value, out accountIDLogin);
     }
 
-    if (Model != null && Model.accountDTO != null)
+    if (Model != null && Model.PersonalPageDTO.accountDTO != null)
     {
-        ViewData["Title"] = Model.accountDTO.FullName;
+        ViewData["Title"] = Model.PersonalPageDTO.accountDTO.FullName;
     }
     else
     {
@@ -25,18 +25,18 @@
     }
 
     // Kiểm tra trạng thái quan hệ
-    bool isOwnProfile = Model?.accountDTO != null && accountIDLogin > 0 && accountIDLogin == Model.accountDTO.AccountId;
-    bool isFriend = Model?.listFriends != null && Model.listFriends.Any(f =>
-        (f.SenderId == accountIDLogin && f.ReceiverId == Model.accountDTO.AccountId) ||
-        (f.SenderId == Model.accountDTO.AccountId && f.ReceiverId == accountIDLogin));
+    bool isOwnProfile = Model?.PersonalPageDTO.accountDTO != null && accountIDLogin > 0 && accountIDLogin == Model.PersonalPageDTO.accountDTO.AccountId;
+    bool isFriend = Model?.PersonalPageDTO.listFriends != null && Model.PersonalPageDTO.listFriends.Any(f =>
+        (f.SenderId == accountIDLogin && f.ReceiverId == Model.PersonalPageDTO.accountDTO.AccountId) ||
+        (f.SenderId == Model.PersonalPageDTO.accountDTO.AccountId && f.ReceiverId == accountIDLogin));
 
-    bool hasSentRequest = Model?.friendRequestReceivers != null && Model.friendRequestReceivers.Any(fr =>
-        fr.SenderId == accountIDLogin && fr.ReceiverId == Model.accountDTO.AccountId && fr.RequestStatus == "pending");
+    bool hasSentRequest = Model?.PersonalPageDTO.friendRequestReceivers != null && Model.PersonalPageDTO.friendRequestReceivers.Any(fr =>
+        fr.SenderId == accountIDLogin && fr.ReceiverId == Model.PersonalPageDTO.accountDTO.AccountId && fr.RequestStatus == "pending");
 
-    bool hasReceivedRequest = Model?.friendRequestSenders != null && Model.friendRequestSenders.Any(fr =>
-        fr.SenderId == Model.accountDTO.AccountId && fr.ReceiverId == accountIDLogin && fr.RequestStatus == "pending");
+    bool hasReceivedRequest = Model?.PersonalPageDTO.friendRequestSenders != null && Model.PersonalPageDTO.friendRequestSenders.Any(fr =>
+        fr.SenderId == Model.PersonalPageDTO.accountDTO.AccountId && fr.ReceiverId == accountIDLogin && fr.RequestStatus == "pending");
 
-    Console.WriteLine("Model.accountDTO.AccountId: " + (Model?.accountDTO?.AccountId ?? 0));
+    Console.WriteLine("Model.PersonalPageDTO.PersonalPageDTO.accountDTO.AccountId: " + (Model?.PersonalPageDTO.accountDTO?.AccountId ?? 0));
     Console.WriteLine("accountIDLogin: " + accountIDLogin);
 }
 
@@ -58,14 +58,14 @@ else
                     <!-- accountDTO -->
                     <div class="w3-card w3-round w3-white pb-3">
                         <div class="w3-container">
-                            <h4 class="w3-center">@Model.accountDTO.FullName</h4>
+                            <h4 class="w3-center">@Model.PersonalPageDTO.accountDTO.FullName</h4>
                             <p class="w3-center">
-                                <img src="@Model.accountDTO.Avatar" class="w3-circle" style="height:106px;width:106px" alt="Avatar">
+                                <img src="@Model.PersonalPageDTO.accountDTO.Avatar" class="w3-circle" style="height:106px;width:106px" alt="Avatar">
                             </p>
                             <div class="mt-3 text-center" id="friend-action-buttons">
-                                @if (Model.accountDTO.ShortBio != null && Model.accountDTO.ShortBio != "N/A")
+                                @if (Model.PersonalPageDTO.accountDTO.ShortBio != null && Model.PersonalPageDTO.accountDTO.ShortBio != "N/A")
                                 {
-                                    <p class="text-secondary mb-1">@Model.accountDTO.ShortBio</p>
+                                    <p class="text-secondary mb-1">@Model.PersonalPageDTO.accountDTO.ShortBio</p>
                                 }
 
                                 @if (!isOwnProfile)
@@ -75,17 +75,17 @@ else
                                         <div class="w3-row w3-opacity">
                                             <div class="w3-half">
                                                 <button type="button" class="w3-button w3-green w3-section px-3 py-1 request-btn"
-                                                        data-sender-id="@Model.accountDTO.AccountId"
-                                                        data-receiver-id="@accountIDLogin"
-                                                        data-status="accepted" title="Accept">
+                                                data-sender-id="@Model.PersonalPageDTO.accountDTO.AccountId"
+                                                data-receiver-id="@accountIDLogin"
+                                                data-status="accepted" title="Accept">
                                                     <i class="fa fa-check"></i>
                                                 </button>
                                             </div>
                                             <div class="w3-half">
                                                 <button type="button" class="w3-button w3-red w3-section px-3 py-1 request-btn"
-                                                        data-sender-id="@Model.accountDTO.AccountId"
-                                                        data-receiver-id="@accountIDLogin"
-                                                        data-status="rejected" title="Decline">
+                                                data-sender-id="@Model.PersonalPageDTO.accountDTO.AccountId"
+                                                data-receiver-id="@accountIDLogin"
+                                                data-status="rejected" title="Decline">
                                                     <i class="fa fa-remove"></i>
                                                 </button>
                                             </div>
@@ -93,16 +93,16 @@ else
                                     }
                                     else if (isFriend)
                                     {
-                                        var friendRelation = Model.listFriends.FirstOrDefault(f =>
-                                        (f.SenderId == accountIDLogin && f.ReceiverId == Model.accountDTO.AccountId) ||
-                                        (f.SenderId == Model.accountDTO.AccountId && f.ReceiverId == accountIDLogin)
+                                        var friendRelation = Model.PersonalPageDTO.listFriends.FirstOrDefault(f =>
+                                        (f.SenderId == accountIDLogin && f.ReceiverId == Model.PersonalPageDTO.accountDTO.AccountId) ||
+                                        (f.SenderId == Model.PersonalPageDTO.accountDTO.AccountId && f.ReceiverId == accountIDLogin)
                                         );
 
                                         if (friendRelation != null)
                                         {
                                             <button type="button" class="btn btn-danger unfriend-btn"
-                                                    data-user-id1="@accountIDLogin"
-                                                    data-user-id2="@Model.accountDTO.AccountId">
+                                            data-user-id1="@accountIDLogin"
+                                            data-user-id2="@Model.PersonalPageDTO.accountDTO.AccountId">
                                                 Unfriend
                                             </button>
                                         }
@@ -114,8 +114,8 @@ else
                                     else
                                     {
                                         <button type="button" class="btn btn-primary send-request-btn"
-                                                data-sender-id="@accountIDLogin"
-                                                data-receiver-id="@Model.accountDTO.AccountId">
+                                        data-sender-id="@accountIDLogin"
+                                        data-receiver-id="@Model.PersonalPageDTO.accountDTO.AccountId">
                                             Add Friend
                                         </button>
                                     }
@@ -123,36 +123,36 @@ else
                             </div>
                             <!-- Các thông tin khác -->
                             <hr>
-                            @if (Model.accountDTO.Major != null && Model.accountDTO.Major != "N/A")
+                            @if (Model.PersonalPageDTO.accountDTO.Major != null && Model.PersonalPageDTO.accountDTO.Major != "N/A")
                             {
-                                <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> @Model.accountDTO.Major</p>
+                                <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> @Model.PersonalPageDTO.accountDTO.Major</p>
                             }
-                            @if (Model.accountDTO.Address != null && Model.accountDTO.Address != "N/A")
+                            @if (Model.PersonalPageDTO.accountDTO.Address != null && Model.PersonalPageDTO.accountDTO.Address != "N/A")
                             {
-                                <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> @Model.accountDTO.Address</p>
+                                <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> @Model.PersonalPageDTO.accountDTO.Address</p>
                             }
-                            @if (Model.accountDTO.Gender != null && Model.accountDTO.Gender != "N/A")
+                            @if (Model.PersonalPageDTO.accountDTO.Gender != null && Model.PersonalPageDTO.accountDTO.Gender != "N/A")
                             {
-                                if (Model.accountDTO.Gender.ToLower() == "female")
+                                if (Model.PersonalPageDTO.accountDTO.Gender.ToLower() == "female")
                                 {
-                                    <p><i class="fa fa-venus  fa-fw w3-margin-right w3-text-theme"></i> @Model.accountDTO.Gender</p>
+                                    <p><i class="fa fa-venus  fa-fw w3-margin-right w3-text-theme"></i> @Model.PersonalPageDTO.accountDTO.Gender</p>
                                 }
-                                else if (Model.accountDTO.Gender.ToLower() == "male")
+                                else if (Model.PersonalPageDTO.accountDTO.Gender.ToLower() == "male")
                                 {
-                                    <p><i class="fa fa-mars fa-fw w3-margin-right w3-text-theme"></i> @Model.accountDTO.Gender</p>
+                                    <p><i class="fa fa-mars fa-fw w3-margin-right w3-text-theme"></i> @Model.PersonalPageDTO.accountDTO.Gender</p>
                                 }
                                 else
                                 {
-                                    <p><i class="fa fa-genderless fa-fw w3-margin-right w3-text-theme"></i> @Model.accountDTO.Gender</p>
+                                    <p><i class="fa fa-genderless fa-fw w3-margin-right w3-text-theme"></i> @Model.PersonalPageDTO.accountDTO.Gender</p>
                                 }
                             }
-                            @if (Model.accountDTO.DateOfBirth != null)
+                            @if (Model.PersonalPageDTO.accountDTO.DateOfBirth != null)
                             {
-                                <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> @Model.accountDTO.DateOfBirth.Value.ToString("MMMM dd, yyyy")</p>
+                                <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> @Model.PersonalPageDTO.accountDTO.DateOfBirth.Value.ToString("MMMM dd, yyyy")</p>
                             }
-                            @if (Model.accountDTO.YearOfExperience != null)
+                            @if (Model.PersonalPageDTO.accountDTO.YearOfExperience != null)
                             {
-                                <p><i class="fa fa-user-tie fa-fw w3-margin-right w3-text-theme"></i> @Model.accountDTO.YearOfExperience Year Of Experience</p>
+                                <p><i class="fa fa-user-tie fa-fw w3-margin-right w3-text-theme"></i> @Model.PersonalPageDTO.accountDTO.YearOfExperience Year Of Experience</p>
                             }
                         </div>
                     </div>
@@ -161,23 +161,23 @@ else
                     <!-- Accordion -->
                     <div class="w3-card w3-round">
                         <div class="w3-white">
-                            @if (Model.accountDTO.AccountId == accountIDLogin)
+                            @if (Model.PersonalPageDTO.accountDTO.AccountId == accountIDLogin)
                             {
-                                <a asp-controller="Profile" asp-action="UpdateProfile" asp-route-id="@Model.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                                <a asp-controller="Profile" asp-action="UpdateProfile" asp-route-id="@Model.PersonalPageDTO.accountDTO.AccountId" class="w3-button w3-block w3-theme-l1 w3-left-align">
                                     <i class="fa fa-info-circle fa-fw w3-margin-right"></i> Information
                                 </a>
                             }
 
-                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" asp-route-view="posts" class="w3-button w3-block w3-theme-l1 w3-left-align">
-                                <i class="fa fa-pencil-alt fa-fw w3-margin-right"></i> Posts (@Model.listPostDTOs.Count())
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.PersonalPageDTO.accountDTO.AccountId" asp-route-view="posts" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                                <i class="fa fa-pencil-alt fa-fw w3-margin-right"></i> Posts (@Model.PersonalPageDTO.listPostDTOs.Count())
                             </a>
-                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" asp-route-view="friends" class="w3-button w3-block w3-theme-l1 w3-left-align">
-                                <i class="fa fa-user-friends fa-fw w3-margin-right"></i> Friends (@Model.listFriends.Count())
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.PersonalPageDTO.accountDTO.AccountId" asp-route-view="friends" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                                <i class="fa fa-user-friends fa-fw w3-margin-right"></i> Friends (@Model.PersonalPageDTO.listFriends.Count())
                             </a>
                             @{
-                                var photosDTO = await GetPhotos(Model.accountDTO.AccountId);
+                                var photosDTO = await GetPhotos(Model.PersonalPageDTO.accountDTO.AccountId);
                             }
-                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.accountDTO.AccountId" asp-route-view="photos" class="w3-button w3-block w3-theme-l1 w3-left-align">
+                            <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.PersonalPageDTO.accountDTO.AccountId" asp-route-view="photos" class="w3-button w3-block w3-theme-l1 w3-left-align">
                                 <i class="fa fa-picture-o fa-fw w3-margin-right"></i> Photos (@photosDTO.CountPhotos)
                             </a>
                         </div>
@@ -187,29 +187,89 @@ else
 
                 <!-- Middle Column -->
                 <div class="w3-col m7">
+
+                    @* THỰC HIỆN ADD POST KHI ĐANG Ở TRANG CỦA CHÍNH MÌNH *@
+                    @if(isOwnProfile)
+                    {
+                        <div class="w3-container w3-card w3-white w3-round w3-margin" style="padding: 0">
+
+                                    <div class="wrapper-add-post" style="width: auto">
+                                        <div class="post-header">
+                                            <a href="#">
+                                                <img src="~/image/avatar2.png" alt="Profile Picture">
+                                            </a>
+
+                                            <input id="postInput" type="text" placeholder="@Model.PersonalPageDTO.accountDTO.FullName ơi, bạn đang nghĩ gì thế?">
+                                        </div>
+                                    </div>
+
+                                    <div class="popup" id="popupPost" style="z-index: 100;">
+                                        <div class="popup-content">
+                                            <button class="close-btn" id="closePopupBtn">×</button>
+                                            <h2>Tạo bài viết</h2>
+
+                                            <form id="postForm" method="post" asp-action="CreatePost" asp-controller="Post" enctype="multipart/form-data">
+                                                <input type="hidden" value="@Model.PersonalPageDTO.accountDTO.AccountId" asp-for="PostViewModel.AccountId">
+
+                                                <textarea asp-for="PostViewModel.ContentPost" placeholder="@Model.PersonalPageDTO.accountDTO.FullName ơi, bạn đang nghĩ gì thế?" class="content-post"
+                                                          required></textarea>
+
+                                                <div class="select">
+                                                    <label for="select-input">Chọn danh mục: </label>
+                                                    <select id="select-input" asp-for="PostViewModel.CategoryId">
+                                                        <option value="" disabled selected>Chọn danh mục</option>
+                                                        @foreach (var categoryPost in Model.categoryPosts)
+                                                        {
+                                                            <option value="@categoryPost.CategoryPostId">@categoryPost.CategoryPostName</option>
+                                                        }
+
+                                                    </select>
+                                                </div>
+
+                                                <button type="button" id="clearImagesButton" style="display: none;">Xóa ảnh</button>
+                                                <div id="imagePreview" style="margin-top: 10px; display: flex; flex-wrap: wrap;"></div>
+
+                                                <input onchange="console.log(this.files)" type="file" id="imageInput" asp-for="PostViewModel.Images" accept="image/*" style="display: none;" multiple>
+
+                                                <div class="actions" style="margin-top: 10px;">
+                                                    <button type="button" id="selectImageButton">
+                                                        <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Ảnh/video
+                                                    </button>
+                                                </div>
+
+                                                <button type="submit"
+                                                        style="width: 100%; margin-top: 10px; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 5px;">
+                                                    Đăng
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                        </div>
+                    }
                     @if (ViewBag.ViewMode == "posts")
                     {
                         <!-- Hiển thị danh sách bài viết -->
-                        if (Model.listPostDTOs.Any())
+                        if (Model.PersonalPageDTO.listPostDTOs.Any())
                         {
-                            @foreach (var post in Model.listPostDTOs)
+                            @foreach (var post in Model.PersonalPageDTO.listPostDTOs)
                             {
                                 var imageCount = post.postImages.Count();
 
                                 <div class="w3-container w3-card w3-white w3-round w3-margin">
                                     <br>
                                     <a asp-page="/accountDTO/PersonalPages" asp-route-postid="@post.post.PostId">
-                                        <img src="@Model.accountDTO.Avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+                                        <img src="@Model.PersonalPageDTO.accountDTO.Avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
                                     </a>
                                     <div class="w3-right w3-opacity">
                                         <a asp-page="/Posts/UpdatePost" asp-route-postid="@post.post.PostId" class="updatePost controlPostBtn">
                                             Chỉnh sửa
                                         </a>
-                                        <a class="deletePost controlPostBtn" asp-page="/Posts/DeletePost" asp-route-postid="@post.post.PostId" asp-page-handler="DeletePost" data-postid="@post.post.PostId" data-toggle="modal">Xóa</a>
+                                        <a class="deletePost controlPostBtn" data-postid="@post.post.PostId" data-target="#deletePostModal" data-toggle="modal">Xóa</a>
                                     </div>
 
                                     <div class="activity--header">
-                                        <p><a asp-page="/accountDTO/PersonalPage" asp-route-id="@Model.accountDTO.AccountId">@Model.accountDTO.FullName</a></p>
+                                        <p><a asp-page="/accountDTO/PersonalPage" asp-route-id="@Model.PersonalPageDTO.accountDTO.AccountId">@Model.PersonalPageDTO.accountDTO.FullName</a></p>
                                     </div>
                                     <div class="activity--meta fs--12">
                                         <p><i class="fa mr--8 fa-clock-o"></i>@post.post.CreatedAt</p>
@@ -244,7 +304,7 @@ else
                         }
 
                         <!-- Modal khi nhấn delete -->
-                        <div id="deletePost" class="modal fade">
+                        <div id="deletePostModal" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form>
@@ -268,15 +328,15 @@ else
                     {
                         <!-- Hiển thị danh sách bạn bè -->
                         <div class="w3-container w3-card w3-white w3-round w3-margin">
-                            <h4>Friends of @Model.accountDTO.FullName (@Model.listFriends.Count())</h4>
+                            <h4>Friends of @Model.PersonalPageDTO.accountDTO.FullName (@Model.PersonalPageDTO.listFriends.Count())</h4>
                         </div>
 
-                        @if (Model.listFriends.Any())
+                        @if (Model.PersonalPageDTO.listFriends.Any())
                         {
                             <div id="friend-list">
-                                @foreach (var friend in Model.listFriends)
+                                @foreach (var friend in Model.PersonalPageDTO.listFriends)
                                 {
-                                    var friendId = friend.SenderId == Model.accountDTO.AccountId ? friend.ReceiverId : friend.SenderId;
+                                    var friendId = friend.SenderId == Model.PersonalPageDTO.accountDTO.AccountId ? friend.ReceiverId : friend.SenderId;
                                     var friendInfo = await GetSenderInfo(friendId);
 
                                     <div class="col-md-6 mb-3 friend-item" data-friend-id="@friendId">
@@ -296,7 +356,7 @@ else
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    @if (accountIDLogin == Model.accountDTO.AccountId)
+                                                    @if (accountIDLogin == Model.PersonalPageDTO.accountDTO.AccountId)
                                                     {
                                                         <button type="button" class="btn btn-danger btn-sm unfriend-btn"
                                                                 data-user-id1="@accountIDLogin"
@@ -327,7 +387,7 @@ else
                     {
                         <!-- Hiển thị danh sách ảnh -->
                         <div class="w3-container w3-card w3-white w3-round w3-margin">
-                            <h4>Photos of @Model.accountDTO.FullName (@photosDTO.CountPhotos)</h4>
+                            <h4>Photos of @Model.PersonalPageDTO.accountDTO.FullName (@photosDTO.CountPhotos)</h4>
                         </div>
 
                         @if (photosDTO != null && photosDTO.Photos.Any())
@@ -411,15 +471,15 @@ else
 
             <!-- Right Column -->
             <div class="w3-col m2">
-                @if (accountIDLogin == Model.accountDTO.AccountId)
+                @if (accountIDLogin == Model.PersonalPageDTO.accountDTO.AccountId)
                     {
                         // Nếu vào trang cá nhân của chính mình -> Hiển thị danh sách yêu cầu kết bạn
-                        if (Model.friendRequestReceivers.Count() > 0)
+                        if (Model.PersonalPageDTO.friendRequestReceivers.Count() > 0)
                         {
                             <div class="w3-card w3-round w3-white w3-center" id="friend-requests">
                                 <div class="w3-container">
                                     <p>Friend Requests</p>
-                                    @foreach (var f in Model.friendRequestReceivers)
+                                    @foreach (var f in Model.PersonalPageDTO.friendRequestReceivers)
                                     {
                                         var friendId = f.SenderId == accountIDLogin ? f.ReceiverId : f.SenderId;
                                         var friendInfo = await GetSenderInfo(friendId);
@@ -463,9 +523,9 @@ else
                             <div class="w3-card w3-round w3-white w3-center" id="friend-list-right">
                                 <div class="w3-container">
                                     <p>Friend List</p>
-                                    @if (Model.listFriends.Count() > 0)
+                                    @if (Model.PersonalPageDTO.listFriends.Count() > 0)
                                     {
-                                        @foreach (var f in Model.listFriends.Take(10).Reverse())
+                                        @foreach (var f in Model.PersonalPageDTO.listFriends.Take(10).Reverse())
                                         {
                                             var friendId = f.SenderId == accountIDLogin ? f.ReceiverId : f.SenderId;
                                             var friendInfo = await GetSenderInfo(friendId);
@@ -491,11 +551,11 @@ else
                         <div class="w3-card w3-round w3-white w3-center" id="friend-list-right">
                             <div class="w3-container">
                                 <p>Friend List</p>
-                                @if (Model.listFriends.Count() > 0)
+                                @if (Model.PersonalPageDTO.listFriends.Count() > 0)
                                 {
-                                    @foreach (var f in Model.listFriends.Take(10).Reverse())
+                                    @foreach (var f in Model.PersonalPageDTO.listFriends.Take(10).Reverse())
                                     {
-                                        var friendId = f.SenderId == Model.accountDTO.AccountId ? f.ReceiverId : f.SenderId;
+                                        var friendId = f.SenderId == Model.PersonalPageDTO.accountDTO.AccountId ? f.ReceiverId : f.SenderId;
                                         var friendInfo = await GetSenderInfo(friendId);
 
                                         <div class="mb-2 friend-item" data-friend-id="@friendId">
@@ -532,6 +592,18 @@ else
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(".deletePost").click(function () {
+                var postId = $(this).data("postid"); // Lấy ID của bài post
+                $("#confirmDeletePost").data("postid", postId); // Gán ID vào nút xác nhận
+
+                $('#confirmDeletePost').attr('href', '/Posts/DeletePost/' + postId);
+                $('#deletePostModal').modal('show');
+            });
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

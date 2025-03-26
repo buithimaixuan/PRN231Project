@@ -31,5 +31,10 @@ namespace PostService.Repositories.Implement
         {
             return await _postImageDAO.GetAllByPostId(postId);
         }
+
+        public async Task DeleteAllByPostId(int postId)
+        {
+            await _postImageDAO.DeleteAllByPostId(postId);
+        }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace Client.DTOs
+﻿using Client.Models;
+using Client.ViewModel;
+
+namespace Client.DTOs
 {
     public class PersonalPageDTO
     {

@@ -73,5 +73,18 @@ namespace PostService.DAOs
             like.UnLike = isLike ? 0 : 1;
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteAllByPostId(int postId)
+        {
+            var likes = await _context.LikePosts
+                                 .Where(c => c.PostId == postId)
+                                 .ToListAsync();
+
+            if (likes.Any())
+            {
+                _context.LikePosts.RemoveRange(likes);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
