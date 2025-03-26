@@ -40,9 +40,9 @@ public partial class PostDbContext : DbContext
         //=> optionsBuilder.UseSqlServer("Data Source=MSI\\SQLEXPRESS;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=khoa31102003;Encrypt=True;Trust Server Certificate=True");
 
         // PHUONG NAM
-        //=> optionsBuilder.UseSqlServer("Data Source=DESKTOP-G595621\\SQLEXPRESS;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=123123;Encrypt=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-G595621\\SQLEXPRESS;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=123123;Encrypt=True;Trust Server Certificate=True");
 
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-EV8RQ78\\SQLEXPRESS;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=123456;Encrypt=True;Trust Server Certificate=True");
+        //=> optionsBuilder.UseSqlServer("Data Source=DESKTOP-EV8RQ78\\SQLEXPRESS;Initial Catalog=Microservice_PostDB;Persist Security Info=True;User ID=sa;Password=123456;Encrypt=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
