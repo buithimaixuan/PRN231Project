@@ -19,5 +19,9 @@ namespace PostService.Services.Interface
         Task<int> GetTotalNewsCount();
         Task<IEnumerable<(string Month, int Count)>> GetNewsCountByMonth();
         Task<(IEnumerable<News> News, int TotalCount)> FilterAndPaginateNews(int? categoryId, string searchString, int pageNumber, int pageSize);
+
+        Task Add(CategoryNews item);
+        Task Update(CategoryNews item);
+
     }
 }

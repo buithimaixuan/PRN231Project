@@ -1,4 +1,5 @@
-﻿using PostService.Models;
+﻿using PostService.DAOs;
+using PostService.Models;
 using PostService.Repositories.Implement;
 using PostService.Repositories.Interface;
 using PostService.Services.Interface;
@@ -45,5 +46,9 @@ namespace PostService.Services.Implement
         
         public async Task<(IEnumerable<News> News, int TotalCount)> FilterAndPaginateNews(int? categoryId, string searchString, int pageNumber, int pageSize)
             => await _newsRepo.FilterAndPaginateNews(categoryId, searchString, pageNumber, pageSize);
+
+        public async Task Add(CategoryNews news) => await _categoryNewsRepository.Add(news);
+
+        public async Task Update(CategoryNews news) => await _categoryNewsRepository.Update(news);
     }
 }

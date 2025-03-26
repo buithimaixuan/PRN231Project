@@ -23,5 +23,9 @@ namespace PostService.Repositories.Implement
         public async Task<IEnumerable<CategoryNews>> GetCategoriesHaveNews() => await _categoryNewsDAO.GetCategoriesHaveNews();
 
         public async Task<CategoryNews> GetCategoryNewsById(int id) => await _categoryNewsDAO.GetCategoryNewsById(id);
+
+        public async Task Add(CategoryNews news) => await _categoryNewsDAO.Add(news);
+
+        public async Task Update(CategoryNews news) => await _categoryNewsDAO.Update(news);
     }
 }

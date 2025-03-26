@@ -13,5 +13,8 @@ namespace PostService.Repositories.Interface
         Task<CategoryNews> GetCategoryNewsById(int id);
         Task<IEnumerable<CategoryNews>> GetAllCategoryNews();
         Task<IEnumerable<CategoryNews>> GetCategoriesHaveNews();
+        
+        Task Add(CategoryNews item);
+        Task Update(CategoryNews item);
     }
 }

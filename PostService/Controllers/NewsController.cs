@@ -157,5 +157,27 @@ namespace PostService.Controllers
             }
             return Ok(category);
         }
+
+        [HttpPost("NewsCategory/create")]
+        public async Task<IActionResult> CreateCategoryNews([FromBody] CategoryNews cat)
+        {
+            await _newsService.Add(cat);
+            return Ok(cat);
+        }
+
+        [HttpPut("NewsCategory/Edit/{id}")]
+        public async Task<IActionResult> EditCategoryNews(int id,[FromBody] CategoryNews cat)
+        {
+
+            if (cat == null)
+                return BadRequest("Invalid news data.");
+
+            var existingNews = await _newsService.GetCategoryNewsById(id);
+            if (existingNews == null)
+                return NotFound("category new not found.");
+        
+            await _newsService.Update(cat);
+            return Ok(cat);
+        }
     }
 }
