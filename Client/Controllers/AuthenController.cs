@@ -8,6 +8,10 @@ using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication.Google;
+using System.Text.Json;
+using System.Text;
+using System.Security.Principal;
+using static System.Net.WebRequestMethods;
 using Client.ViewModel;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -278,6 +282,148 @@ namespace Client.Controllers
 
             ViewBag.ErrorMessage = "Failed to login with Google.";
             return RedirectToAction("Index");
+        }
+
+        [HttpGet("ForgotPassword")]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO etDTO)
+        {
+            ModelState.Remove("DTO");
+            ModelState.Remove("NewPassword");
+            ModelState.Remove("ConfirmPass");
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var getAccEmailResponse = await client.GetAsync($"{accountUrl}/{etDTO.ResetEmail}");
+            if (!getAccEmailResponse.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError("EmailNotFound", "Email không tồn tại");
+                return View();
+            }
+
+            var accountJson = await getAccEmailResponse.Content.ReadAsStringAsync();
+            var getAccEmail = JsonConvert.DeserializeObject<Account>(accountJson);
+
+            //string repEmail = getAccEmail.Email;
+
+            // Tạo mã OTP gồm 6 chữ số ngẫu nhiên
+            var random = new Random();
+            int otp = random.Next(100000, 999999); // Tạo số ngẫu nhiên từ 100000 đến 999999 (6 chữ số)
+
+            // Nội dung email với mã OTP
+            //string emailBody = $"Đây là mã OTP của bạn: {otp}";
+
+            getAccEmail.Otp = otp;
+
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(getAccEmail), Encoding.UTF8,"application/json");
+
+            var updateOTPResponse = await client.PutAsync($"{accountUrl}/UpdateOTP/{getAccEmail.AccountId}", jsonContent);
+            if (!updateOTPResponse.IsSuccessStatusCode)
+            {
+                return StatusCode(500, "Không thể cập nhật OTP.");
+            }
+
+            // Nội dung email
+
+            HttpContext.Session.SetInt32("AccountIDReset", getAccEmail.AccountId);
+
+            return RedirectToAction("ConfirmForget", "Authen");
+        }
+
+        [HttpGet("ConfirmForget")]
+        public IActionResult ConfirmForget()
+        {
+            return View();
+        }
+
+        [HttpPost("ConfirmForget")]
+        public async Task<IActionResult> ConfirmForget(ForgotPasswordDTO etDTO)
+        {
+            ModelState.Remove("ResetEmail");
+            ModelState.Remove("NewPassword");
+            ModelState.Remove("ConfirmPass");
+
+            int? getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountIDReset"));
+
+            var getAccResponse = await client.GetAsync($"{accountUrl}/DetailFarmer{getAccId}");
+            if (!getAccResponse.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError("EmailNotFound", "Email không tồn tại");
+                return View();
+            }
+
+            var accountJson = await getAccResponse.Content.ReadAsStringAsync();
+            var getAcc = JsonConvert.DeserializeObject<Account>(accountJson);
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            if (etDTO.OTP != getAcc.Otp)
+            {
+                ModelState.AddModelError("OTPNotMatch", "OTP không khớp");
+                return View();
+            }
+
+            return RedirectToAction("ResetPassword", "Authen");
+        }
+
+        [HttpGet("ResetPassword")]
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ForgotPasswordDTO etDTO)
+        {
+            ModelState.Remove("ResetEmail");
+            ModelState.Remove("DTO");
+
+            int? getAccId = Convert.ToInt32(HttpContext.Session.GetInt32("AccountIDReset"));
+
+            var getAccResponse = await client.GetAsync($"{accountUrl}/DetailFarmer{getAccId}");
+            if (!getAccResponse.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError("EmailNotFound", "Email không tồn tại");
+                return View();
+            }
+
+            var accountJson = await getAccResponse.Content.ReadAsStringAsync();
+            var getAcc = JsonConvert.DeserializeObject<Account>(accountJson);
+
+            HttpContext.Session.Remove("AccountIDReset");
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var setPasswordDTO = new
+            {
+                NewPassword = etDTO.NewPassword,
+                ConfirmNewPassword = etDTO.ConfirmPass
+            };
+
+
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(setPasswordDTO), Encoding.UTF8, "application/json");
+
+            var resetPassResponse = await client.PutAsync($"{accountUrl}/SetPassword/{getAcc.AccountId}", jsonContent);
+            if (!resetPassResponse.IsSuccessStatusCode)
+            {
+                return StatusCode(500, "Không thể cập nhật OTP.");
+            }
+
+            return RedirectToAction("Index", "Authen");
         }
 
         [HttpGet]

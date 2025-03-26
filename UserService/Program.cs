@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using UserService.Config;
 using UserService.DAOs;
+using UserService.Models;
 using UserService.PasswordHashing;
 using UserService.Repositories;
 using UserService.Repositories.AccountRepo;
@@ -15,6 +16,16 @@ using UserService.Services.Interface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<Sender>(builder.Configuration.GetSection("Sender"));
+
+// Đăng ký Sender là Singleton
+builder.Services.AddSingleton(sp =>
+{
+    return sp.GetRequiredService<IOptions<Sender>>().Value;
+});
+
+// Đăng ký EmailSenderService là Singleton
+builder.Services.AddSingleton<IEmailSenderService, EmailSenderService>();
 
 // Account DI
 builder.Services.AddScoped<AccountDAO>();
