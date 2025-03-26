@@ -12,6 +12,8 @@ using System.Text.Json;
 using System.Text;
 using System.Security.Principal;
 using static System.Net.WebRequestMethods;
+using Client.ViewModel;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Client.Controllers
 {
@@ -20,6 +22,7 @@ namespace Client.Controllers
         private readonly HttpClient client;
         private string authenUrl = "";
         private string accountUrl = "";
+        private string cloudUrl = "";
 
         public AuthenController()
         {
@@ -33,6 +36,8 @@ namespace Client.Controllers
             //SWAGGER
             authenUrl = "https://localhost:7272/api/Auth";
             accountUrl = "https://localhost:7272/api/Accounts";
+
+            cloudUrl = "https://localhost:7231/api/cloudinary";
         }
 
         public IActionResult Index()
@@ -87,6 +92,114 @@ namespace Client.Controllers
 
             ViewBag.ErrorMessage = "Invalid login credentials";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet] 
+        public async Task<IActionResult> OptionRole()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RegisterFarmer()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterFarmer(RegisterFarmerViewModel request)
+        {
+            client.Timeout = TimeSpan.FromMinutes(5);
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Error = "Thông tin không hợp lệ.";
+                return View(request);
+            }
+
+            AccountDTO accountDTO = new AccountDTO();
+            accountDTO.FullName = request.FullName;
+            accountDTO.Gender = request.Gender ?? "Male";
+            accountDTO.DateOfBirth = request.DateOfBirth;
+            accountDTO.Phone = request.PhoneNumber;
+            accountDTO.Username = request.Username;
+            accountDTO.Password = request.Password;
+            accountDTO.RoleId = 2;
+
+
+            var content = new StringContent(JsonConvert.SerializeObject(accountDTO), System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{authenUrl}/register", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["RegisterSuccess"] = "Đăng ký thành công.";
+                TempData.Keep("RegisterSuccess");
+                return View(request);
+            }
+
+            TempData["RegisterSuccess"] = "Đăng ký thành công.";
+            TempData.Keep("RegisterSuccess");
+            return RedirectToAction("Index", "Authen");
+        }
+        [HttpGet]
+        public async Task<IActionResult> RegisterExpert()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterExpert([FromForm] RegisterExpertViewModel request)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Log lỗi ra console để debug
+                foreach (var error in ModelState)
+                {
+                    foreach (var message in error.Value.Errors)
+                    {
+                        Console.WriteLine($"Lỗi tại {error.Key}: {message.ErrorMessage}");
+                    }
+                }
+                return View(request);
+            }
+
+            AccountDTO accountDTO = new AccountDTO();
+            accountDTO.FullName = request.FullName;
+            accountDTO.Gender = request.Gender ?? "Male";
+            accountDTO.DateOfBirth = request.DateOfBirth;
+            accountDTO.Phone = request.PhoneNumber;
+            accountDTO.Username = request.Username;
+            accountDTO.Password = request.Password;
+            accountDTO.RoleId = 3;
+            accountDTO.Email = request.Email;
+            accountDTO.Address = request.Address;
+            accountDTO.Major = request.Major;
+            accountDTO.YearOfExperience = request.YearOfExperience;
+            accountDTO.ShortBio = request.ShortBio;
+
+            //GỌI API UPLOAD FILE ẢNH
+            ImageUploadResponseDTO education = await UploadFileAsync(request.fileEducation);
+            accountDTO.EducationUrl = education.ImageUrl;
+
+            ImageUploadResponseDTO degree = await UploadFileAsync(request.fileDegree);
+            accountDTO.DegreeUrl = degree.ImageUrl;
+
+            ImageUploadResponseDTO avatar = await UploadFileAsync(request.fileAvatar);
+            accountDTO.Avatar = avatar.ImageUrl;
+
+            var content = new StringContent(JsonConvert.SerializeObject(accountDTO), System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{authenUrl}/register", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["RegisterSuccess"] = "Đăng ký thành công.";
+                TempData.Keep("RegisterSuccess");
+                return View(request);
+            }
+
+            TempData["RegisterSuccess"] = "Đăng ký thành công.";
+            TempData.Keep("RegisterSuccess");
+            return RedirectToAction("Index", "Authen");
         }
 
         [HttpGet]
@@ -321,5 +434,34 @@ namespace Client.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
+
+        public async Task<ImageUploadResponseDTO> UploadFileAsync(IFormFile file)
+        {
+            using (var contentCloud = new MultipartFormDataContent())
+            {
+                var memoryStream = new MemoryStream();
+                file.OpenReadStream().CopyTo(memoryStream);
+                memoryStream.Position = 0; // Đặt lại vị trí đầu stream
+
+                var fileContent = new StreamContent(memoryStream);
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+
+                contentCloud.Add(fileContent, "formFile", file.FileName);
+
+                //Gọi api
+                var responseCloud = await client.PostAsync($"{cloudUrl}/upload", contentCloud);
+
+                if (responseCloud.IsSuccessStatusCode)
+                {
+                    var responseStringImage = await responseCloud.Content.ReadAsStringAsync();
+                    ImageUploadResponseDTO imageResponse = JsonConvert.DeserializeObject<ImageUploadResponseDTO>(responseStringImage);
+
+                    return imageResponse;
+
+                }
+            }
+            return null;
+        }
+
     }
 }

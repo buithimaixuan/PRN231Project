@@ -2,7 +2,7 @@
 {
     public class AccountDTO
     {
-        public int AccountId { get; set; }
+        public int? AccountId { get; set; }
         public int RoleId { get; set; }
 
         public string Username { get; set; } = null!;
@@ -12,8 +12,10 @@
         public string? FullName { get; set; }
 
         public string? Email { get; set; }
-
+        public int? EmailConfirmed { get; set; }
+        
         public string? Phone { get; set; }
+        public int? PhoneConfirmed { get; set; }
 
         public string? Gender { get; set; }
 

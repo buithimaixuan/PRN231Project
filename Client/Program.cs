@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Protocol.Plugins;
 
@@ -12,7 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
-//var emailConfig = builder.Configuration.GetSection("EmailConfig").Get<Sender>();
+//TĂNG DUNG LƯỢNG FILE KHI GỬI QUA FORM
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 100000000; // 100MB
+});
 
 builder.Services.AddSession(options =>
 {
