@@ -1,0 +1,125 @@
+﻿@model Account
+
+@{
+    ViewData["Title"] = "Edit";
+}
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="container">
+    <form asp-action="Edit" enctype="multipart/form-data">
+        <input asp-for="AccountId" readonly hidden />
+
+        <div>
+            <label>Can I have your avatar?</label>
+            <input type="file" class="form-control" id="AvatarFile" name="AvatarFile" accept="image/*">
+            <div style="width: 100px; heigh: 100px;">
+
+                <img style="width: 100px; heigh: 100px;" src="@Model.Avatar" alt="img" />
+            </div>
+            <div class="form-group">
+                <label asp-for="FullName">Full name</label>
+                <input type="text" class="form-control" asp-for="FullName">
+
+            </div>
+            <div class="form-group">
+                <label asp-for="Username">Username</label>
+                <input asp-for="Username" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="Email">Email address</label>
+                <input asp-for="Email" class="form-control" placeholder="Enter email" />
+
+            </div>
+            <div class="form-group  w-50">
+                <label asp-for="Phone">Phone number</label>
+                <input asp-for="Phone" class="form-control">
+            </div>
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="DateOfBirth">Birthday</label>
+                <input asp-for="DateOfBirth" class="form-control" />
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="Gender">Gender is:</label>
+                <div class="d-flex">
+                    <div class="form-check me-3">
+                        <input readonly asp-for="Gender" class="form-check-input" type="radio" value="Male" checked="@(Model.Gender == "Male")" />
+                        <label class="form-check-label">Male</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input readonly asp-for="Gender" class="form-check-input" type="radio" value="Female" checked="@(Model.Gender == "Female")" />
+                        <label class="form-check-label">Female</label>
+                    </div>
+                </div>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+
+
+
+
+        </div>
+        <div class="d-flex ">
+            <div class="form-group w-50">
+                <label asp-for="Address">Address</label>
+                <input asp-for="Address" class="form-control">
+
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" class="form-control" type="password">
+
+            </div>
+
+        </div>
+        <div class="d-flex">
+            <div class="form-group w-50">
+                <label asp-for="Major">Major</label>
+                <input asp-for="Major" class="form-control" placeholder="Enter your major at here">
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="YearOfExperience">The number of years experience is:</label>
+                <input asp-for="YearOfExperience" class="form-control">
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="form-group w-50">
+                <label>Can I get your degree image?</label>
+                <input type="file" id="DegreeFile" name="DegreeFile"
+                       class="form-control" accept="image/*">
+                <div style="width: 100px; heigh: 100px;">
+                    <img style="width: 100px; heigh: 100px;" src="@Model.DegreeUrl" alt="img" />
+                </div>
+            </div>
+            <div class="form-group  w-50">
+                <label>Can I get your education image?</label>
+                <input type="file" class="form-control" id="EducationFile" name="EducationFile" accept="image/*">
+                <div style="width: 100px; heigh: 100px;">
+                    <img style="width: 100px; heigh: 100px;" src="@Model.EducationUrl" alt="img" />
+                </div>
+            </div>
+        </div>
+        <div class="d-flex">
+
+            <div class="form-group">
+                <label asp-for="ShortBio">Short bio:</label>
+                <input asp-for="ShortBio" class="form-control">
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button asp-action="Index" class="btn btn-primary">Back to your Profile</button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

@@ -109,16 +109,23 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a data-bs-toggle="collapse" href="#maps">
+                            <a asp-controller="NewsAdmin" asp-action="Index" asp-area="">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <p>Manage Category News</p>
                             </a>
 
                         </li>
                         <li class="nav-item">
-                            <a data-bs-toggle="collapse" href="#maps">
+                            <a asp-controller="ProfileAdmin" asp-action="Index" asp-area="">
                                 <i class="fas fa-map-marker-alt"></i>
-                                <p>Manage Category Post</p>
+                                <p>Profile</p>
+                            </a>
+
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Authen" asp-action="Logout" asp-area="">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <p>Logout</p>
                             </a>
 
                         </li>
@@ -154,50 +161,7 @@
                     <!-- End Logo Header -->
                 </div>
                 <!-- Navbar Header -->
-                <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom bg-body-secondary">
-                    <div class="container-fluid">
-                        <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                            <li class="nav-item topbar-user dropdown hidden-caret">
-                                <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
-                                    <div class="avatar-sm">
-                                        <img src="~/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle" />
-                                    </div>
-                                    <span class="profile-username">
-                                        <span class="op-7">Hi,</span>
-                                        <span class="fw-bold">Hizrian</span>
-                                    </span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-user animated fadeIn">
-                                    <div class="dropdown-user-scroll scrollbar-outer">
-                                    <li>
-                                        <div class="user-box">
-                                            <div class="avatar-lg">
-                                                <img src="~/assets/img/profile.jpg" alt="image profile" class="avatar-img rounded" />
-                                            </div>
-                                            <div class="u-text">
-                                                <h4>Hizrian</h4>
-                                                <p class="text-muted">hello@example.com</p>
-                                                <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View Profile</a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">My Profile</a>
-                                        <a class="dropdown-item" href="#">My Balance</a>
-                                        <a class="dropdown-item" href="#">Inbox</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">Account Setting</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">Logout</a>
-                                    </li>
-                    </div>
-                    </ul>
-                    </li>
-                    </ul>
-            </div>
-
-            </nav>
+           
 
             <!-- End Navbar -->
         </div>
