@@ -156,7 +156,6 @@ namespace UserService.Controllers
             existingAccount.YearOfExperience = accountDTO.YearOfExperience ?? null;
             existingAccount.DegreeUrl = accountDTO.DegreeUrl ?? null;
             existingAccount.Major = accountDTO.Major ?? null;
-            existingAccount.Otp = accountDTO.OTP ?? null;
 
             await _accountService.UpdateAccount(existingAccount);
             return Ok(existingAccount);
@@ -164,7 +163,7 @@ namespace UserService.Controllers
 
 
         [HttpPut("UpdateOTP/{id}")]
-        public async Task<IActionResult> UpdateOTP(int id, [FromBody] UpdateAccountDTO accountDTO)
+        public async Task<IActionResult> UpdateOTP(int id, [FromBody] OTPUpdateDTO accountDTO)
         {
             if (accountDTO == null)
                 return BadRequest("Invalid account.");
