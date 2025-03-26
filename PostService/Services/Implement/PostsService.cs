@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PostService.Config;
 using PostService.DTOs;
 using PostService.Models;
 using PostService.Repositories.Interface;
@@ -14,8 +15,9 @@ namespace PostService.Services.Implement
         private readonly ICommentRepository _commentRepository;
         private readonly ISharePostRepository _sharePostRepository;
         private readonly IViewRepository _viewRepository;
+        private readonly CloudinaryConfig _cloudinaryConfig;
 
-        public PostsService(IPostRepository postRepository, IPostImageRepository postImageRepository, ILikePostRepository likePostRepository, ICommentRepository commentRepository, ISharePostRepository sharePostRepository, IViewRepository viewRepository)
+        public PostsService(IPostRepository postRepository, IPostImageRepository postImageRepository, ILikePostRepository likePostRepository, ICommentRepository commentRepository, ISharePostRepository sharePostRepository, IViewRepository viewRepository, CloudinaryConfig cloudinaryConfig)
         {
             _postRepository = postRepository;
             _postImageRepository = postImageRepository;
@@ -23,6 +25,7 @@ namespace PostService.Services.Implement
             _commentRepository = commentRepository;
             _sharePostRepository = sharePostRepository;
             _viewRepository = viewRepository;
+            _cloudinaryConfig = cloudinaryConfig;
         }
         //public Task<int[]> GetPostCountByYear(int year)
         //{
@@ -223,6 +226,12 @@ namespace PostService.Services.Implement
             //4. Xóa ViewPost có postId
             await _viewRepository.DeleteAllByPostId(postId);
             //5. Xóa PostImage có postId
+            IEnumerable<PostImage> postImages = await _postImageRepository.GetAllByPostId(postId);
+
+            foreach (PostImage postImage in postImages)
+            {
+                await _cloudinaryConfig.DeleteImageAsync(postImage.PublicId);
+            }
             await _postImageRepository.DeleteAllByPostId(postId);
 
             return await _postRepository.DeletePost(postId);

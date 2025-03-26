@@ -96,7 +96,7 @@ namespace PostService.Controllers
 
             if (newPost <= 0) return BadRequest("Error message: Fail to update post!");
 
-            return Ok("Output message: Update post successfully");
+            return Ok(newPost);
         }
 
         [HttpDelete("{postId}")]

@@ -120,7 +120,7 @@ namespace Client.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [HttpGet("/Posts/DeletePost/{postId}")]
+        [HttpGet("/Post/DeletePost/{postId}")]
         public async Task<IActionResult> DeletePost([FromRoute] int postId)
         {
             int accId = GetCookiesAccId();
@@ -306,6 +306,171 @@ namespace Client.Controllers
             }
         }
 
+        [HttpGet("/Post/UpdatePost")] 
+        public async Task<IActionResult> UpdatePost([FromQuery] int postId, [FromQuery] int accountId)
+        {
+            UpdatePostPageViewModel viewModel = new UpdatePostPageViewModel();
+            // Đảm bảo viewModel.UpdatePostViewModel không bị null trước khi gán
+            if (viewModel.UpdatePostViewModel == null)
+            {
+                viewModel.UpdatePostViewModel = new UpdatePostViewModel();
+            }
+
+            int cookiesAccId = GetCookiesAccId();
+            if (cookiesAccId <= 0)
+            {
+                return RedirectToAction("Index", "Authen");
+            }
+
+            if (cookiesAccId != accountId)
+            {
+                return RedirectToAction("PersonalPage", "Profile", new {id = accountId});
+            }
+
+            //GOI API LAY THONG TIN POST
+            HttpResponseMessage postResponse = await client.GetAsync($"{postUrl}/{postId}");
+            if (!postResponse.IsSuccessStatusCode)
+            {
+                string errorMessage = await postResponse.Content.ReadAsStringAsync();
+                ViewBag.Error = $"Không thể tải bài đăng: {errorMessage}";
+                return View(new PostDetailViewModel());
+            }
+
+            string postData = await postResponse.Content.ReadAsStringAsync();
+            PostDTO postDTO = JsonConvert.DeserializeObject<PostDTO>(postData);
+            viewModel.PostDTO = postDTO;
+
+            //FIX LỖI KHÔNG HIỆN CONTENT POST LÊN TEXTAREA
+            viewModel.UpdatePostViewModel.ContentPost = postDTO.post.PostContent;
+
+            //GỌI API LẤY ACCOUNT BẰNG ACCOUNT ID
+            HttpResponseMessage accountResponse = await client.GetAsync($"{accountUrl}/DetailFarmer{accountId}");
+            if (accountResponse.IsSuccessStatusCode)
+            {
+                string accountData = await accountResponse.Content.ReadAsStringAsync();
+                viewModel.PostDTO.Account = JsonConvert.DeserializeObject<Account>(accountData);
+            }
+
+            //LẤY LIST CATEGORY
+            // Lấy danh mục bài viết
+            var categoryResponse = await client.GetAsync($"{categoryPostUrl}");
+            if (categoryResponse.IsSuccessStatusCode)
+            {
+                var responseListCategoryPost = await categoryResponse.Content.ReadAsStringAsync();
+                viewModel.CategoryPosts = JsonConvert.DeserializeObject<List<CategoryPost>>(responseListCategoryPost);
+            }
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePost([Bind(Prefix = "UpdatePostViewModel")] UpdatePostViewModel request)
+        {
+            int cookiesAccId = GetCookiesAccId();
+
+            if (cookiesAccId <= 0)
+            {
+                return RedirectToAction("Index", "Authen");
+            }
+
+            if (request.AccountId == null || request.AccountId <= 0)
+            {
+                return RedirectToAction("Index", "Authen");
+            }
+
+            if (request.CategoryId == null || request.CategoryId <= 0)
+            {
+                request.CategoryId = 1;
+            }
+
+            PostRequestDTO postRequest = new PostRequestDTO();
+            postRequest.PostId = request.PostId;
+            postRequest.CategoryPostId = request.CategoryId;
+            postRequest.AccountId = request.AccountId;
+            postRequest.PostContent = request.ContentPost;
+
+            var contentPost = new StringContent(JsonConvert.SerializeObject(postRequest), System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage responsePost = await client.PutAsync($"{postUrl}/{request.PostId}", contentPost);
+
+            //NẾU UPDATE POST KHÔNG THÀNH CÔNG
+            if (!responsePost.IsSuccessStatusCode)
+            {
+                ViewBag.Error = "Update post fail.";
+                return RedirectToAction("PersonalPage", "Profile", new { id = cookiesAccId });
+            }
+
+            var responseString = await responsePost.Content.ReadAsStringAsync();
+            int postResponse = JsonConvert.DeserializeObject<int>(responseString);
+
+            if (postResponse <= 0)
+            {
+                ViewBag.Error = "Update post fail.";
+                return RedirectToAction("PersonalPage", "Profile", new { id = cookiesAccId });
+            }
+
+            if (request.IsDeleteOldImage)
+            {
+                //GỌI API XÓA TOÀN BỘ ẢNH CŨ CỦA POST
+                HttpResponseMessage responseDelete = await client.DeleteAsync($"{postImageUrl}/delete-all-of-post/{request.PostId}");
+                if (responseDelete.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Xóa ảnh cũ thành công");
+                }
+            }
+
+            //THEM ẢNH MỚI
+            int postId = request.PostId;
+
+            if (request.Images != null && request.Images.Count > 0)
+            {
+                //Cấu hình content gửi về api
+                using (var contentCloud = new MultipartFormDataContent())
+                {
+                    foreach (var image in request.Images)
+                    {
+                        var memoryStream = new MemoryStream();
+                        image.OpenReadStream().CopyTo(memoryStream);
+                        memoryStream.Position = 0; // Đặt lại vị trí đầu stream
+
+                        var fileContent = new StreamContent(memoryStream);
+                        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(image.ContentType);
+
+                        contentCloud.Add(fileContent, "request", image.FileName);
+                    }
+
+                    //Gọi api
+                    var responseCloud = await client.PostAsync($"{cloudUrl}/upload-list", contentCloud);
+
+                    if (responseCloud.IsSuccessStatusCode)
+                    {
+                        var responseStringImage = await responseCloud.Content.ReadAsStringAsync();
+                        List<ImageUploadResponseDTO> imageResponse = JsonConvert.DeserializeObject<List<ImageUploadResponseDTO>>(responseStringImage);
+
+                        if (imageResponse == null)
+                        {
+                            Console.WriteLine("Upload image không thành công.");
+                        }
+                        else
+                        {
+                            foreach (var image in imageResponse)
+                            {
+                                PostImageRequestDTO imageRequest = new PostImageRequestDTO();
+                                imageRequest.PostId = postId;
+                                imageRequest.ImageUrl = image.ImageUrl;
+                                imageRequest.IsDeleted = false;
+                                imageRequest.PublicId = image.PublicId;
+
+                                var contentImage = new StringContent(JsonConvert.SerializeObject(imageRequest), System.Text.Encoding.UTF8, "application/json");
+                                var responseImageApi = await client.PostAsync(postImageUrl, contentImage);
+                            }
+                        }
+
+                    }
+                }
+            }
+            ViewBag.Data = "Update post successfully.";
+            return RedirectToAction("PersonalPage", "Profile", new {id = cookiesAccId});
+        }
         [HttpPost]
         public async Task<IActionResult> LikePost(int postId)
         {
