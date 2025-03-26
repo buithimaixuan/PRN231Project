@@ -13,5 +13,6 @@
         public int? YearOfExperience { get; set; }
         public string DegreeUrl { get; set; }
         public string Major { get; set; }
+        public int? OTP { get; set; }
     }
 }

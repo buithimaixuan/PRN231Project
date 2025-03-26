@@ -8,6 +8,7 @@ using UserService.DTOs;
 using UserService.Models;
 using UserService.PasswordHashing;
 using UserService.Services.Interface;
+using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UserService.Controllers
@@ -22,12 +23,15 @@ namespace UserService.Controllers
         private readonly IAccountService _accountService;
         private readonly PasswordHasher _passwordHasher;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IEmailSenderService _emailSender;
 
-        public AccountsController(IAccountService accountService, IHttpClientFactory httpClientFactory)
+        public AccountsController(IAccountService accountService, IHttpClientFactory httpClientFactory, PasswordHasher passwordHasher, IEmailSenderService emailSender)
         {
             _accountService = accountService;
             _passwordHasher = new PasswordHasher();
             _httpClientFactory = httpClientFactory;
+            _passwordHasher = passwordHasher;
+            _emailSender = emailSender;
         }
 
 
@@ -152,6 +156,41 @@ namespace UserService.Controllers
             existingAccount.YearOfExperience = accountDTO.YearOfExperience ?? null;
             existingAccount.DegreeUrl = accountDTO.DegreeUrl ?? null;
             existingAccount.Major = accountDTO.Major ?? null;
+            existingAccount.Otp = accountDTO.OTP ?? null;
+
+            await _accountService.UpdateAccount(existingAccount);
+            return Ok(existingAccount);
+        }
+
+
+        [HttpPut("UpdateOTP/{id}")]
+        public async Task<IActionResult> UpdateOTP(int id, [FromBody] UpdateAccountDTO accountDTO)
+        {
+            if (accountDTO == null)
+                return BadRequest("Invalid account.");
+
+            var existingAccount = await _accountService.GetByIdAccount(id);
+            if (existingAccount == null)
+                return NotFound("Account not found.");
+
+            string repEmail = existingAccount.Email;
+
+            string emailBody = $"Đây là mã OTP của bạn: {accountDTO.OTP}";
+
+            _emailSender.SendEmail(repEmail, "Mã OTP mật khẩu", emailBody);
+
+            existingAccount.FullName = accountDTO.FullName ?? null;
+            existingAccount.ShortBio = accountDTO.ShortBio ?? null;
+            existingAccount.Gender = accountDTO.Gender ?? null;
+            existingAccount.Email = accountDTO.Email;
+            existingAccount.Phone = accountDTO.Phone ?? null;
+            existingAccount.DateOfBirth = accountDTO.DateOfBirth ?? null;
+            existingAccount.Address = accountDTO.Address ?? null;
+            existingAccount.EducationUrl = accountDTO.EducationUrl ?? null;
+            existingAccount.YearOfExperience = accountDTO.YearOfExperience ?? null;
+            existingAccount.DegreeUrl = accountDTO.DegreeUrl ?? null;
+            existingAccount.Major = accountDTO.Major ?? null;
+            existingAccount.Otp = accountDTO.OTP ?? null;
 
             await _accountService.UpdateAccount(existingAccount);
             return Ok(existingAccount);
@@ -188,10 +227,10 @@ namespace UserService.Controllers
                 }
 
                 // Kiểm tra xem tài khoản có được tạo bằng Google không (Otp = -1)
-                if (!account.Otp.HasValue || account.Otp != -1)
+ /*               if (!account.Otp.HasValue || account.Otp != -1)
                 {
                     return BadRequest("This account was not created using Google or already has a password set.");
-                }
+                }*/
 
                 // Kiểm tra dữ liệu đầu vào
                 if (string.IsNullOrEmpty(request.NewPassword) || string.IsNullOrEmpty(request.ConfirmNewPassword))
