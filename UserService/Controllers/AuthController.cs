@@ -21,12 +21,14 @@ namespace UserService.Controllers
         private readonly IAccountService _accountService;
         private readonly PasswordHasher _passwordHasher;
         private readonly AuthenConfig _config;
+        private readonly Services.Interface.IEmailSender _emailSender;
 
-        public AuthController(IAccountService accountService, AuthenConfig config)
+        public AuthController(IAccountService accountService, AuthenConfig config, IEmailSender emailSender)
         {
             _accountService = accountService;
             _passwordHasher = new PasswordHasher();
             _config = config;
+            _emailSender = emailSender;
         }
 
         [HttpPost("register")]
@@ -35,23 +37,29 @@ namespace UserService.Controllers
             try
             {
                 // Kiểm tra các trường bắt buộc
-                if (string.IsNullOrEmpty(accountDTO.Email) || string.IsNullOrEmpty(accountDTO.Username) || string.IsNullOrEmpty(accountDTO.Password))
+                if (string.IsNullOrEmpty(accountDTO.Username) || string.IsNullOrEmpty(accountDTO.Password))
                 {
                     return BadRequest("Email, username, and password are required.");
                 }
 
                 // Kiểm tra xem email hoặc username đã tồn tại chưa
-                var existingAccountByPhone = await _accountService.GetAccountByPhone(accountDTO.Phone);
-                if (existingAccountByPhone != null)
+                if (accountDTO.Phone != null)
                 {
-                    return Conflict("Phone already exists.");
+                    var existingAccountByPhone = await _accountService.GetAccountByPhone(accountDTO.Phone);
+                    if (existingAccountByPhone != null)
+                    {
+                        return Conflict("Phone already exists.");
+                    }
                 }
 
                 // Kiểm tra xem email hoặc username đã tồn tại chưa
-                var existingAccountByEmail = await _accountService.GetAccountByEmail(accountDTO.Email);
-                if (existingAccountByEmail != null)
+                if (accountDTO.Email != null)
                 {
-                    return Conflict("Email already exists.");
+                    var existingAccountByEmail = await _accountService.GetAccountByEmail(accountDTO.Email);
+                    if (existingAccountByEmail != null)
+                    {
+                        return Conflict("Email already exists.");
+                    }
                 }
 
                 var existingAccountByUsername = await _accountService.GetByUsername(accountDTO.Username);
@@ -66,11 +74,11 @@ namespace UserService.Controllers
                 // Tạo đối tượng Account để lưu
                 var account = new Account
                 {
-                    RoleId = 2, // mặc định 3 (Farmer)
+                    RoleId = accountDTO.RoleId, // mặc định 3 (Farmer)
                     Username = accountDTO.Username,
                     Password = hashedPassword,
-                    Email = accountDTO.Email,
-                    EmailConfirmed = 0, // Mặc định chưa xác nhận email
+                    Email = accountDTO.Email ?? null,
+                    EmailConfirmed = accountDTO.EmailConfirmed ?? 0, // Mặc định chưa xác nhận email
                     Phone = accountDTO.Phone ?? null,
                     PhoneConfirmed = 0,
                     Gender = accountDTO.Gender ?? null,
@@ -84,7 +92,7 @@ namespace UserService.Controllers
                     Major = accountDTO.Major ?? null,
                     Address = accountDTO.Address ?? null,
                     IsDeleted = false,
-                    Otp = null
+                    Otp = accountDTO.Otp ?? null
                 };
 
                 // Thêm tài khoản vào database
@@ -103,54 +111,6 @@ namespace UserService.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            //try
-            //{
-            //    // Kiểm tra dữ liệu đầu vào
-            //    if (string.IsNullOrEmpty(loginDTO?.Identifier) || string.IsNullOrEmpty(loginDTO?.Password))
-            //    {
-            //        return BadRequest("Identifier (Email, Username, or PhoneNumber) and password are required.");
-            //    }
-
-            //    // Tìm tài khoản bằng identifier (Email, Username, hoặc PhoneNumber)
-            //    var account = await _accountService.GetAccountByIdentifier(loginDTO.Identifier);
-            //    if (account == null)
-            //    {
-            //        return Unauthorized("Invalid identifier or password.");
-            //    }
-
-            //    // Kiểm tra trạng thái tài khoản
-            //    if (account.IsDeleted.HasValue && account.IsDeleted.Value)
-            //    {
-            //        return Unauthorized("Account has been deleted.");
-            //    }
-
-            //    // Xác minh password
-            //    bool isPasswordValid = _passwordHasher.VerifyPassword(loginDTO.Password, account.Password);
-            //    if (!isPasswordValid)
-            //    {
-            //        return Unauthorized("Invalid identifier or password.");
-            //    }
-
-            //    string token = _config.GenerateToken(loginDTO);
-
-            //    // Đăng nhập thành công, trả về thông tin cơ bản (có thể mở rộng để trả về token JWT)
-            //    return Ok(new LoginResponseDTO
-            //    {
-            //        Message = "Login successful.",
-            //        AccountId = account.AccountId,
-            //        Username = account.Username,
-            //        Email = account.Email,
-            //        Phone = account.Phone,
-            //        RoleId = account.RoleId,
-            //        Token = token
-            //    });
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Error: {ex.Message}\nInner Exception: {ex.InnerException?.Message}");
-            //    return StatusCode(500, $"Internal server error: {ex.Message} - {ex.InnerException?.Message}");
-            //}
-
             var result = await _config.Authenticate(loginDTO);
             if (result == null)
             {
@@ -159,6 +119,26 @@ namespace UserService.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("send-email")] 
+        public async Task<IActionResult> SendEmail([FromBody] SenderDTO request)
+        {
+            if (string.IsNullOrEmpty(request.To) || string.IsNullOrEmpty(request.Subject) || string.IsNullOrEmpty(request.Body))
+            {
+                return BadRequest("All fields are required.");
+            }
+
+            try
+            {
+                await _emailSender.SendEmailAsync(request.To, request.Subject, request.Body);
+                return Ok("Email sent successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Failed to send email: {ex.Message}");
+            }
+        }
+
 
         [HttpPost("google-login")]
         public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDTO request)

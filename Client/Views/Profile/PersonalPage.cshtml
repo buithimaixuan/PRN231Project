@@ -175,7 +175,8 @@ else
                                 <i class="fa fa-user-friends fa-fw w3-margin-right"></i> Friends (@Model.PersonalPageDTO.listFriends.Count())
                             </a>
                             @{
-                                var photosDTO = await GetPhotos(Model.PersonalPageDTO.accountDTO.AccountId);
+                               
+                                var photosDTO = await GetPhotos(Model.PersonalPageDTO.accountDTO.AccountId ?? 0);
                             }
                             <a asp-controller="Profile" asp-action="PersonalPage" asp-route-id="@Model.PersonalPageDTO.accountDTO.AccountId" asp-route-view="photos" class="w3-button w3-block w3-theme-l1 w3-left-align">
                                 <i class="fa fa-picture-o fa-fw w3-margin-right"></i> Photos (@photosDTO.CountPhotos)

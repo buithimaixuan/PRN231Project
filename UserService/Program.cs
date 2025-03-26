@@ -22,6 +22,8 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<PasswordHasher>();
 
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 // Friend DI
 builder.Services.AddScoped<FriendRequestDAO>();
 builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();

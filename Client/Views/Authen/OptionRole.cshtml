@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAccess.cshtml";
+    ViewData["Title"] = "Lựa chọn chức vụ";
+}
+<main>
+    <div class="container-role">
+        <h1>Bạn muốn tạo tài khoản cho?</h1>
+
+        <div class="option-role">
+            <a class="register-farmer" asp-action="RegisterFarmer" asp-controller="Authen">
+                Nông dân
+            </a>
+            <a class="register-expert" asp-action="RegisterExpert" asp-controller="Authen">
+                Chuyên gia
+            </a>
+        </div>
+
+        <div class="back-login">
+            <a asp-action="Index" asp-controller="Authen"><i class="fa-regular fa-hand-point-left"></i> Trở về trang đăng nhập</a>
+        </div>
+    </div>
+</main>
