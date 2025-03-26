@@ -27,5 +27,7 @@ namespace PostService.Repositories.Implement
         {
             return await _viewDAO.GetViewByPostId(postId);
         }
+
+        public async Task DeleteAllByPostId(int postId) => await _viewDAO.DeleteAllByPostId(postId);
     }
 }

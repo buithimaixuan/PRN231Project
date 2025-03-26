@@ -23,5 +23,6 @@ namespace PostService.Repositories.Implement
         public async Task<LikePost> AddLike(int accountId, int postId, bool isLike = true) => await _likePostDAO.AddLike(accountId, postId, isLike);
         public async Task RemoveLike(int accountId, int postId) => await _likePostDAO.RemoveLike(accountId, postId);
         public async Task UpdateLike(int likePostId, bool isLike) => await _likePostDAO.UpdateLike(likePostId, isLike);
+        public async Task DeleteAllByPostId(int postId) => await _likePostDAO.DeleteAllByPostId(postId);
     }
 }

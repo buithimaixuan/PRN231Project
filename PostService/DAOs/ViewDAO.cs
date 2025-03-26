@@ -1,4 +1,5 @@
-﻿using PostService.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PostService.Models;
 
 namespace PostService.DAOs
 {
@@ -14,6 +15,19 @@ namespace PostService.DAOs
         {
             _context.Views.Add(view);
             return await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAllByPostId(int postId)
+        {
+            var views = await _context.Views
+                                 .Where(c => c.PostId == postId)
+                                 .ToListAsync();
+
+            if (views.Any())
+            {
+                _context.Views.RemoveRange(views);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

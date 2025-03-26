@@ -1,4 +1,5 @@
-﻿using PostService.Models;
+﻿using PostService.DAOs;
+using PostService.Models;
 using PostService.Repositories.Interface;
 using PostService.Services.Interface;
 
@@ -32,6 +33,11 @@ namespace PostService.Services.Implement
         public async Task<IEnumerable<PostImage>> GetPostImagesByPostId(int postId)
         {
             return await _postImageRepository.GetAllByPostId(postId);
+        }
+
+        public async Task DeleteAllByPostId(int postId)
+        {
+            await _postImageRepository.DeleteAllByPostId(postId);
         }
     }
 }

@@ -120,6 +120,36 @@ namespace Client.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet("/Posts/DeletePost/{postId}")]
+        public async Task<IActionResult> DeletePost([FromRoute] int postId)
+        {
+            int accId = GetCookiesAccId();
+
+            if (accId <= 0)
+            {
+                return RedirectToAction("Index", "Authen");
+            }
+
+            if (postId <= 0)
+            {
+                ViewBag.Error = "Invalid post ID";
+                return RedirectToAction("PersonalPage", "Profile");
+            }
+
+            //Xóa post
+            //API NAY DA XOA CAC TABLE LIEN QUAN DEN POST NAY
+            HttpResponseMessage response = await client.DeleteAsync($"{postUrl}/{postId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ViewBag.Error = "Delete post fail";
+            } else
+            {
+                ViewBag.Data = "Delete post successfully";
+            }
+
+            return RedirectToAction("PersonalPage", "Profile", new {id = accId});
+        }
         public async Task<IActionResult> PostDetail(int id)
         {
             if (GetCookiesAccId() <= 0)

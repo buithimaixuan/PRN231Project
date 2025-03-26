@@ -13,14 +13,16 @@ namespace PostService.Services.Implement
         private readonly ILikePostRepository _likePostRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly ISharePostRepository _sharePostRepository;
+        private readonly IViewRepository _viewRepository;
 
-        public PostsService(IPostRepository postRepository, IPostImageRepository postImageRepository, ILikePostRepository likePostRepository, ICommentRepository commentRepository, ISharePostRepository sharePostRepository)
+        public PostsService(IPostRepository postRepository, IPostImageRepository postImageRepository, ILikePostRepository likePostRepository, ICommentRepository commentRepository, ISharePostRepository sharePostRepository, IViewRepository viewRepository)
         {
             _postRepository = postRepository;
             _postImageRepository = postImageRepository;
             _likePostRepository = likePostRepository;
             _commentRepository = commentRepository;
             _sharePostRepository = sharePostRepository;
+            _viewRepository = viewRepository;
         }
         //public Task<int[]> GetPostCountByYear(int year)
         //{
@@ -208,6 +210,22 @@ namespace PostService.Services.Implement
         public Task<int> DeletePost(int postId)
         {
             return _postRepository.DeletePost(postId);
+        }
+
+        public async Task<int> DeleteAllByPostId(int postId)
+        {
+            //1. Xóa Comment có postId
+            await _commentRepository.DeleteAllByPostId(postId);
+            //2. Xóa LikePost có postId
+            await _likePostRepository.DeleteAllByPostId(postId);
+            //3. Xóa SharePost có postId
+            await _sharePostRepository.DeleteAllByPostId(postId);
+            //4. Xóa ViewPost có postId
+            await _viewRepository.DeleteAllByPostId(postId);
+            //5. Xóa PostImage có postId
+            await _postImageRepository.DeleteAllByPostId(postId);
+
+            return await _postRepository.DeletePost(postId);
         }
         public async Task<IEnumerable<Comment>> GetAllCommentPostByPostId(int id)
         {

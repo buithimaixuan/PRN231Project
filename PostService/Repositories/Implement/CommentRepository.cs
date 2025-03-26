@@ -30,5 +30,7 @@ namespace PostService.Repositories.Implement
         public async Task<IEnumerable<Comment>> GetAllCommentPostByPostId(int id) => await _commentPostDAO.GetAllCommentPostByPostId(id);
 
         public async Task Update(Comment item) => await _commentPostDAO.Update(item);
+
+        public async Task DeleteAllByPostId(int postId) => await _commentPostDAO.DeleteAllByPostId(postId);
     }
 }

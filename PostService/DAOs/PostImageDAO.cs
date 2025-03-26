@@ -32,5 +32,18 @@ namespace PostService.DAOs
             _context.PostImages.Remove(postImage);
             return await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteAllByPostId(int postId)
+        {
+            var images = await _context.PostImages
+                                 .Where(c => c.PostId == postId)
+                                 .ToListAsync();
+
+            if (images.Any())
+            {
+                _context.PostImages.RemoveRange(images);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -8,5 +8,6 @@ namespace PostService.Repositories.Interface
         Task<IEnumerable<PostImage>> GetAllByPostId(int postId);
         Task<int> AddPostImage(PostImage postImage);
         Task<int> DeleteImage(int postImageId);
+        Task DeleteAllByPostId(int postId);
     }
 }

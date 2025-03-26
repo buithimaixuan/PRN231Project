@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Security.Claims;
-using System.Net.Http;
+
 using Client.ViewModel;
+using Newtonsoft.Json;
+using Client.Models;
+using Azure.Core;
 
 namespace Client.Controllers
 {
@@ -13,6 +15,7 @@ namespace Client.Controllers
     {
         private readonly HttpClient _clientProfile;
         private readonly string _accountUrl;
+        private string categoryPostUrl = "";
 
         public ProfileController()
         {
@@ -20,6 +23,9 @@ namespace Client.Controllers
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             _clientProfile.DefaultRequestHeaders.Accept.Add(contentType); // Chỉ thêm header Accept
             _accountUrl = "http://localhost:5157/api/Accounts";
+
+            //nam
+            categoryPostUrl = "https://localhost:7231/api/post-categories";
         }
 
         [Authorize]
@@ -27,6 +33,8 @@ namespace Client.Controllers
         {
             try
             {
+                PersonalPageViewModel viewModel = new PersonalPageViewModel();  
+
                 // Gọi API GetUserPersonalPage
                 string requestUrl = $"{_accountUrl}/personal-page/{id}";
                 Console.WriteLine($"Calling API: {requestUrl}");
@@ -45,10 +53,7 @@ namespace Client.Controllers
 
                 // Đọc và deserialize dữ liệu từ API
                 var content = await response.Content.ReadAsStringAsync();
-                var profile = JsonSerializer.Deserialize<PersonalPageDTO>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var profile = JsonConvert.DeserializeObject<PersonalPageDTO>(content);
 
                 if (profile == null || profile.accountDTO == null)
                 {
@@ -56,12 +61,22 @@ namespace Client.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
+                viewModel.PersonalPageDTO = profile;
+
+                //GỌI API LẤY CATEGORY POST CHO ADD POST TRONG PROFILE
+                var categoryResponse = await _clientProfile.GetAsync($"{categoryPostUrl}");
+                if (categoryResponse.IsSuccessStatusCode)
+                {
+                    var responseListCategoryPost = await categoryResponse.Content.ReadAsStringAsync();
+                    viewModel.categoryPosts = JsonConvert.DeserializeObject<List<CategoryPost>>(responseListCategoryPost);
+                }
+
                 // Truyền dữ liệu vào ViewBag
                 ViewBag.ViewMode = view;
                 ViewBag.Otp = profile.accountDTO.Otp;
 
                 // Truyền dữ liệu vào View
-                return View(profile);
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -99,10 +114,7 @@ namespace Client.Controllers
 
                 // Đọc và deserialize dữ liệu từ API
                 var content = await response.Content.ReadAsStringAsync();
-                var profile = JsonSerializer.Deserialize<PersonalPageDTO>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var profile = JsonConvert.DeserializeObject<PersonalPageDTO>(content);
 
                 if (profile == null || profile.accountDTO == null)
                 {
@@ -233,7 +245,7 @@ namespace Client.Controllers
                 };
 
                 // Gọi API để cập nhật thông tin tài khoản
-                var content = new StringContent(JsonSerializer.Serialize(updateAccountDTO), System.Text.Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonConvert.SerializeObject(updateAccountDTO), System.Text.Encoding.UTF8, "application/json");
                 var response = await _clientProfile.PutAsync($"{_accountUrl}/Update/{accountIDLogin}", content);
 
                 if (!response.IsSuccessStatusCode)
@@ -289,7 +301,7 @@ namespace Client.Controllers
                 };
 
                 string requestUrl = $"{_accountUrl}/SetPassword/{accountIDLogin}";
-                var content = new StringContent(JsonSerializer.Serialize(setPasswordDTO), System.Text.Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonConvert.SerializeObject(setPasswordDTO), System.Text.Encoding.UTF8, "application/json");
                 var response = await _clientProfile.PutAsync(requestUrl, content);
 
                 if (!response.IsSuccessStatusCode)
@@ -346,7 +358,7 @@ namespace Client.Controllers
                 };
 
                 string requestUrl = $"{_accountUrl}/ChangePassword/{accountIDLogin}";
-                var content = new StringContent(JsonSerializer.Serialize(changePasswordDTO), System.Text.Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonConvert.SerializeObject(changePasswordDTO), System.Text.Encoding.UTF8, "application/json");
                 var response = await _clientProfile.PutAsync(requestUrl, content);
 
                 if (!response.IsSuccessStatusCode)
@@ -378,7 +390,7 @@ namespace Client.Controllers
                     RequestStatus = "pending"
                 };
 
-                var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonConvert.SerializeObject(request), System.Text.Encoding.UTF8, "application/json");
                 var response = await _clientProfile.PostAsync($"{_accountUrl}/friend-request/send", content);
 
                 if (!response.IsSuccessStatusCode)
@@ -524,10 +536,7 @@ namespace Client.Controllers
 
                 // Đọc và deserialize dữ liệu từ API
                 var content = await response.Content.ReadAsStringAsync();
-                var friends = JsonSerializer.Deserialize<IEnumerable<FriendRequestDTO>>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var friends = JsonConvert.DeserializeObject<IEnumerable<FriendRequestDTO>>(content);
 
                 if (friends == null)
                 {
@@ -544,10 +553,7 @@ namespace Client.Controllers
                 }
 
                 var profileContent = await profileResponse.Content.ReadAsStringAsync();
-                var profile = JsonSerializer.Deserialize<PersonalPageDTO>(profileContent, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var profile = JsonConvert.DeserializeObject<PersonalPageDTO>(profileContent);
 
                 // Truyền dữ liệu vào ViewBag
                 ViewBag.IsLoggedIn = isLoggedIn;
@@ -605,10 +611,7 @@ namespace Client.Controllers
 
                 // Đọc và deserialize dữ liệu từ API
                 var content = await response.Content.ReadAsStringAsync();
-                var photosDTO = JsonSerializer.Deserialize<AccountPhotosDTO>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var photosDTO = JsonConvert.DeserializeObject<AccountPhotosDTO>(content);
 
                 if (photosDTO == null || photosDTO.Photos == null)
                 {
@@ -625,10 +628,7 @@ namespace Client.Controllers
                 }
 
                 var profileContent = await profileResponse.Content.ReadAsStringAsync();
-                var profile = JsonSerializer.Deserialize<PersonalPageDTO>(profileContent, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var profile = JsonConvert.DeserializeObject<PersonalPageDTO>(profileContent);
 
                 // Truyền dữ liệu vào ViewBag
                 ViewBag.IsLoggedIn = isLoggedIn;
@@ -643,5 +643,7 @@ namespace Client.Controllers
                 return RedirectToAction("PersonalPage", new { id });
             }
         }
+
+
     }
 }
