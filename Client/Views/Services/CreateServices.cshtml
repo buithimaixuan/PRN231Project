@@ -12,17 +12,17 @@
 <!-- JQUERY STEP -->
 <link rel="stylesheet" href="~/css/addServiceStyle.css"/>
 <section class="body-form">
-    <h1>Tạo dịch vụ</h1>
+    <h1>Create Service</h1>
     <form class="cf" method="post" asp-controller="Services" asp-action="CreateServices">
         <div class="half left cf">
-            <h4 class="title-input">Tiêu đề</h4>
+            <h4 class="title-input">Title</h4>
             <input class="input-form" asp-for="TitleInput" type="text" id="input-name" placeholder="Tiêu đề">
             <div class="text-danger valid-service">
                 <span asp-validation-for="TitleInput" class="text-danger"></span>
             </div>
-            <h4 class="title-input">Thể loại</h4>
+            <h4 class="title-input">Category</h4>
             <select id="category-ser-dropdown" asp-for="SelectedCategoryServiceId">
-                <option value="">-- Chọn thể loại --</option>
+                <option value="">-- Select --</option>
                 @if(Model.ServiceLCateList != null){
                     @foreach (var category in Model.ServiceLCateList)
                     {
@@ -33,7 +33,7 @@
             <div class="text-danger valid-service">
                 <span asp-validation-for="SelectedCategoryServiceId" class="text-danger"></span>
             </div>
-            <h4 class="title-input">Giá dịch vụ</h4>
+            <h4 class="title-input">Service Price</h4>
             <input class="input-form" asp-for="PriceInput" type="text" id="input-email" placeholder="Giá">
             <div class="text-danger valid-service">
                 @if (ViewData.ModelState.ContainsKey("PriceNotZero"))
@@ -45,12 +45,12 @@
                     <span class="valid-service">@ViewData.ModelState["PriceInteger"].Errors[0].ErrorMessage</span>
                 }
             </div>
-            <h4 class="title-input" >Nội dung</h4>
+            <h4 class="title-input" >Description</h4>
             <textarea class="input-form" asp-for="Description" name="Description" type="text" id="input-message"></textarea>
             <div class="text-danger valid-service">
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
         </div>
-        <input class="submit-service" type="submit" value="Tạo mới" id="input-submit">
+        <input class="submit-service" type="submit" value="Create New" id="input-submit">
     </form>
 </section>
