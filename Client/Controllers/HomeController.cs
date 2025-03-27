@@ -2,11 +2,13 @@
 using Client.Models;
 using Client.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 
 namespace Client.Controllers
@@ -40,6 +42,8 @@ namespace Client.Controllers
         public async Task<IActionResult> Index()
         {
             int accId = GetCookiesAccId();
+            int roleId = GetCookiesRoleId();
+
             var viewModel = new HomeViewModel();
 
             //Lay account cua nguoi dung hien tai
@@ -51,6 +55,11 @@ namespace Client.Controllers
                     var responseAccount = await accountInfor.Content.ReadAsStringAsync();
                     viewModel.Account = JsonConvert.DeserializeObject<Account>(responseAccount);
                 }
+            }
+
+            if (roleId >= 0 && roleId == 1)
+            {
+                return RedirectToAction("Index", "Statistic");
             }
 
             // Lấy danh sách bài viết từ PostService
@@ -112,6 +121,23 @@ namespace Client.Controllers
             }
 
             return -1; // Không tìm thấy AccountID
+        }
+
+        public int GetCookiesRoleId()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext == null || !httpContext.User.Identity.IsAuthenticated)
+            {
+                return -1; // Người dùng chưa đăng nhập
+            }
+
+            var roleIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            if (roleIdClaim != null && int.TryParse(roleIdClaim.Value, out int roleId))
+            {
+                return roleId;
+            }
+
+            return -1; // Không tìm thấy RoleID
         }
 
     }

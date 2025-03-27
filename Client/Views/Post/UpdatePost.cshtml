@@ -18,19 +18,19 @@
 
                     @* FORM UPDATE *@
                     <div class="update-post-container">
-                        <h2>Chỉnh sửa bài viết</h2>
+                        <h2>Update Post</h2>
 
                         <form id="updatePostForm" method="post" asp-controller="Post" asp-action="UpdatePost" enctype="multipart/form-data">
                             <input type="hidden" value="@Model.PostDTO.Account.AccountId" asp-for="UpdatePostViewModel.AccountId">
                             <input type="hidden" value="@Model.PostDTO.post.PostId" asp-for="UpdatePostViewModel.PostId"/>
 
-                            <textarea asp-for="UpdatePostViewModel.ContentPost" placeholder="@Model.PostDTO.Account.FullName ơi, bạn đang nghĩ gì thế?" class="content-post-update"
+                            <textarea asp-for="UpdatePostViewModel.ContentPost" placeholder="@Model.PostDTO.Account.FullName, what are you thinking, today?" class="content-post-update"
                             required></textarea>
 
                             <div class="select">
-                                <label for="select-input">Chọn danh mục: </label>
+                                <label for="select-input">Select Category: </label>
                                 <select id="select-input" asp-for="UpdatePostViewModel.CategoryId">
-                                    <option value="" disabled selected>Chọn danh mục</option>
+                                    <option value="" disabled selected>Select Category</option>
                                     @foreach (var categoryPost in Model.CategoryPosts)
                                     {
                                         @if (categoryPost.CategoryPostId == Model.PostDTO.post.CategoryPostId)
@@ -48,17 +48,17 @@
                             @if (Model.PostDTO.postImages != null && Model.PostDTO.postImages.Count() > 0)
                             {
                                 <div id="optionChooseImage">
-                                    <label>Bạn có muốn xóa ảnh cũ không?</label>
+                                    <label>Do you want to delete old images?</label>
                                     <div>
-                                        <input type="radio" asp-for="UpdatePostViewModel.IsDeleteOldImage" value="true" /> Có
-                                        <input type="radio" asp-for="UpdatePostViewModel.IsDeleteOldImage" value="false" /> Không
+                                        <input type="radio" asp-for="UpdatePostViewModel.IsDeleteOldImage" value="true" /> Yes
+                                        <input type="radio" asp-for="UpdatePostViewModel.IsDeleteOldImage" value="false" /> No
                                     </div>
                                 </div>
                             }
 
 
                             <div id="imageOldPreviewUpdate">
-                                <p>Ảnh cũ:</p>
+                                <p>Old image:</p>
 
                                 <div style="margin-top: 10px; display: flex; flex-wrap: wrap;">
                                     @if (Model.PostDTO.postImages != null && Model.PostDTO.postImages.Count() > 0)
@@ -70,14 +70,14 @@
                                     }
                                     else
                                     {
-                                        <p>Bài post hiện không có ảnh</p>
+                                        <p>This post have not any image</p>
                                     }
                                 </div>
 
                             </div>
 
                             <div id="imageNewPreviewUpdate">
-                                <p>Ảnh mới: </p>
+                                <p>New image: </p>
                                 <div id="previewNewImage" style="margin-top: 10px; display: flex; flex-wrap: wrap;">
                                 </div>
                             </div>
@@ -86,16 +86,16 @@
 
                             <div class="actions" style="margin-top: 10px;">
                                 <button type="button" id="selectImageButton">
-                                    <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Ảnh/video
+                                    <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Image/Video
                                 </button>
                             </div>
 
                             <button type="submit"
                             style="width: 100%; margin-top: 10px; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 5px;">
-                                Lưu thay đổi
+                                Save
                             </button>
 
-                            <a asp-action="PersonalPage" asp-controller="Profile" asp-route-id="@Model.PostDTO.post.AccountId">Trở về trang cá nhân</a>
+                            <a asp-action="PersonalPage" asp-controller="Profile" asp-route-id="@Model.PostDTO.post.AccountId">Back to Personal page</a>
                         </form>
                     </div>
                     @* END FORM UPDATE *@
@@ -107,6 +107,6 @@
     </div>
 } else
 {
-    <a asp-action="Index" asp-controller="Authen">Đăng nhập lại</a>
+    <a asp-action="Index" asp-controller="Authen">Login</a>
 }
 

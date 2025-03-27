@@ -44,7 +44,7 @@
 
 @if (ViewBag.ErrorMessage != null)
 {
-    <p>Tai khonag khong ton tai hoac bi xoa roi</p>
+    <p>Account does not exist or deleted.</p>
 }
 else
 {
@@ -56,6 +56,7 @@ else
                 <!-- Left Column -->
                 <div class="w3-col m3">
                     <!-- accountDTO -->
+
                     <div class="w3-card w3-round w3-white pb-3">
                         <div class="w3-container">
                             <h4 class="w3-center">@Model.PersonalPageDTO.accountDTO.FullName</h4>
@@ -200,25 +201,25 @@ else
                                                 <img src="~/image/avatar2.png" alt="Profile Picture">
                                             </a>
 
-                                            <input id="postInput" type="text" placeholder="@Model.PersonalPageDTO.accountDTO.FullName ơi, bạn đang nghĩ gì thế?">
+                                    <input id="postInput" type="text" placeholder="@Model.PersonalPageDTO.accountDTO.FullName, what are you thinking, today?">
                                         </div>
                                     </div>
 
                                     <div class="popup" id="popupPost" style="z-index: 100;">
                                         <div class="popup-content">
                                             <button class="close-btn" id="closePopupBtn">×</button>
-                                            <h2>Tạo bài viết</h2>
+                                            <h2>Create Post</h2>
 
                                             <form id="postForm" method="post" asp-action="CreatePost" asp-controller="Post" enctype="multipart/form-data">
                                                 <input type="hidden" value="@Model.PersonalPageDTO.accountDTO.AccountId" asp-for="PostViewModel.AccountId">
 
-                                                <textarea asp-for="PostViewModel.ContentPost" placeholder="@Model.PersonalPageDTO.accountDTO.FullName ơi, bạn đang nghĩ gì thế?" class="content-post"
+                                                <textarea asp-for="PostViewModel.ContentPost" placeholder="@Model.PersonalPageDTO.accountDTO.FullName, what are you thinking, today?" class="content-post"
                                                           required></textarea>
 
                                                 <div class="select">
-                                                    <label for="select-input">Chọn danh mục: </label>
+                                                    <label for="select-input">Select Category: </label>
                                                     <select id="select-input" asp-for="PostViewModel.CategoryId">
-                                                        <option value="" disabled selected>Chọn danh mục</option>
+                                                        <option value="" disabled selected>Select Category</option>
                                                         @foreach (var categoryPost in Model.categoryPosts)
                                                         {
                                                             <option value="@categoryPost.CategoryPostId">@categoryPost.CategoryPostName</option>
@@ -227,20 +228,20 @@ else
                                                     </select>
                                                 </div>
 
-                                                <button type="button" id="clearImagesButton" style="display: none;">Xóa ảnh</button>
+                                                <button type="button" id="clearImagesButton" style="display: none;">Delete Image</button>
                                                 <div id="imagePreview" style="margin-top: 10px; display: flex; flex-wrap: wrap;"></div>
 
                                                 <input onchange="console.log(this.files)" type="file" id="imageInput" asp-for="PostViewModel.Images" accept="image/*" style="display: none;" multiple>
 
                                                 <div class="actions" style="margin-top: 10px;">
                                                     <button type="button" id="selectImageButton">
-                                                        <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Ảnh/video
+                                                        <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Image/Video
                                                     </button>
                                                 </div>
 
                                                 <button type="submit"
                                                         style="width: 100%; margin-top: 10px; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 5px;">
-                                                    Đăng
+                                                    Post
                                                 </button>
                                             </form>
                                         </div>
@@ -264,9 +265,9 @@ else
                                     </a>
                                     <div class="w3-right w3-opacity">
                                         <a asp-action="UpdatePost" asp-controller="Post" asp-route-postId="@post.post.PostId" asp-route-accountId="@post.post.AccountId" class="updatePost controlPostBtn">
-                                            Chỉnh sửa
+                                            Update
                                         </a>
-                                        <a class="deletePost controlPostBtn" data-postid="@post.post.PostId" data-target="#deletePostModal" data-toggle="modal">Xóa</a>
+                                        <a class="deletePost controlPostBtn" data-postid="@post.post.PostId" data-target="#deletePostModal" data-toggle="modal">Delete</a>
                                     </div>
 
                                     <div class="activity--header">
@@ -291,7 +292,7 @@ else
 
                                     <div class="w3-margin-top">
                                         <div class="activity--action fw--700 w3-margin-bottom">
-                                            <a asp-controller="Post" asp-action="PostDetail" asp-route-id="@post.post.PostId" class="h5">See More...</a>
+                                            <a asp-controller="Post" asp-action="PostDetail" asp-route-id="@post.post.PostId" class="h5">Read more...</a>
                                         </div>
                                     </div>
                                 </div>
@@ -310,15 +311,15 @@ else
                                 <div class="modal-content">
                                     <form>
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Xóa bài đăng</h4>
+                                            <h4 class="modal-title">Delete post</h4>
                                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                                         </div>
                                         <div class="modal-body">
-                                            <p>Bạn có muốn xóa bài đăng này không?</p>
+                                            <p>Do you want to delete this post?</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
-                                            <a id="confirmDeletePost" class="btn btn-danger">Xóa</a>
+                                            <input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Cancel">
+                                            <a id="confirmDeletePost" class="btn btn-danger">Delete</a>
                                         </div>
                                     </form>
                                 </div>
