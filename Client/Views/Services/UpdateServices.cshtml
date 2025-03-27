@@ -11,7 +11,7 @@
 <!-- JQUERY STEP -->
 <link rel="stylesheet" href="~/css/addServiceStyle.css" />
 <section class="body-form">
-    <h1>Cập nhật dịch vụ</h1>
+    <h1>Update Service</h1>
     <form class="cf" method="post" asp-controller="Services" asp-action="UpdateServices">
         <div class="half left cf">
             <input type="hidden" asp-for="ServiceDetail.ServiceId" />
@@ -20,12 +20,12 @@
             <input type="hidden" asp-for="ServiceDetail.AverageRating" />
             <input type="hidden" asp-for="ServiceDetail.RatingCount" />
             <input type="hidden" asp-for="ServiceDetail.IsEnable" />
-            <h4 class="title-input">Tiêu đề</h4>
+            <h4 class="title-input">Title</h4>
             <input class="input-form" type="text" placeholder="Tiêu đề" asp-for="TitleInput">
             <div class="text-danger valid-service">
                 <span asp-validation-for="TitleInput" class="text-danger"></span>
             </div>
-            <h4 class="title-input">Thể loại</h4>
+            <h4 class="title-input">Category</h4>
             <select id="category-ser-dropdown" asp-for="SelectedCategoryServiceId">
                 <option value="@Model.ServiceDetail.CategoryServiceId">@Model.SearchCateSerId.CategoryServiceName</option>
                 @if (Model.ServiceLCateList != null)
@@ -39,7 +39,7 @@
             <div class="text-danger valid-service">
                 <span asp-validation-for="SelectedCategoryServiceId" class="text-danger"></span>
             </div>
-            <h4 class="title-input">Giá dịch vụ</h4>
+            <h4 class="title-input">Service Price</h4>
             <input class="input-form" type="number" placeholder="Giá" asp-for="PriceInput">
             <div class="text-danger valid-service">
                 @if (ViewData.ModelState.ContainsKey("PriceNotZero"))
@@ -51,12 +51,12 @@
                     <span class="valid-service">@ViewData.ModelState["PriceInteger"].Errors[0].ErrorMessage</span>
                 }
             </div>
-            <h4 class="title-input">Nội dung</h4>
+            <h4 class="title-input">Description</h4>
             <textarea class="input-form" asp-for="Description" placeholder="Nội dung"></textarea>
             <div class="text-danger valid-service">
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
         </div>
-        <input class="submit-service" type="submit" value="Cập nhật" id="input-submit">
+        <input class="submit-service" type="submit" value="Update" id="input-submit">
     </form>
 </section>

@@ -464,14 +464,14 @@ namespace Client.Controllers
         [BindProperty]
         public decimal RatingPoint { get; set; }
         [BindProperty]
-        [Required(ErrorMessage = "Cần bạn đóng góp ý kiến")]
+        [Required(ErrorMessage = "Need your comments")]
         public string CommentService { get; set; }
         [HttpPost("ReviewService")]
         public async Task<IActionResult> ReviewService()
         {
             if (RatingPoint == 0)
             {
-                TempData["NoRating"] = "Số sao không được để trống";
+                TempData["NoRating"] = "Number of stars cannot be left blank";
                 return RedirectToPage("/Services/ServiceDetails", new { id = InputServiceId });
             }
 
@@ -620,17 +620,17 @@ namespace Client.Controllers
         }
 
         [BindProperty]
-        [Required(ErrorMessage = "Không được để trống")]
-        [StringLength(200, ErrorMessage = "Quá 200 ký tự")]
+        [Required(ErrorMessage = "Cannot be left blank")]
+        [StringLength(200, ErrorMessage = "Over 200 characters")]
         public string TitleInput { get; set; }
         [BindProperty]
-        [Required(ErrorMessage = "Không được để trống")]
+        [Required(ErrorMessage = "Cannot be left blank")]
         public double PriceInput { get; set; }
         [BindProperty]
-        [Required(ErrorMessage = "Không được để trống")]
+        [Required(ErrorMessage = "Cannot be left blank")]
         public string Description { get; set; }
         [BindProperty]
-        [Required(ErrorMessage = "Vui lòng chọn thể loại dịch vụ.")]
+        [Required(ErrorMessage = "Please select service category")]
         public int? SelectedCategoryServiceId { get; set; }
         [HttpPost("UpdateServices/{id}")]
         public async Task<IActionResult> UpdateServices(ServiceListViewModel vm)
