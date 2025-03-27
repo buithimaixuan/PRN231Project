@@ -30,35 +30,35 @@
 
                 <!-- LEFT FORM  -->
                 <div class="personal-infor">
-                    <h1 class="title">Thông tin cá nhân</h1>
+                    <h1 class="title">Personal Information</h1>
 
                     <div class="form-floating form-fullname">
-                        <input asp-for="FullName" type="text" placeholder="Nhập họ và tên" id="floatingFullname"
+                        <input asp-for="FullName" type="text" placeholder="Full name" id="floatingFullname"
                                class="fullname inputRegister form-control">
-                        <label for="floatingFullname">Họ và tên</label>
+                        <label for="floatingFullname">Full name</label>
 
                         <span asp-validation-for="FullName" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating form-dob">
-                        <input asp-for="DateOfBirth" type="date" placeholder="Ngày sinh" id="floatingDob"
+                        <input asp-for="DateOfBirth" type="date" placeholder="Birthday" id="floatingDob"
                                class="dateOfBirth inputRegister form-control">
-                        <label for="floatingDob">Ngày sinh</label>
+                        <label for="floatingDob">Birthday</label>
 
                         <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating form-gender">
                         <div class="gender-field">
-                            <label class="label-label" for="gender-options">Giới tính:</label>
+                            <label class="label-label" for="gender-options">Gender:</label>
                             <div class="gender-options" id="gender-options">
                                 <div class="male-option">
                                     <input type="radio" id="male" asp-for="Gender" value="Male">
-                                    <label for="male">Nam</label>
+                                    <label for="male">Male</label>
                                 </div>
                                 <div class="female-option">
                                     <input type="radio" id="female" asp-for="Gender" value="Female">
-                                    <label for="female">Nữ</label>
+                                    <label for="female">Female</label>
                                 </div>
                             </div>
                         </div>
@@ -66,9 +66,9 @@
                     </div>
 
                     <div class="form-floating form-phone">
-                        <input asp-for="PhoneNumber" type="text" placeholder="Số điện thoại" id="floatingPhone"
+                        <input asp-for="PhoneNumber" type="text" placeholder="Phone" id="floatingPhone"
                                class="phone inputRegister form-control">
-                        <label for="floatingPhone">Số điện thoại</label>
+                        <label for="floatingPhone">Phone</label>
 
                         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
@@ -82,65 +82,65 @@
                     </div>
 
                     <div class="form-floating form-address">
-                        <textarea asp-for="Address" placeholder="Địa chỉ" id="floatingAddress" class="address inputRegister form-control" style="height: 80px;"></textarea>
-                        <label for="floatingAddress">Địa chỉ</label>
+                        <textarea asp-for="Address" placeholder="Address" id="floatingAddress" class="address inputRegister form-control" style="height: 80px;"></textarea>
+                        <label for="floatingAddress">Address</label>
 
                         <span asp-validation-for="Address" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating form-username">
-                        <input asp-for="Username" type="text" placeholder="Nhập tên đăng nhập" id="floatingUsername"
+                        <input asp-for="Username" type="text" placeholder="Username" id="floatingUsername"
                                class="username inputRegister form-control">
-                        <label for="floatingUsername">Tên đăng nhập</label>
+                        <label for="floatingUsername">Username</label>
 
                         <span asp-validation-for="Username" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating form-password">
-                        <input asp-for="Password" type="password" placeholder="Tạo mật khẩu" id="floatingPass"
+                        <input asp-for="Password" type="password" placeholder="Password" id="floatingPass"
                                class="password inputRegister form-control">
-                        <label for="floatingPass">Mật khẩu</label>
+                        <label for="floatingPass">Password</label>
 
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating form-repassword">
-                        <input asp-for="ConfirmPassword" type="password" placeholder="Xác nhận mật khẩu" id="floatingRepass"
+                        <input asp-for="ConfirmPassword" type="password" placeholder="Confirm password" id="floatingRepass"
                                class="password form-control">
-                        <label for="floatingRepass">Xác nhận mật khẩu</label>
+                        <label for="floatingRepass">Confirm Password</label>
 
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
 
                     <div class="back-login">
-                        <a asp-action="Index" asp-controller="Authen"><i class="fa-regular fa-hand-point-left"></i> Trở về trang đăng nhập</a>
+                        <a asp-action="Index" asp-controller="Authen"><i class="fa-regular fa-hand-point-left"></i> Back to login page</a>
                     </div>
                 </div>
 
                 <!-- RIGHT FORM  -->
                 <div class="contact-infor">
-                    <h1 class="title">Thông tin liên lạc</h1>
+                    <h1 class="title">Contact Information</h1>
 
                     <div class="form-floating form-major">
-                        <input asp-for="Major" type="text" placeholder="Nhập chuyên ngành" id="floatingMajor"
+                        <input asp-for="Major" type="text" placeholder="Major" id="floatingMajor"
                                class="major inputRegister form-control">
-                        <label for="floatingMajor">Chuyên ngành</label>
+                        <label for="floatingMajor">Major</label>
 
                         <span asp-validation-for="Major" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating form-yoe">
-                        <input asp-for="YearOfExperience" type="number" placeholder="Số năm kinh nghiệm" id="floatingYoe"
+                        <input asp-for="YearOfExperience" type="number" placeholder="Year of experience" id="floatingYoe"
                                class="yoe inputRegister form-control">
-                        <label for="floatingYoe">Số năm kinh nghiệm</label>
+                        <label for="floatingYoe">Year of experience</label>
 
                         <span asp-validation-for="YearOfExperience" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating form-shortBio">
-                        <input asp-for="ShortBio" type="text" placeholder="Miêu tả" id="floatingShortBio"
+                        <input asp-for="ShortBio" type="text" placeholder="Short Bio" id="floatingShortBio"
                                class="shortBio inputRegister form-control">
-                        <label for="floatingShortBio">Miêu tả ngắn</label>
+                        <label for="floatingShortBio">Short Bio</label>
 
                         <span asp-validation-for="ShortBio" class="text-danger"></span>
                     </div>
@@ -148,7 +148,7 @@
                     <div class="form-floating fileEducation">
                         <div class="file-wrapper">
                             <div>
-                                <label class="labelEducation" for="fileEducation">Học vấn</label>
+                                <label class="labelEducation" for="fileEducation">Education</label>
                             </div>
                             <input class="file-input" type="file" id="fileEducation" asp-for="fileEducation">
                         </div>
@@ -158,7 +158,7 @@
                     <div class="form-floating fileDegree">
                         <div class="file-wrapper">
                             <div>
-                                <label for="fileDegree">Chứng chỉ</label>
+                                <label for="fileDegree">Degree</label>
                             </div>
                             <input class="file-input" type="file" id="fileDegree" asp-for="fileDegree">
                         </div>
@@ -168,7 +168,7 @@
                     <div class="form-floating fileAvatar">
                         <div class="file-wrapper">
                             <div>
-                                <label for="fileAvatar">Ảnh đại diện</label>
+                                <label for="fileAvatar">Avatar</label>
                             </div>
                             <input class="file-input" type="file" id="fileAvatar" asp-for="fileAvatar">
                         </div>
@@ -176,7 +176,7 @@
                     </div>
 
                     <div class="field button-field">
-                        <button type="submit">Đăng ký</button>
+                        <button type="submit">Register</button>
                     </div>
                 </div>
 
