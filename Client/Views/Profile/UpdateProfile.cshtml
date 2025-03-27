@@ -1,6 +1,6 @@
 ﻿@model Client.ViewModel.ProfileViewModel
 @{
-    ViewData["Title"] = "Update Profile";
+    ViewData["Title"] = Model.Account.FullName ?? "Update Profile";
 }
 
 <style>

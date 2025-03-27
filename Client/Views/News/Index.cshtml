@@ -1,13 +1,13 @@
 ﻿@model Client.ViewModel.NewsViewModel
 
 @{
-    ViewData["Title"] = "Tin tức";
+    ViewData["Title"] = "News";
 }
 
 <section class="page--wrapper pb--20">
     <div class="container">
         <div class="d-flex">
-            <a href="@Url.Action("Index", "News")"><h2 class="pb--20">Tin tức</h2></a>
+            <a href="@Url.Action("Index", "News")"><h2 class="pb--20">News</h2></a>
             @if (Model.Category != null)
             {
                 <i class="ml--10 text- fa fa-caret-right" style="padding: 35px 20px 0 10px"></i>
@@ -74,7 +74,7 @@
                                             <!-- Post Meta End -->
                                             <!-- Post Action Start -->
                                             <div class="post--action text-darkest mt--8">
-                                                <a href="@Url.Action("NewsDetail", "News", new { id = news.NewsId })" class="btn-link">Chi tiết tin tức<i class="ml--10 text-primary fa fa-caret-right"></i></a>
+                                                <a href="@Url.Action("NewsDetail", "News", new { id = news.NewsId })" class="btn-link">News Detail<i class="ml--10 text-primary fa fa-caret-right"></i></a>
                                             </div>
                                             <!-- Post Action End -->
                                         </div>
@@ -86,7 +86,7 @@
                         }
                         else
                         {
-                            <p>Không có tin tức nào để hiển thị.</p>
+                            <p>There are no news to show.</p>
                         }
 
                         @if (TempData["Message"] != null)
@@ -163,7 +163,7 @@
             <!-- Main Sidebar Start -->
             <div class="main--sidebar col-md-4 pb--60" data-trigger="stickyScroll">
                 <div class="widget">
-                    <h2 class="h4 fw--700 widget--title">Tìm kiếm tin tức</h2>
+                    <h2 class="h4 fw--700 widget--title">Search news</h2>
 
                     <div class="buddy-finder--widget">
                         <form method="get" action="@Url.Action("Index", "News")">
@@ -171,15 +171,15 @@
                                 <div class="col-xs-12">
                                     <div class="form-group">
                                         <label>
-                                            <span class="text-darker ff--primary fw--500">Tìm kiếm tin tức</span>
-                                            <input class="form-control form-sm" name="searchKey" placeholder="Nhập từ khóa tin tức bạn muốn tìm" value="@Model.SearchKey" />
+                                            <span class="text-darker ff--primary fw--500">Search key</span>
+                                            <input class="form-control form-sm" name="searchKey" placeholder="Enter search key" value="@Model.SearchKey" />
                                         </label>
                                     </div>
                                 </div>
                                 <div class="col-xs-12">
                                     <div class="form-group">
                                         <label>
-                                            <span class="text-darker ff--primary fw--500">Danh mục tin tức</span>
+                                            <span class="text-darker ff--primary fw--500">News category</span>
                                             <select class="form-control form-sm" name="cat">
                                                 <option value="">Chọn danh mục</option>
                                                 @foreach (var category in Model.CategoryNewsList)
@@ -198,7 +198,7 @@
                                     </div>
                                 </div>
                                 <div class="col-xs-12">
-                                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                    <button type="submit" class="btn btn-primary">Search</button>
                                 </div>
                             </div>
                         </form>
