@@ -41,10 +41,10 @@
 				<div class="table-title">
 					<div class="row">
 						<div class="col-sm-6">
-							<h2>Quản lý <b>dịch vụ</b></h2>
+							<h2>Manage <b>service</b></h2>
 						</div>
 						<div class="col-sm-6">
-							<a asp-controller="Services" asp-action="CreateServices" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Tạo dịch vụ mới</span></a>
+							<a asp-controller="Services" asp-action="CreateServices" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Create Service</span></a>
 						</div>
 					</div>
 				</div>
@@ -52,12 +52,12 @@
 					<thead>
 						<tr>
 							<th>ID</th>
-							<th>Tiêu đề</th>
-							<th>Ngày tạo</th>
-							<th>Giá</th>
-							<th>Đánh giá</th>
-							<th>Tình trạng</th>
-							<th>Thao tác</th>
+							<th>Title</th>
+							<th>Start Date</th>
+							<th>Price</th>
+							<th>Rating</th>
+							<th>Status</th>
+							<th>Action</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -71,11 +71,11 @@
 								<td>@serviceList.AverageRating</td>
 								@if (serviceList.IsEnable == true)
 								{
-									<td>Hoạt động</td>
+									<td>Enable</td>
 								}
 								else
 								{
-									<td>Ngừng hoạt động</td>
+									<td>Disable</td>
 								}
 								<td class="action-service">
 									<a asp-controller="Services" asp-action="UpdateServices" asp-route-id="@serviceList.ServiceId" class="edit"><i class="material-icons" title="Edit">&#xE254;</i></a>
@@ -99,15 +99,15 @@
 					<div class="modal-content">
 						<form>
 							<div class="modal-header">
-								<h4 class="modal-title">Xóa dịch vụ</h4>
+								<h4 class="modal-title">Delete Service</h4>
 								@* <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> *@
 							</div>
 							<div class="modal-body">
-								<p>Bạn có muốn xóa dịch vụ này không?</p>
+								<p>Do you want to delete this service?</p>
 							</div>
 							<div class="modal-footer">
-								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
-								<a id="confirmDelete" class="btn btn-danger">Xóa</a>
+								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Back">
+								<a id="confirmDelete" class="btn btn-danger">OK</a>
 							</div>
 						</form>
 					</div>
@@ -119,15 +119,15 @@
 					<div class="modal-content">
 						<form>
 							<div class="modal-header">
-								<h4 class="modal-title">Thay đổi tình trạng dịch vụ</h4>
+								<h4 class="modal-title">Change service status</h4>
 								@* <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> *@
 							</div>
 							<div class="modal-body">
-								<p>Bạn có muốn ngừng hoạt động dịch vụ này không?</p>
+								<p>Do you want to disable this service?</p>
 							</div>
 							<div class="modal-footer">
-								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
-								<a id="confirmDisable" class="btn btn-primary">Xác nhận</a>
+								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Back">
+								<a id="confirmDisable" class="btn btn-primary">OK</a>
 							</div>
 						</form>
 					</div>
@@ -139,15 +139,15 @@
 					<div class="modal-content">
 						<form>
 							<div class="modal-header">
-								<h4 class="modal-title">Thay đổi tình trạng dịch vụ</h4>
+								<h4 class="modal-title">Change service status</h4>
 								@* <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> *@
 							</div>
 							<div class="modal-body">
-								<p>Bạn có muốn hoạt động trờ lại dịch vụ này không?</p>
+								<p>Do you want to enable this service?</p>
 							</div>
 							<div class="modal-footer">
-								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Quay về">
-								<a id="confirmEnable" class="btn btn-primary">Xác nhận</a>
+								<input type="button" class="btn btn-default btnBack" data-dismiss="modal" value="Back">
+								<a id="confirmEnable" class="btn btn-primary">OK</a>
 							</div>
 						</form>
 					</div>

@@ -27,9 +27,9 @@
                         <table class="table">
                             <thead class="ff--primary fs--14 text-darkest">
                                 <tr>
-                                    <th>Dịch vụ</th>
-                                    <th class="price-th">Giá</th>
-                                    <th>Tác giả</th>
+                                    <th>Service</th>
+                                    <th class="price-th">Price</th>
+                                    <th>Author</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -89,18 +89,18 @@
                                             }
                                             else
                                             {
-                                                <p class="text-danger">Không có thông tin tài khoản</p>
+                                                <p class="text-danger">No Account Information</p>
                                             }
                                         </td>
                                         <td>
                                             <div>
                                                 @if (isLoggedIn)
                                                 {
-                                                    <button class="booking-btn btn btn-primary" onclick="showModalForm(@service.ServiceId);">Đặt lịch</button>
+                                                    <button class="booking-btn btn btn-primary" onclick="showModalForm(@service.ServiceId);">Booking</button>
                                                 }
                                                 else
                                                 {
-                                                    <button class="booking-btn btn btn-primary" onclick="window.dialog.showModal();">Đặt lịch</button>
+                                                    <button class="booking-btn btn btn-primary" onclick="window.dialog.showModal();">Booking</button>
                                                 }
                                             </div>
                                         </td>
@@ -113,16 +113,16 @@
                         <form class="modal-content" method="post" asp-action="RequestService" asp-controller="Services">
                             <input type="hidden" id="serviceIdInput" asp-for="InputServiceId" value="" />
                             <span class="close" onclick="closeModalForm()">&times;</span>
-                            <h2>Nhập yêu cầu của bạn</h2>
-                            <textarea id="userRequest" rows="4" placeholder="Nhập yêu cầu..." asp-for="InputRequestContent"></textarea>
-                            <button id="submitRequest">Gửi yêu cầu</button>
+                            <h2>Enter your request</h2>
+                            <textarea id="userRequest" rows="4" placeholder="Enter request..." asp-for="InputRequestContent"></textarea>
+                            <button id="submitRequest">Send request</button>
                         </form>
                     </div>
                     <!-- Topics List End -->
                     <!-- Page Count Start -->
                     <div class="page--count pt--30">
                         <label class="ff--primary fs--14 fw--500 text-darker">
-                            <span>Hiển thị @Model.ServiceList.Count() dịch vụ - @Model.CurrentPage trong @Model.TotalPages</span>
+                            <span>Display @Model.ServiceList.Count() service - @Model.CurrentPage in @Model.TotalPages</span>
 
                             @if (Model.CurrentPage > 1)
                             {
@@ -143,9 +143,9 @@
                     </div>
 
                     <dialog id="dialog">
-                        <h2>Bạn chưa đăng nhập</h2>
+                        <h2>You are not logged in</h2>
                         <p>Cần tài khoản để tiến hành đăng nhập</p>
-                        <a asp-page="/Access/Login" class="login-btn">Đăng nhập</a>
+                        <a asp-page="/Access/Login" class="login-btn">Loginp</a>
                         <button onclick="window.dialog.close();" aria-label="close" class="x">❌</button>
                     </dialog>
                     <!-- Page Count End -->
@@ -156,7 +156,7 @@
             <div class="main--sidebar col-md-4 pb--60" data-trigger="stickyScroll">
                 <!-- Widget Start -->
                 <div class="widget">
-                    <h2 class="h4 fw--700 widget--title">Lọc dịch vụ</h2>
+                    <h2 class="h4 fw--700 widget--title">Filter service</h2>
 
                     <!-- Buddy Finder Widget Start -->
                     <div class="buddy-finder--widget">
@@ -166,11 +166,11 @@
                                 <div class="col-xs-6 col-xxs-12">
                                     <div class="form-group">
                                         <label>
-                                            <span class="text-darker ff--primary fw--500">Chi phí</span>
+                                            <span class="text-darker ff--primary fw--500">Price</span>
                                             <select asp-for="PriceFilter" class="form-control form-sm">
-                                                <option value="">Chọn danh mục</option>
-                                                <option value="1">Giá thấp nhất</option>
-                                                <option value="2">Giá cao nhất</option>
+                                                <option value="">Select</option>
+                                                <option value="1">Lowest price</option>
+                                                <option value="2">Highest price</option>
                                             </select>
                                         </label>
                                     </div>
@@ -179,21 +179,21 @@
                                 <div class="col-xs-6 col-xxs-12">
                                     <div class="form-group">
                                         <label>
-                                            <span class="text-darker ff--primary fw--500">Đánh giá</span>
+                                            <span class="text-darker ff--primary fw--500">Rating</span>
                                             <select asp-for="RateFilter" class="form-control form-sm">
-                                                <option value="">Chọn danh mục</option>
-                                                <option value="1">1 sao</option>
-                                                <option value="2">2 sao</option>
-                                                <option value="3">3 sao</option>
-                                                <option value="4">4 sao</option>
-                                                <option value="5">5 sao</option>
+                                                <option value="">Select</option>
+                                                <option value="1">1 star</option>
+                                                <option value="2">2 star</option>
+                                                <option value="3">3 star</option>
+                                                <option value="4">4 star</option>
+                                                <option value="5">5 star</option>
                                             </select>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div class="col-xs-12">
-                                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                    <button type="submit" class="btn btn-primary">Search</button>
                                 </div>
                             </div>
                         </form>

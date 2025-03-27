@@ -6,18 +6,18 @@ namespace Client.DTOs
     public class ForgotPasswordDTO
     {
         [BindProperty]
-        [Required(ErrorMessage = "Email không được để trống")]
-        [EmailAddress(ErrorMessage = "Sai định dạng email")]
+        [Required(ErrorMessage = "Email cannot be blank")]
+        [EmailAddress(ErrorMessage = "Incorrect email format")]
         public string ResetEmail { get; set; }
         [BindProperty]
-        [Required(ErrorMessage = "Không được để trống")]
+        [Required(ErrorMessage = "Cannot be left blank")]
         public int OTP { get; set; }
         [BindProperty]
-        [Required(ErrorMessage = "Không được để trống")]
+        [Required(ErrorMessage = "Cannot be left blank")]
         public string NewPassword { get; set; }
         [BindProperty]
-        [Required(ErrorMessage = "Không được để trống")]
-        [Compare(otherProperty: "NewPassword", ErrorMessage = "Không trùng mật khẩu")]
+        [Required(ErrorMessage = "Cannot be left blank")]
+        [Compare(otherProperty: "NewPassword", ErrorMessage = "No duplicate password")]
         public string ConfirmPass { get; set; }
     }
 }

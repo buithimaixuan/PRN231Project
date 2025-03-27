@@ -23,7 +23,7 @@ namespace Client.DTOs
         [Required]
         public int InputServiceId { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng nhập yêu cầu")]
+        [Required(ErrorMessage = "Please enter request")]
         public string InputRequestContent { get; set; } = string.Empty;
 
 
@@ -42,20 +42,20 @@ namespace Client.DTOs
         [BindProperty]
         public decimal RatingPoint { get; set; }
         [BindProperty]
-        [Required(ErrorMessage = "Cần bạn đóng góp ý kiến")]
+        [Required(ErrorMessage = "Need your comments")]
         public string CommentService { get; set; }
         public Dictionary<int, Account> ReviewerAccounts { get; set; }
         // Thêm sửa Service
         public Service ServiceForm { get; set; }
-        [Required(ErrorMessage = "Không được để trống")]
-        [StringLength(200, ErrorMessage = "Quá 200 ký tự")]
+        [Required(ErrorMessage = "Cannot be left blank")]
+        [StringLength(200, ErrorMessage = "Over 200 characters")]
         public string TitleInput { get; set; }
-        [Required(ErrorMessage = "Không được để trống")]
+        [Required(ErrorMessage = "Cannot be left blank")]
         public double PriceInput { get; set; }
-        [Required(ErrorMessage = "Không được để trống")]
+        [Required(ErrorMessage = "Cannot be left blank")]
         public string Description { get; set; }
 		public IEnumerable<CategoryService> ServiceLCateList { get; set; } = new List<CategoryService>();
-        [Required(ErrorMessage = "Vui lòng chọn thể loại dịch vụ.")]
+        [Required(ErrorMessage = "Please select service category")]
         public int? SelectedCategoryServiceId { get; set; }
         public CategoryService SearchCateSerId { get; set; }
 	}
