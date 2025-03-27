@@ -24,25 +24,25 @@
                                 <img src="~/image/avatar2.png" alt="Profile Picture">
                             </a>
 
-                            <input id="postInput" type="text" placeholder="@Model.Account.FullName ơi, bạn đang nghĩ gì thế?">
+                            <input id="postInput" type="text" placeholder="@Model.Account.FullName, what are you thinking, today?">
                         </div>
                     </div>
 
                     <div class="popup" id="popupPost" style="z-index: 100;">
                         <div class="popup-content">
                             <button class="close-btn" id="closePopupBtn">×</button>
-                            <h2>Tạo bài viết</h2>
+                            <h2>Create post</h2>
 
                             <form id="postForm" method="post" asp-action="CreatePost" asp-controller="Post" enctype="multipart/form-data">
                                 <input type="hidden" value="@Model.Account.AccountId" asp-for="PostViewModel.AccountId">
 
-                                <textarea asp-for="PostViewModel.ContentPost" placeholder="@Model.Account.FullName ơi, bạn đang nghĩ gì thế?" class="content-post"
+                                <textarea asp-for="PostViewModel.ContentPost" placeholder="@Model.Account.FullName, what are you thinking, today?" class="content-post"
                                 required></textarea>
 
                                 <div class="select">
-                                    <label for="select-input">Chọn danh mục: </label>
+                                    <label for="select-input">Select Category: </label>
                                     <select id="select-input" asp-for="PostViewModel.CategoryId">
-                                        <option value="" disabled selected>Chọn danh mục</option>
+                                        <option value="" disabled selected>Select Category</option>
                                         @foreach (var categoryPost in Model.categoryPosts)
                                         {
                                             <option value="@categoryPost.CategoryPostId">@categoryPost.CategoryPostName</option>
@@ -51,20 +51,20 @@
                                     </select>
                                 </div>
 
-                                <button type="button" id="clearImagesButton" style="display: none;">Xóa ảnh</button>
+                                <button type="button" id="clearImagesButton" style="display: none;">Delete Image</button>
                                 <div id="imagePreview" style="margin-top: 10px; display: flex; flex-wrap: wrap;"></div>
 
                                 <input onchange="console.log(this.files)" type="file" id="imageInput" asp-for="PostViewModel.Images" accept="image/*" style="display: none;" multiple>
 
                                 <div class="actions" style="margin-top: 10px;">
                                     <button type="button" id="selectImageButton">
-                                        <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Ảnh/video
+                                        <img src="https://via.placeholder.com/20/00FF00" alt="Photo/Video">Image/Video
                                     </button>
                                 </div>
 
                                 <button type="submit"
                                 style="width: 100%; margin-top: 10px; padding: 10px; background-color: #1877f2; color: white; border: none; border-radius: 5px;">
-                                    Đăng
+                                    Post
                                 </button>
                             </form>
                         </div>
@@ -154,14 +154,14 @@
                                                 @if (Model.Account == null)
                                                 {
                                                     <div class="activity--action fw--700">
-                                                        <a asp-controller="Authen" asp-action="Index">Xem thêm...</a>
+                                                        <a asp-controller="Authen" asp-action="Index">Read more...</a>
                                                     </div>
                                                 }
                                                 else
                                                 {
                                                     @* KHI LOGIN ROI THI XEM DUOC *@
                                                     <div class="activity--action fw--700">
-                                                        <a asp-controller="Post" asp-action="PostDetail" asp-route-id="@post.post.PostId">Xem thêm...</a>
+                                                        <a asp-controller="Post" asp-action="PostDetail" asp-route-id="@post.post.PostId">Read more...</a>
                                                     </div>
                                                 }
                                             </div>
@@ -172,7 +172,7 @@
                             }
                             else
                             {
-                                <h1>không có bài đăng</h1>
+                                <h1>There are no posts</h1>
                             }
 
                         </ul>

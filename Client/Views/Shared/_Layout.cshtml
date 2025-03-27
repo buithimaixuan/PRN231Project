@@ -168,13 +168,7 @@
                         <li>
                             <a asp-controller="Authen" asp-action="Logout" class="btn-link">
                                 <i class="fa mr--8 fa-user-o"></i>
-                                <span>Đăng xuất</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a id="chatButton" href="#" class="btn-link" onclick="showListChat()">
-                                <i class="fa fa-commenting-o" aria-hidden="true"></i>
-                                <span>Tin Nhắn</span>
+                                <span>Logout</span>
                             </a>
                         </li>
                     }
@@ -183,7 +177,7 @@
                         <li>
                         <a asp-controller="Authen" asp-action="Index" class="btn-link">
                                 <i class="fa mr--8 fa-user-o"></i>
-                                <span>Đăng nhập</span>
+                                <span>Login</span>
                             </a>
                         </li>
                     }
@@ -284,7 +278,7 @@
 
                         <form id="form-search" action="" method="get">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" placeholder="Tìm kiếm trên trang chủ" id="searchInput" class="search-input" onfocus="expandSearch()" onblur="collapseSearch()">
+                            <input type="text" placeholder="Search" id="searchInput" class="search-input" onfocus="expandSearch()" onblur="collapseSearch()">
                         </form>
                     </div>
 
@@ -301,8 +295,8 @@
                     <!-- Header Nav Links Start -->
                     <ul class="header--nav-links style--1 nav ff--primary">
                         <li class="dropdown">
-                            <a href="/Index">
-                                <span>Trang chủ</span>
+                            <a asp-action="Index" asp-controller="Home">
+                                <span>Home</span>
                             </a>
                             @* <a href="/index" class="dropdown-toggle" data-toggle="dropdown">
                             <span>trang chủ</span>
@@ -328,7 +322,7 @@
                         </li> *@
 
                         <li class="dropdown">
-                            <a asp-controller="News" asp-action="Index" class="dropdown-toggle"><span>Tin tức</span></a>
+                            <a asp-controller="News" asp-action="Index" class="dropdown-toggle"><span>News</span></a>
                             <ul class="dropdown-menu">
                                 @if (ViewBag.Categories != null)
                                 {
@@ -346,20 +340,20 @@
                             @if (roleId != null && roleId == 3)
                             {
                                 <a asp-controller="Services" asp-action="Services" class="dropdown-toggle">
-                                    <span>Dịch vụ</span>
+                                    <span>Service</span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                <li><a asp-controller="Services" asp-action="ServicesOfExperts">Tùy chỉnh dịch vụ</a></li>
+                                <li><a asp-controller="Services" asp-action="ServicesOfExperts">Service option</a></li>
                                 </ul>
                             }
                             else
                             {
                                 <a asp-controller="Services" asp-action="Services">
-                                    <span>Dịch vụ</span>
+                                    <span>Service</span>
                                 </a>
                             }
                         </li>
-                        <li><a href=""><span>Liên hệ hỗ trợ</span></a></li>
+                        <li><a href=""><span>Support</span></a></li>
                     </ul>
                     <!-- Header Nav Links End -->
                 </div>
